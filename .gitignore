@@ -1,0 +1,52 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual Environment
+venv/
+env/
+ENV/
+.venv
+
+# Environment variables
+.env
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Database
+*.db
+*.sqlite
+
+# Logs
+*.log
+logs/
+
+# PDF output
+*.pdf
+
+# Flask
+instance/
+.webassets
+
+# Migrations
+migrations/versions/*.py
+!migrations/versions/__init__.py
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Deployment (keep deploy scripts but ignore sensitive files)
+deploy/*.log
+deploy/*.pid
+
+# Secrets
+*.pem
+*.key
+secrets/

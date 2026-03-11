@@ -1,0 +1,282 @@
+{% extends "base.html" %}
+
+{% block title %}首页 - 采购管理系统{% endblock %}
+
+{% block content %}
+{% if current_user.is_authenticated %}
+<!-- 欢迎横幅 -->
+<div class="card mb-4 border-0 welcome-banner">
+    <div class="card-body" style="background: linear-gradient(135deg, #3b5cdb 0%, #1070ff 100%); color: white;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h2 class="mb-2"><i class="bi bi-house-door"></i> 采购管理系统</h2>
+                <p class="mb-0" style="opacity: 0.95; font-size: 1.05rem;">欢迎回来，{{ current_user.username }}！高效、便捷的采购管理平台，助您轻松完成采购流程</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <div class="bg-white bg-opacity-20 rounded p-3 d-inline-block">
+                    <small style="opacity: 0.9; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.5px;">当前时间</small>
+                    <div class="h4 mb-0 fw-bold" id="current-time" style="font-size: 1.3rem; min-width: 160px;">--</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 统计卡片 -->
+{% if plan_stats %}
+<div class="row mb-4 stats-row g-3">
+    <div class="col-md-3">
+        <div class="stat-card stat-card-blue">
+            <div class="stat-value">{{ plan_stats.total }}</div>
+            <div class="stat-label">总计划数</div>
+            <i class="bi bi-file-earmark-text stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-card-green">
+            <div class="stat-value">{{ plan_stats.approved }}</div>
+            <div class="stat-label">已批准</div>
+            <i class="bi bi-check-circle stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-card-yellow">
+            <div class="stat-value">{{ plan_stats.pending }}</div>
+            <div class="stat-label">待审批</div>
+            <i class="bi bi-clock stat-icon"></i>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="stat-card stat-card-cyan">
+            <div class="stat-value">{{ plan_stats.draft }}</div>
+            <div class="stat-label">草稿</div>
+            <i class="bi bi-file-earmark stat-icon"></i>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<div class="row features-section">
+    <!-- 系统核心功能 -->
+    <div class="col-lg-8 mb-4">
+        <div class="card border-0 h-100">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-star"></i> 系统核心功能</h5>
+            </div>
+            <div class="card-body">
+                <div class="row g-3">
+                    <div class="col-md-4">
+                        <div class="function-card h-100">
+                            <div class="icon-wrapper icon-blue">
+                                <i class="bi bi-pencil-square"></i>
+                            </div>
+                            <h5>采购申请</h5>
+                            <p class="small mb-3">在线填写和提交采购申请表单</p>
+                            <a href="{{ url_for('plan.create') }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-plus"></i> 开始申请
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="function-card h-100">
+                            <div class="icon-wrapper icon-green">
+                                <i class="bi bi-clock-history"></i>
+                            </div>
+                            <h5>申请历史</h5>
+                            <p class="small mb-3">查看历史申请记录和审批状态</p>
+                            <a href="{{ url_for('plan.index') }}" class="btn btn-success btn-sm">
+                                <i class="bi bi-list-ul"></i> 查看历史
+                            </a>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="function-card h-100">
+                            <div class="icon-wrapper icon-red">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </div>
+                            <h5>PDF 导出</h5>
+                            <p class="small mb-3">导出标准格式的采购文档</p>
+                            <a href="{{ url_for('plan.index') }}" class="btn btn-danger btn-sm">
+                                <i class="bi bi-download"></i> 导出
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 用户信息 -->
+    <div class="col-lg-4 mb-4">
+        <div class="card border-0 h-100 quick-action-card">
+            <div class="card-body">
+                <!-- 用户信息卡片 -->
+                <div class="user-info-card mb-4">
+                    <div class="user-avatar">
+                        <i class="bi bi-person"></i>
+                    </div>
+                    <div class="user-name">{{ current_user.username }}</div>
+                    <div class="user-role">
+                        {% if current_user.is_administrator() %}
+                        <span class="badge bg-danger">管理员</span>
+                        {% else %}
+                        <span class="badge bg-light text-dark">普通用户</span>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <!-- 快捷操作 -->
+                <h6 class="mb-3"><i class="bi bi-flash"></i> 快捷操作</h6>
+                <ul class="quick-action-list">
+                    <li>
+                        <a href="{{ url_for('plan.index') }}">
+                            <i class="bi bi-file-earmark-text text-primary"></i>
+                            <span>我的采购计划</span>
+                        </a>
+                    </li>
+                    {% if current_user.is_administrator() %}
+                    <li>
+                        <a href="{{ url_for('plan.index') }}?status=pending">
+                            <i class="bi bi-clock-history text-warning"></i>
+                            <span>待审批管理</span>
+                        </a>
+                    </li>
+                    {% endif %}
+                    <li>
+                        <a href="{{ url_for('plan.create') }}">
+                            <i class="bi bi-plus-circle text-success"></i>
+                            <span>新建采购计划</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 快速申请入口 -->
+<div class="card border-0 quick-action-card">
+    <div class="card-body" style="background: linear-gradient(135deg, #00b5d6 0%, #0096b3 100%); color: white;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h4 class="mb-2"><i class="bi bi-lightning-charge"></i> 快速申请入口</h4>
+                <p class="mb-0" style="opacity: 0.95;">立即开始新的采购申请，快速填写申请表单，提交后系统将自动处理并生成申请记录</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('plan.create') }}" class="btn btn-light btn-lg" style="border-radius: 50px; padding: 0.75rem 2rem;">
+                    <i class="bi bi-send"></i> 开始申请
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% else %}
+<!-- 未登录时的欢迎页面 -->
+<div class="card mb-4 border-0">
+    <div class="card-body" style="background: linear-gradient(135deg, #3b5cdb 0%, #1070ff 100%); color: white;">
+        <div class="row align-items-center">
+            <div class="col-md-8">
+                <h1 class="display-5 mb-3"><i class="bi bi-cart4"></i> 采购管理系统</h1>
+                <p class="lead mb-0" style="opacity: 0.9;">高效、规范的企业采购管理平台，让采购流程更加简单</p>
+            </div>
+            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('auth.login') }}" class="btn btn-light btn-lg me-2">
+                    <i class="bi bi-box-arrow-in-right"></i> 立即登录
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 功能特性 -->
+<div class="row mb-4">
+    <div class="col-md-4 mb-4">
+        <div class="function-card h-100">
+            <div class="icon-wrapper icon-blue">
+                <i class="bi bi-file-earmark-text"></i>
+            </div>
+            <h5>采购计划管理</h5>
+            <p class="small text-muted">支持创建、编辑、删除采购计划，可添加多行物资明细，满足各类采购需求</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="function-card h-100">
+            <div class="icon-wrapper icon-green">
+                <i class="bi bi-file-earmark-pdf"></i>
+            </div>
+            <h5>PDF 导出</h5>
+            <p class="small text-muted">一键生成正式 PDF 文档，支持中文字体，格式规范，可直接打印使用</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="function-card h-100">
+            <div class="icon-wrapper icon-cyan">
+                <i class="bi bi-shield-check"></i>
+            </div>
+            <h5>审批流程</h5>
+            <p class="small text-muted">支持多级审批流程，状态实时跟踪，审批记录完整可查</p>
+        </div>
+    </div>
+</div>
+
+<div class="row mb-4">
+    <div class="col-md-4 mb-4">
+        <div class="function-card h-100">
+            <div class="icon-wrapper icon-yellow">
+                <i class="bi bi-cloud-upload"></i>
+            </div>
+            <h5>扫描件管理</h5>
+            <p class="small text-muted">上传签字盖章后的扫描件 PDF，支持在线下载预览，方便档案管理</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="function-card h-100">
+            <div class="icon-wrapper icon-red">
+                <i class="bi bi-people"></i>
+            </div>
+            <h5>权限控制</h5>
+            <p class="small text-muted">基于角色的权限管理，用户只能操作自己的计划，管理员拥有全部权限</p>
+        </div>
+    </div>
+    <div class="col-md-4 mb-4">
+        <div class="function-card h-100">
+            <div class="icon-wrapper icon-success">
+                <i class="bi bi-graph-up"></i>
+            </div>
+            <h5>数据统计</h5>
+            <p class="small text-muted">实时统计采购数据，预算金额、实际金额一目了然，支持多维度筛选</p>
+        </div>
+    </div>
+</div>
+
+<!-- 注册引导 -->
+<div class="card border-0 text-center py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #e8eaec 100%);">
+    <div class="card-body">
+        <h3 class="mb-3">还没有账号？</h3>
+        <p class="text-muted mb-4">立即注册，开始使用高效便捷的采购管理系统</p>
+        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
+            <i class="bi bi-person-plus"></i> 免费注册
+        </a>
+    </div>
+</div>
+{% endif %}
+
+<script>
+// 更新当前时间
+function updateTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+    });
+    const el = document.getElementById('current-time');
+    if (el) el.textContent = timeStr;
+}
+updateTime();
+setInterval(updateTime, 60000);
+</script>
+{% endblock %}

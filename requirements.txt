@@ -1,0 +1,20 @@
+# Flask Core
+Flask>=2.3.0
+Flask-SQLAlchemy>=3.0.0
+Flask-Migrate>=4.0.0
+Flask-WTF>=1.2.0
+Flask-Login>=0.6.0
+
+# Database
+PyMySQL>=1.1.0
+cryptography>=41.0.0
+
+# Environment
+python-dotenv>=1.0.0
+
+# PDF Generation (optional)
+WeasyPrint>=60.0
+pdfkit>=1.0.0
+
+# Development
+Werkzeug>=2.3.0

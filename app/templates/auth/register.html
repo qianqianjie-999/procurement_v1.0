@@ -1,0 +1,231 @@
+{% extends "base.html" %}
+
+{% block title %}用户注册 - 采购管理系统{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<!-- Font Awesome 图标 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    body {
+        background-color: #f5f7fa;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .register-container {
+        max-width: 550px;
+        width: 100%;
+    }
+
+    .register-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .register-card .card-header {
+        background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+        color: white;
+        padding: 1.5rem;
+        border: none;
+    }
+
+    .register-card .card-header h4 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.25rem;
+    }
+
+    .register-card .card-header h4 i {
+        font-size: 1.2rem;
+    }
+
+    .register-card .card-body {
+        padding: 2rem;
+        background: #fff;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        border-color: #198754;
+        box-shadow: 0 0 0 0.2rem rgba(25, 135, 84, 0.25);
+    }
+
+    .form-control.is-invalid {
+        border-color: #dc3545;
+        padding-right: calc(1.5em + 1.5rem);
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+        background-repeat: no-repeat;
+        background-position: right calc(0.375em + 0.4rem) center;
+        background-size: calc(0.75em + 0.2rem) calc(0.75em + 0.2rem);
+    }
+
+    .invalid-feedback {
+        color: #dc3545;
+        font-size: 0.85rem;
+        margin-top: 0.35rem;
+    }
+
+    .btn-register {
+        background: linear-gradient(135deg, #198754 0%, #146c43 100%);
+        border: none;
+        border-radius: 6px;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .btn-register:hover {
+        background: linear-gradient(135deg, #146c43 0%, #0f5132 100%);
+        box-shadow: 0 4px 12px rgba(25, 135, 84, 0.3);
+    }
+
+    .register-card .card-footer {
+        background-color: #f8f9fa;
+        padding: 1rem 1.5rem;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .login-link {
+        color: #198754;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .login-link:hover {
+        color: #146c43;
+        text-decoration: underline;
+    }
+
+    .register-benefits {
+        background-color: rgba(25, 135, 84, 0.1);
+        border-left: 4px solid #198754;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-bottom: 1.5rem;
+    }
+
+    .register-benefits h5 {
+        color: #198754;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .register-benefits ul {
+        margin: 0;
+        padding-left: 1.25rem;
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .register-benefits li {
+        margin-bottom: 0.35rem;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="register-container">
+    <div class="card register-card">
+        <div class="card-header">
+            <h4>
+                <i class="fas fa-user-plus"></i> 用户注册
+            </h4>
+        </div>
+        <div class="card-body">
+            <!-- 注册权益 -->
+            <div class="register-benefits">
+                <h5><i class="fas fa-gift"></i> 注册即可享受：</h5>
+                <ul class="mb-0">
+                    <li>创建和管理采购计划</li>
+                    <li>PDF 导出与文档打印</li>
+                    <li>完整的审批流程管理</li>
+                </ul>
+            </div>
+
+            <form method="POST" action="{{ url_for('auth.register') }}">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">用户名</label>
+                    {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), id="username", placeholder="请输入用户名（3-20 个字符）", autocomplete="username", required=True) }}
+                    {% for error in form.username.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="email" class="form-label">邮箱地址</label>
+                    {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), id="email", type="email", placeholder="请输入邮箱地址", autocomplete="email", required=True) }}
+                    {% for error in form.email.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">密码</label>
+                    {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), id="password", type="password", placeholder="请输入密码（至少 6 位）", autocomplete="new-password", required=True) }}
+                    {% for error in form.password.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="password2" class="form-label">确认密码</label>
+                    {{ form.password2(class="form-control" + (" is-invalid" if form.password2.errors else ""), id="password2", type="password", placeholder="请再次输入密码", autocomplete="new-password", required=True) }}
+                    {% for error in form.password2.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="d-grid gap-2">
+                    {{ form.submit(class="btn btn-register btn-lg") }}
+                </div>
+            </form>
+
+            <hr class="my-4">
+
+            <div class="text-center">
+                <small class="text-muted">已有账号？</small>
+                <a href="{{ url_for('auth.login') }}" class="login-link">
+                    <i class="fas fa-sign-in-alt"></i> 立即登录
+                </a>
+            </div>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">
+                &copy; 2026 采购管理系统 | 企业级采购管理平台
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,205 @@
+{% extends "base.html" %}
+
+{% block title %}用户登录 - 采购管理系统{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block footer %}{% endblock %}
+
+{% block styles %}
+{{ super() }}
+<!-- Font Awesome 图标 -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+<style>
+    body {
+        background-color: #f5f7fa;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 2rem 0;
+    }
+
+    .login-container {
+        max-width: 500px;
+        width: 100%;
+    }
+
+    .login-card {
+        border: none;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+    }
+
+    .login-card .card-header {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        color: white;
+        padding: 1.5rem;
+        border: none;
+    }
+
+    .login-card .card-header h4 {
+        margin: 0;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        font-size: 1.25rem;
+    }
+
+    .login-card .card-header h4 i {
+        font-size: 1.2rem;
+    }
+
+    .login-card .card-body {
+        padding: 2rem;
+        background: #fff;
+    }
+
+    .form-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-control {
+        border-radius: 6px;
+        border: 1px solid #dee2e6;
+        padding: 0.75rem 1rem;
+        font-size: 1rem;
+    }
+
+    .form-control:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+    }
+
+    .btn-login {
+        background: linear-gradient(135deg, #0d6efd 0%, #0a58ca 100%);
+        border: none;
+        border-radius: 6px;
+        padding: 0.75rem;
+        font-size: 1.1rem;
+        font-weight: 500;
+        color: white;
+        width: 100%;
+        transition: all 0.3s ease;
+    }
+
+    .btn-login:hover {
+        background: linear-gradient(135deg, #0a58ca 0%, #084298 100%);
+        box-shadow: 0 4px 12px rgba(13, 110, 253, 0.3);
+    }
+
+    .login-card .card-footer {
+        background-color: #f8f9fa;
+        padding: 1rem 1.5rem;
+        text-align: center;
+        border-top: 1px solid #dee2e6;
+    }
+
+    .register-link {
+        color: #0d6efd;
+        font-weight: 500;
+        text-decoration: none;
+    }
+
+    .register-link:hover {
+        color: #0a58ca;
+        text-decoration: underline;
+    }
+
+    .test-account-info {
+        background-color: rgba(13, 110, 253, 0.1);
+        border-left: 4px solid #0d6efd;
+        padding: 1rem;
+        border-radius: 6px;
+        margin-top: 1.5rem;
+    }
+
+    .test-account-info h5 {
+        color: #0d6efd;
+        font-size: 1rem;
+        margin-bottom: 0.75rem;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+    .test-account-info ul {
+        margin: 0;
+        padding-left: 1.25rem;
+        font-size: 0.9rem;
+        color: #495057;
+    }
+
+    .test-account-info li {
+        margin-bottom: 0.35rem;
+    }
+
+    .form-check-input {
+        cursor: pointer;
+    }
+
+    .form-check-label {
+        cursor: pointer;
+        color: #6c757d;
+    }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="login-container">
+    <div class="card login-card">
+        <div class="card-header">
+            <h4>
+                <i class="fas fa-user"></i> 用户登录
+            </h4>
+        </div>
+        <div class="card-body">
+            <form method="POST" action="{{ url_for('auth.login') }}">
+                {{ form.hidden_tag() }}
+
+                <div class="mb-3">
+                    <label for="username" class="form-label">用户名</label>
+                    {{ form.username(class="form-control", id="username", placeholder="请输入用户名", autocomplete="username", required=True) }}
+                    {% for error in form.username.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3">
+                    <label for="password" class="form-label">密码</label>
+                    {{ form.password(class="form-control", id="password", type="password", placeholder="请输入密码", autocomplete="current-password", required=True) }}
+                    {% for error in form.password.errors %}
+                        <div class="invalid-feedback d-block">{{ error }}</div>
+                    {% endfor %}
+                </div>
+
+                <div class="mb-3 form-check">
+                    {{ form.remember_me(class="form-check-input", id="remember") }}
+                    <label class="form-check-label" for="remember">记住我</label>
+                </div>
+
+                <div class="d-grid gap-2">
+                    {{ form.submit(class="btn btn-login btn-lg") }}
+                </div>
+            </form>
+
+            <hr class="my-4">
+
+            <div class="test-account-info">
+                <h5><i class="fas fa-info-circle"></i> 测试账号：</h5>
+                <ul class="mb-0">
+                    <li><strong>管理员:</strong> admin / admin123</li>
+                    <li><strong>普通用户:</strong> user1 / user123</li>
+                </ul>
+            </div>
+        </div>
+        <div class="card-footer">
+            <small class="text-muted">
+                还没有账号？<a href="{{ url_for('auth.register') }}" class="register-link">立即注册</a>
+            </small>
+        </div>
+    </div>
+</div>
+{% endblock %}
