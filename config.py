@@ -48,7 +48,7 @@ class ProductionConfig(Config):
     SQLALCHEMY_ECHO = False
     # 生产环境数据库地址（根据你的实际配置修改）
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'mysql+pymysql://root:root@localhost/procurement'
+        'mysql+pymysql://procurement:YourSecurePassword123!@localhost/procurement_system'
 
     @classmethod
     def init_app(cls, app):
