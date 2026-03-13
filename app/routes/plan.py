@@ -441,6 +441,7 @@ def export_pdf(id):
     """
     try:
         from weasyprint import HTML, CSS
+        from weasyprint.text.fonts import FontConfiguration
     except ImportError:
         flash('未安装 WeasyPrint，请先运行：pip install weasyprint', 'warning')
         return redirect(url_for('plan.plan_list'))
@@ -454,33 +455,22 @@ def export_pdf(id):
     # 渲染 HTML 模板
     html_content = render_template('plan/plan_preview.html', plan=plan, items=items)
 
-    # 生成 PDF
+    # 生成 PDF - 优化性能
     try:
-        # 构建 CSS，指定中文字体（使用 file:// URL 格式）
-        font_file_url = f'file://{chinese_font_path}' if chinese_font_path else None
-        css_content = f"""
-        @font-face {{
-            font-family: 'SimSun';
-            src: url('{font_file_url}');
-        }}
-        body {{
-            font-family: 'SimSun', sans-serif;
-        }}
-        """ if font_file_url else ""
-
-        # 生成 PDF，使用自定义 CSS
         html = HTML(string=html_content, base_url=request.base_url)
-        css = CSS(string=css_content) if css_content else None
 
-        # 尝试使用自定义字体生成 PDF
-        try:
-            if css:
-                pdf_file = html.write_pdf(stylesheets=[css])
-            else:
-                pdf_file = html.write_pdf()
-        except Exception as font_error:
-            # 如果字体加载失败，使用默认字体生成
-            current_app.logger.warning(f'自定义字体加载失败：{font_error}, 使用默认字体')
+        # 优化：使用 FontConfiguration 预加载字体，加快渲染速度
+        font_config = FontConfiguration()
+        if chinese_font_path:
+            css = CSS(string=f"""
+                @font-face {{
+                    font-family: 'SimSun';
+                    src: url('file://{chinese_font_path}');
+                }}
+                body {{ font-family: 'SimSun', sans-serif; }}
+            """, font_config=font_config)
+            pdf_file = html.write_pdf(stylesheets=[css], font_config=font_config)
+        else:
             pdf_file = html.write_pdf()
 
         # 直接返回 PDF 下载，不保存到服务器
