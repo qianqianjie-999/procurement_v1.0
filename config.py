@@ -58,6 +58,11 @@ class ProductionConfig(Config):
     SCANNED_STORAGE_PATH = '/var/www/html/procurement/app/static/uploads/scanned'
     ATTACHMENT_STORAGE_PATH = '/var/www/html/procurement/app/static/uploads/attachments'
 
+    # 上传文件大小限制 (16MB)
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+    ALLOWED_SCANNED_EXTENSIONS = {'pdf'}
+    ALLOWED_ATTACHMENT_EXTENSIONS = {'pdf', 'doc', 'docx', 'xls', 'xlsx'}
+
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)  # 现在父类有 init_app 方法，不会报错
