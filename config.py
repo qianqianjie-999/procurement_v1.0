@@ -50,6 +50,10 @@ class ProductionConfig(Config):
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'mysql+pymysql://procurement:YourSecurePassword123!@127.0.0.1/procurement_system'
 
+    # PDF 导出配置
+    PDF_STORAGE_PATH = '/var/www/html/procurement/app/static/pdfs'
+    CHINESE_FONT_PATH = '/var/www/html/procurement/app/static/fonts/SimSun.ttf'
+
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)  # 现在父类有 init_app 方法，不会报错
