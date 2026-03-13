@@ -54,6 +54,10 @@ class ProductionConfig(Config):
     PDF_STORAGE_PATH = '/var/www/html/procurement/app/static/pdfs'
     CHINESE_FONT_PATH = '/var/www/html/procurement/app/static/fonts/SimSun.ttf'
 
+    # 上传文件配置
+    SCANNED_STORAGE_PATH = '/var/www/html/procurement/app/static/uploads/scanned'
+    ATTACHMENT_STORAGE_PATH = '/var/www/html/procurement/app/static/uploads/attachments'
+
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)  # 现在父类有 init_app 方法，不会报错
