@@ -437,44 +437,27 @@ def preview(id):
 @login_required
 def export_pdf(id):
     """
-    导出采购计划为 PDF
-
-    使用 WeasyPrint 生成 PDF 文件并保存到服务器，同时更新数据库路径
+    导出采购计划为 PDF - 直接下载不保存
     """
     try:
         from weasyprint import HTML, CSS
-        import os
-        import uuid
-        from datetime import datetime
     except ImportError:
-        flash('未安装 WeasyPrint，请先运行：pip install WeasyPrint', 'warning')
-        return redirect(url_for('plan.preview', id=id))
+        flash('未安装 WeasyPrint，请先运行：pip install weasyprint', 'warning')
+        return redirect(url_for('plan.plan_list'))
 
     plan = PurchasePlan.query.get_or_404(id)
     items = plan.items.order_by(PurchaseItem.id).all()
 
     # 获取配置
-    pdf_storage_path = current_app.config.get('PDF_STORAGE_PATH')
     chinese_font_path = current_app.config.get('CHINESE_FONT_PATH')
-
-    # 确保存储目录存在
-    os.makedirs(pdf_storage_path, exist_ok=True)
-
-    # 生成文件名：采购计划 ID_时间戳.pdf
-    timestamp = datetime.utcnow().strftime('%Y%m%d_%H%M%S')
-    safe_filename = f"{plan.id}_{timestamp}.pdf"
-    pdf_filepath = os.path.join(pdf_storage_path, safe_filename)
-    pdf_relative_path = f"static/pdfs/{safe_filename}"
 
     # 渲染 HTML 模板
     html_content = render_template('plan/plan_preview.html', plan=plan, items=items)
 
     # 生成 PDF
     try:
-        from weasyprint import HTML, CSS
-
         # 构建 CSS，指定中文字体（使用 file:// URL 格式）
-        font_file_url = f'file://{chinese_font_path}'
+        font_file_url = f'file://{chinese_font_path}' if chinese_font_path else None
         css_content = f"""
         @font-face {{
             font-family: 'SimSun';
@@ -483,35 +466,28 @@ def export_pdf(id):
         body {{
             font-family: 'SimSun', sans-serif;
         }}
-        """
+        """ if font_file_url else ""
 
         # 生成 PDF，使用自定义 CSS
         html = HTML(string=html_content, base_url=request.base_url)
-        css = CSS(string=css_content)
+        css = CSS(string=css_content) if css_content else None
 
         # 尝试使用自定义字体生成 PDF
         try:
-            pdf_file = html.write_pdf(stylesheets=[css])
+            if css:
+                pdf_file = html.write_pdf(stylesheets=[css])
+            else:
+                pdf_file = html.write_pdf()
         except Exception as font_error:
             # 如果字体加载失败，使用默认字体生成
             current_app.logger.warning(f'自定义字体加载失败：{font_error}, 使用默认字体')
             pdf_file = html.write_pdf()
 
-        # 保存 PDF 到文件
-        with open(pdf_filepath, 'wb') as f:
-            f.write(pdf_file)
-
-        # 更新数据库，保存 PDF 路径
-        plan.pdf_path = pdf_relative_path
-        db.session.commit()
-
-        current_app.logger.info(f'PDF 生成成功：{pdf_filepath}')
-
-        # 创建响应，返回 PDF 文件下载
+        # 直接返回 PDF 下载，不保存到服务器
         response = make_response(pdf_file)
         response.headers['Content-Type'] = 'application/pdf'
-        # 使用英文文件名避免编码问题
         response.headers['Content-Disposition'] = f'attachment; filename={plan.plan_number}_purchase_plan.pdf'
+        response.headers['Content-Length'] = str(len(pdf_file))
 
         return response
 
