@@ -9,28 +9,41 @@
             margin: 15mm;
         }
 
-        body {
-            font-family: 'SimSun', sans-serif;
-            font-size: 11px;
-            color: #000;
-            line-height: 1.4;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        /* 标题 */
+        body {
+            font-family: "SimSun", "Songti SC", "STSong", sans-serif;
+            font-size: 12px;
+            line-height: 1.5;
+            color: #000;
+        }
+
+        /* 标题样式 */
         .header {
             text-align: center;
-            margin-bottom: 15px;
+            margin-bottom: 20px;
             border-bottom: 2px solid #000;
-            padding-bottom: 8px;
+            padding-bottom: 10px;
+        }
+
+        .header .company-name {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 5px;
         }
 
         .header h1 {
-            font-size: 20px;
+            font-size: 22px;
             font-weight: bold;
-            margin: 0;
+            letter-spacing: 2px;
         }
 
-        /* 信息表格 */
+        /* 基本信息表格 */
         .info-table {
             width: 100%;
             border-collapse: collapse;
@@ -39,148 +52,224 @@
 
         .info-table td {
             border: 1px solid #000;
-            padding: 5px 8px;
+            padding: 6px 10px;
+            word-break: break-word;
+            white-space: normal;
         }
 
         .info-table .label {
             font-weight: bold;
-            width: 90px;
-            background-color: #f5f5f5;
+            width: 100px;
+            background-color: #f9f9f9;
+            word-break: keep-all;
         }
 
-        /* 明细表格 */
+        /* 物资明细表格 */
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 15px;
-            font-size: 10px;
+            margin-bottom: 20px;
+            font-size: 11px;
         }
 
         .items-table th,
         .items-table td {
             border: 1px solid #000;
-            padding: 6px 4px;
+            padding: 8px 5px;
             text-align: center;
+            word-break: break-word;
+            white-space: normal;
         }
 
         .items-table th {
-            background-color: #e0e0e0;
+            background-color: #e8e8e8;
             font-weight: bold;
-            font-size: 10px;
+            word-break: keep-all;
         }
 
-        .items-table .left {
+        .items-table td.left-align {
             text-align: left;
         }
 
+        /* 列宽 */
+        .items-table .col-name { width: 5%; }
+        .items-table .col-brand { width: 15%; }
+        .items-table .col-spec { width: 15%; }
+        .items-table .col-quantity { width: 8%; }
+        .items-table .col-unit { width: 5%; }
+        .items-table .col-batch { width: 7%; }
+        .items-table .col-extra { width: 8%; }
+        .items-table .col-date { width: 8%; }
+        .items-table .col-remark { width: 14%; }
+
         /* 签字栏 */
-        .signature {
-            width: 100%;
-            border-collapse: collapse;
+        .signature-section {
             margin-top: 20px;
+            margin-bottom: 15px;
         }
 
-        .signature td {
+        .signature-title {
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #000;
+            padding-bottom: 5px;
+        }
+
+        .signature-grid {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .signature-grid td {
             border: 1px solid #000;
+            padding: 12px 8px;
+            height: 40px;
+        }
+
+        .signature-grid .sig-label {
+            font-weight: bold;
+            width: 22%;
+            text-align: left;
+            background-color: #f5f5f5;
+            padding-left: 15px;
+        }
+
+        .signature-grid .sig-space {
+            width: 11%;
+        }
+
+        .signature-grid .sig-gm {
+            width: 33%;
+        }
+
+        /* 备注说明 */
+        .gm-approval-note {
+            margin-top: 15px;
             padding: 10px;
-            text-align: center;
+            border: 1px solid #000;
             background-color: #fafafa;
+            font-size: 10px;
+        }
+
+        .gm-approval-note p {
+            margin: 4px 0;
+        }
+
+        .gm-approval-note strong {
+            font-weight: bold;
         }
     </style>
 </head>
 <body>
-    <!-- 标题 -->
+    <!-- 标题头 -->
     <div class="header">
-        <h1>采购计划表</h1>
+        <div class="company-name">科威达科技集团股份有限公司</div>
+        <h1>物资采购计划表</h1>
     </div>
 
     <!-- 基本信息 -->
     <table class="info-table">
         <tr>
-            <td class="label">采购编号</td>
+            <td class="label">采购计划编号</td>
             <td>{{ plan.plan_number }}</td>
-            <td class="label">计划名称</td>
-            <td>{{ plan.plan_name }}</td>
+            <td class="label">制表日期</td>
+            <td>{{ plan.created_at.strftime('%Y年%m月%d日') }}</td>
         </tr>
         <tr>
-            <td class="label">采购类型</td>
-            <td>{{ plan.plan_type_label }}</td>
-            <td class="label">采购方式</td>
-            <td>{{ plan.procurement_method or '未指定' }}</td>
+            <td class="label">项目名称</td>
+            <td colspan="3">{{ plan.plan_name }}</td>
         </tr>
         <tr>
-            <td class="label">预算金额</td>
-            <td>¥{{ plan.budget_amount|default('0.00') }} {{ plan.currency }}</td>
-            <td class="label">实际金额</td>
-            <td>¥{{ plan.actual_amount|default('0.00') }} {{ plan.currency }}</td>
-        </tr>
-        <tr>
-            <td class="label">申请部门</td>
-            <td>{{ plan.department or '未指定' }}</td>
             <td class="label">项目经理</td>
-            <td>{{ plan.project_manager or '未指定' }}</td>
+            <td>{{ plan.project_manager or '-' }}</td>
+            <td class="label">开工日期</td>
+            <td>{{ plan.start_date.strftime('%Y年%m月%d日') if plan.start_date else '-' }}</td>
         </tr>
         <tr>
-            <td class="label">状态</td>
-            <td>{{ plan.status_label }}</td>
-            <td class="label">创建时间</td>
-            <td>{{ plan.created_at.strftime('%Y-%m-%d') }}</td>
+            <td class="label">预计完工日期</td>
+            <td colspan="3">{{ plan.end_date.strftime('%Y年%m月%d日') if plan.end_date else '-' }}</td>
         </tr>
+        {% if plan.description %}
+        <tr>
+            <td class="label">采购说明</td>
+            <td colspan="3">{{ plan.description }}</td>
+        </tr>
+        {% endif %}
     </table>
 
-    <!-- 采购明细 -->
+    <!-- 物资明细表格 -->
     <table class="items-table">
         <thead>
             <tr>
-                <th style="width: 5%">序号</th>
-                <th style="width: 20%">物资名称</th>
-                <th style="width: 20%">规格型号</th>
-                <th style="width: 10%">数量</th>
-                <th style="width: 8%">单位</th>
-                <th style="width: 27%">备注</th>
+                <th class="col-name">序号</th>
+                <th class="col-name">物资名称</th>
+                <th class="col-brand">品牌型号</th>
+                <th class="col-spec">主要规格</th>
+                <th class="col-quantity">数量</th>
+                <th class="col-unit">单位</th>
+                <th class="col-batch">批次数量</th>
+                <th class="col-extra">合同外数量</th>
+                <th class="col-date">计划到货时间</th>
+                <th class="col-remark">备注</th>
             </tr>
         </thead>
         <tbody>
             {% for item in items %}
             <tr>
                 <td>{{ loop.index }}</td>
-                <td class="left">{{ item.item_name or '' }}</td>
-                <td class="left">{{ item.specification or item.brand_model or '' }}</td>
-                <td>{{ '%.2f'|format(item.quantity|default(0)) }}</td>
-                <td>{{ item.unit or '' }}</td>
-                <td class="left">{{ item.remarks or '' }}</td>
+                <td class="left-align">{{ item.item_name or '-' }}</td>
+                <td class="left-align">{{ item.brand_model or '-' }}</td>
+                <td class="left-align">{{ item.specification or '-' }}</td>
+                <td>{{ "%.1f"|format(item.quantity|default(0)) }}</td>
+                <td>{{ item.unit or '-' }}</td>
+                <td>{{ item.batch_quantity if item.batch_quantity else '-' }}</td>
+                <td>{{ item.extra_contract_quantity if item.extra_contract_quantity else '-' }}</td>
+                <td>{{ item.required_date.strftime('%Y-%m-%d') if item.required_date else '-' }}</td>
+                <td class="left-align">{{ item.remarks or '-' }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
-    <!-- 采购说明 -->
-    {% if plan.description %}
-    <div style="margin-bottom: 10px;">
-        <strong>采购说明：</strong>
-        <div style="padding: 5px; border: 1px solid #000; background: #fafafa;">
-            {{ plan.description }}
-        </div>
-    </div>
-    {% endif %}
-
-    <!-- 备注 -->
-    {% if plan.remarks %}
-    <div style="margin-bottom: 10px;">
-        <strong>备注：</strong>
-        <div style="padding: 5px; border: 1px solid #000; background: #fafafa;">
-            {{ plan.remarks }}
-        </div>
-    </div>
-    {% endif %}
-
     <!-- 签字栏 -->
-    <table class="signature">
-        <tr>
-            <td style="width: 33%"><strong>制表人：</strong>____________</td>
-            <td style="width: 33%"><strong>审核人：</strong>____________</td>
-            <td style="width: 33%"><strong>批准人：</strong>____________</td>
-        </tr>
-    </table>
+    <div class="signature-section">
+        <div class="signature-title">审批签字栏</div>
+        <table class="signature-grid">
+            <tr>
+                <td class="sig-label">项目经理：</td>
+                <td class="sig-space"></td>
+                <td class="sig-label">设计人员：</td>
+                <td class="sig-space"></td>
+                <td class="sig-label">设计部经理：</td>
+                <td class="sig-space"></td>
+            </tr>
+            <tr>
+                <td class="sig-label">工程部经理/事业部经理：</td>
+                <td class="sig-space"></td>
+                <td class="sig-label">采购部经理：</td>
+                <td class="sig-space"></td>
+                <td class="sig-label">合同是否签订：</td>
+                <td class="sig-space"></td>
+            </tr>
+            <tr>
+                <td class="sig-label sig-gm" colspan="3">总经理/董事长：</td>
+                <td class="sig-space" colspan="3"></td>
+            </tr>
+        </table>
+
+        <!-- 备注说明 -->
+        <div class="gm-approval-note">
+            <p><strong>备注：</strong></p>
+            <p>1. 本表用于所有项目物资采购计划，必按流程签字确认物资采购计划。采购计划项目经理、设计部、采购部都有留存；采购清单由设计部按计划输入 T+，采购部采购；库管凭物资采购单发货。（杆件、地笼附图纸、详细采购设备参数需单独附表）</p>
+            <p>2. 审批流程：项目经理列清单表→设计人员审核签字→设计部经理审核签字→事业部经理审核签字→采购部经理审核签字→总经理/董事长审核签字；</p>
+            <p>3. 涉及到本项目合同内清单采购计划遗漏的、变更补充清单、按实结算的补充清单，需另下采购单，签字流程到采购部经理；合同外且无法收费的，需由总经理/董事长，签署事务审批单，再下采购单！</p>
+        </div>
+    </div>
+
+    <!-- 页脚 -->
+    <div style="margin-top: 15px; font-size: 10px; text-align: center;">
+        <p>制表人：{{ plan.creator.username if plan.creator else '-' }}</p>
+    </div>
 </body>
 </html>
