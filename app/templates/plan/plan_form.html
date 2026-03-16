@@ -6,6 +6,207 @@
 
 {% block styles %}
 {{ super() }}
+<style>
+/* 页面头部 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.page-header h1 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-header h1 i {
+    color: #3b82f6;
+}
+
+/* 卡片样式 */
+.card {
+    border: none;
+    border-radius: 12px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-bottom: 1rem;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    font-weight: 600;
+    padding: 12px 16px;
+    border: none;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.card-header h5 {
+    font-size: 0.95rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.card-body {
+    padding: 16px;
+}
+
+/* 紧凑表单 */
+.form-label {
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: #4b5563;
+    margin-bottom: 6px;
+}
+
+.form-control {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s;
+}
+
+.form-control:focus {
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+}
+
+.form-control-sm {
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+/* 表格优化 */
+.table thead th {
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    color: #4b5563;
+    padding: 12px 8px;
+    border: none;
+}
+
+.table tbody td {
+    padding: 8px;
+    vertical-align: middle;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 8px 16px;
+    font-size: 0.9rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-sm {
+    padding: 4px 10px;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+.btn-outline-danger:hover {
+    background: #fee2e2;
+    border-color: #ef4444;
+    color: #dc2626;
+}
+
+/* 操作按钮区域 */
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 10px;
+}
+
+/* 必填标记 */
+.text-danger {
+    color: #ef4444 !important;
+}
+
+/* 表格删除按钮 */
+.delete-row {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 6px;
+    transition: all 0.2s;
+}
+
+.delete-row:hover {
+    background: #fee2e2;
+    transform: scale(1.1);
+}
+
+/* 添加行按钮 */
+#addRowBtn {
+    border-color: rgba(255, 255, 255, 0.5);
+    color: white;
+}
+
+#addRowBtn:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: white;
+}
+
+/* 必填字段边框 */
+.required-field {
+    border-left: 3px solid #ef4444;
+}
+
+/* 响应式优化 */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .form-actions {
+        flex-direction: column;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}
+</style>
 <link rel="stylesheet" href="{{ url_for('static', filename='css/plan_form.css') }}">
 {% endblock %}
 
@@ -18,46 +219,44 @@
 <form method="POST" id="planForm" novalidate>
     {{ form.hidden_tag() }}
 
-    <!-- 基本信息卡片（匹配 Excel 模板） -->
-    <div class="card mb-4">
+    <!-- 基本信息卡片 -->
+    <div class="card mb-3">
         <div class="card-header">
-            <h5 class="mb-0"><i class="bi bi-file-text"></i> 基本信息</h5>
+            <h5><i class="bi bi-file-text"></i> 基本信息</h5>
         </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6 mb-3">
+        <div class="card-body py-3">
+            <div class="row g-2">
+                <div class="col-md-4">
                     <label for="plan_name" class="form-label">项目名称 <span class="text-danger">*</span></label>
                     {{ form.plan_name(class="form-control" + (" is-invalid" if form.plan_name.errors else ""), placeholder="请输入项目名称") }}
                     {% for error in form.plan_name.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
-                <div class="col-md-6 mb-3">
+                <div class="col-md-3">
                     <label for="project_manager" class="form-label">项目经理</label>
                     {{ form.project_manager(class="form-control" + (" is-invalid" if form.project_manager.errors else ""), placeholder="请输入项目经理") }}
                     {% for error in form.project_manager.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
-            </div>
-            <div class="row">
-                <div class="col-md-4 mb-3">
+                <div class="col-md-2">
                     <label for="start_date" class="form-label"><i class="bi bi-calendar-check"></i> 开工日期</label>
                     {{ form.start_date(class="form-control" + (" is-invalid" if form.start_date.errors else ""), type="date") }}
                     {% for error in form.start_date.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
-                <div class="col-md-4 mb-3">
-                    <label for="end_date" class="form-label"><i class="bi bi-calendar-event"></i> 预计完工日期</label>
+                <div class="col-md-2">
+                    <label for="end_date" class="form-label"><i class="bi bi-calendar-event"></i> 完工日期</label>
                     {{ form.end_date(class="form-control" + (" is-invalid" if form.end_date.errors else ""), type="date") }}
                     {% for error in form.end_date.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
-                <div class="col-md-4 mb-3">
+                <div class="col-md-12">
                     <label for="description" class="form-label"><i class="bi bi-chat-left-text"></i> 采购说明</label>
-                    {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="3", placeholder="请输入采购说明") }}
+                    {{ form.description(class="form-control" + (" is-invalid" if form.description.errors else ""), rows="2", placeholder="请输入采购说明") }}
                     {% for error in form.description.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
@@ -66,10 +265,10 @@
         </div>
     </div>
 
-    <!-- 物资明细卡片（匹配 Excel 模板） -->
-    <div class="card mb-4">
+    <!-- 物资明细卡片 -->
+    <div class="card mb-3">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0"><i class="bi bi-list-ul"></i> 物资明细</h5>
+            <h5><i class="bi bi-list-ul"></i> 物资明细</h5>
             <button type="button" class="btn btn-sm btn-outline-light" id="addRowBtn">
                 <i class="bi bi-plus-lg"></i> 添加一行
             </button>
@@ -79,17 +278,17 @@
                 <table class="table table-striped table-hover mb-0" id="itemsTable">
                     <thead class="table-light">
                         <tr>
-                            <th style="width: 50px;">序号</th>
-                            <th style="width: 150px;">物资名称 <span class="text-danger">*</span></th>
-                            <th style="width: 150px;">品牌型号</th>
-                            <th style="width: 150px;">主要规格</th>
-                            <th style="width: 80px;">数量 <span class="text-danger">*</span></th>
+                            <th style="width: 40px;">序号</th>
+                            <th style="width: 140px;">物资名称 <span class="text-danger">*</span></th>
+                            <th style="width: 120px;">品牌型号</th>
+                            <th style="width: 140px;">主要规格</th>
+                            <th style="width: 70px;">数量 <span class="text-danger">*</span></th>
                             <th style="width: 60px;">单位</th>
-                            <th style="width: 80px;">批次数量</th>
-                            <th style="width: 80px;">合同外数量</th>
-                            <th style="width: 120px;">计划到货时间</th>
-                            <th style="width: 150px;">备注</th>
-                            <th style="width: 60px;">操作</th>
+                            <th style="width: 70px;">批次数量</th>
+                            <th style="width: 70px;">合同外数量</th>
+                            <th style="width: 110px;">计划到货时间</th>
+                            <th style="width: 120px;">备注</th>
+                            <th style="width: 50px;">操作</th>
                         </tr>
                     </thead>
                     <tbody id="itemsBody">
@@ -100,18 +299,18 @@
         </div>
     </div>
 
-    <!-- 隐藏字段容器，用于存储表单数组数据 -->
+    <!-- 隐藏字段容器 -->
     <div id="hiddenFields"></div>
 
     <!-- 提交按钮 -->
     <div class="card">
-        <div class="card-body">
+        <div class="card-body py-3">
             <div class="form-actions">
                 <a href="{{ url_for('plan.index') }}" class="btn btn-secondary">
                     <i class="bi bi-x-circle"></i> 取消
                 </a>
-                <div>
-                    {{ form.submit(class="btn btn-primary me-2", id="saveBtn") }}
+                <div class="d-flex gap-2">
+                    {{ form.submit(class="btn btn-primary", id="saveBtn") }}
                     {{ form.submit_and_submit(class="btn btn-success", id="submitApprovalBtn") }}
                 </div>
             </div>
@@ -123,11 +322,11 @@
 <div id="loadingSpinner" class="modal fade" tabindex="-1" data-bs-backdrop="static" data-bs-keyboard="false">
     <div class="modal-dialog modal-dialog-centered modal-sm">
         <div class="modal-content border-0">
-            <div class="modal-body text-center">
-                <div class="spinner-border text-primary" role="status">
+            <div class="modal-body text-center p-4">
+                <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
                     <span class="visually-hidden">Loading...</span>
                 </div>
-                <p class="mt-2 mb-0">正在处理，请稍候...</p>
+                <p class="mt-3 mb-0 fw-medium">正在处理，请稍候...</p>
             </div>
         </div>
     </div>
@@ -136,7 +335,7 @@
 <!-- 行模板（隐藏） -->
 <template id="rowTemplate">
     <tr class="item-row">
-        <td class="row-number text-center"></td>
+        <td class="row-number text-center fw-medium"></td>
         <td>
             <input type="text" name="item_names[]" class="form-control form-control-sm item-name" placeholder="物资名称" required>
             <input type="hidden" name="item_ids[]" class="item-id">
@@ -177,22 +376,19 @@
 {% block scripts %}
 {{ super() }}
 <script>
-    // 初始化数据 - 必须在 plan_form.js 之前定义
+    // 初始化数据
     const initialItems = {{ items | tojson }};
     const editMode = {{ edit_mode | tojson }};
 </script>
 <script src="{{ url_for('static', filename='js/plan_form.js') }}"></script>
 <script>
-    // Loading 提示
     document.addEventListener('DOMContentLoaded', function() {
         const form = document.getElementById('planForm');
         const saveBtn = document.getElementById('saveBtn');
         const submitApprovalBtn = document.getElementById('submitApprovalBtn');
         const loadingSpinner = new bootstrap.Modal(document.getElementById('loadingSpinner'));
 
-        // 表单提交时显示 loading
         form.addEventListener('submit', function(e) {
-            // 验证物资明细
             const itemNames = document.querySelectorAll('.item-name');
             let hasValidItem = false;
             itemNames.forEach(input => {
@@ -205,15 +401,11 @@
                 return false;
             }
 
-            // 显示 loading
             loadingSpinner.show();
-
-            // 禁用按钮防止重复提交
             saveBtn.disabled = true;
             submitApprovalBtn.disabled = true;
         });
 
-        // 如果页面重新加载（表单提交失败），隐藏 loading
         window.addEventListener('pageshow', function() {
             loadingSpinner.hide();
             saveBtn.disabled = false;
