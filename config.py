@@ -54,6 +54,9 @@ class ProductionConfig(Config):
     PDF_STORAGE_PATH = '/var/www/html/procurement/app/static/pdfs'
     CHINESE_FONT_PATH = '/var/www/html/procurement/app/static/fonts/SimSun.ttf'
 
+    # PDF 优化配置：预加载字体到内存，避免每次读取磁盘
+    PRELOAD_FONTS = True
+
     # 上传文件配置
     SCANNED_STORAGE_PATH = '/var/www/html/procurement/app/static/uploads/scanned'
     ATTACHMENT_STORAGE_PATH = '/var/www/html/procurement/app/static/uploads/attachments'

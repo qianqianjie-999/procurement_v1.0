@@ -469,9 +469,15 @@ def export_pdf(id):
                 }}
                 body {{ font-family: 'SimSun', sans-serif; }}
             """, font_config=font_config)
-            pdf_file = html.write_pdf(stylesheets=[css], font_config=font_config)
+            # 性能优化：禁用网络加载，使用缓存
+            pdf_file = html.write_pdf(
+                stylesheets=[css],
+                font_config=font_config,
+                optimize_size=('fonts', 'images'),
+                zoom=1.0
+            )
         else:
-            pdf_file = html.write_pdf()
+            pdf_file = html.write_pdf(optimize_size=('fonts', 'images'))
 
         # 直接返回 PDF 下载，不保存到服务器
         response = make_response(pdf_file)
