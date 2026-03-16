@@ -2,6 +2,402 @@
 
 {% block title %}{{ plan.plan_name }} - 采购计划详情{% endblock %}
 
+{% block styles %}
+{{ super() }}
+<style>
+/* 页面头部 */
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.25rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid #e5e7eb;
+}
+
+.page-header h1 {
+    font-size: 1.35rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-header h1 i {
+    color: #3b82f6;
+}
+
+/* 卡片通用样式 */
+.card {
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+    margin-bottom: 0.75rem;
+}
+
+.card-header {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    color: white;
+    font-weight: 600;
+    padding: 10px 14px;
+    border: none;
+    border-radius: 10px 10px 0 0 !important;
+    font-size: 0.9rem;
+}
+
+.card-header h5 {
+    font-size: 0.9rem;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.card-body {
+    padding: 14px;
+}
+
+/* 状态卡片 - 紧凑版 */
+.status-card {
+    border-radius: 10px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+}
+
+.status-card .card-body {
+    padding: 12px 14px;
+}
+
+.status-card h5 {
+    font-size: 0.95rem;
+    margin-bottom: 6px;
+}
+
+.status-card small {
+    font-size: 0.8rem;
+}
+
+/* 文件管理 - 紧凑版 */
+.file-section {
+    display: flex;
+    gap: 12px;
+}
+
+.file-box {
+    flex: 1;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    padding: 12px;
+    background: #fafbfc;
+}
+
+.file-box-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.file-box-icon {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    font-size: 1.25rem;
+}
+
+.file-box-icon.pdf {
+    background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%);
+    color: #dc2626;
+}
+
+.file-box-icon.upload {
+    background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%);
+    color: #059669;
+}
+
+.file-box-title {
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0;
+}
+
+.file-box-desc {
+    font-size: 0.75rem;
+    color: #6b7280;
+}
+
+.file-box-status {
+    font-size: 0.8rem;
+    padding: 4px 10px;
+    border-radius: 4px;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.file-box-status.success {
+    background: #d1fae5;
+    color: #065f46;
+}
+
+.file-box-status.warning {
+    background: #fef3c7;
+    color: #92400e;
+}
+
+.file-box-actions {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    margin-top: 10px;
+}
+
+.file-box-actions .btn {
+    padding: 6px 12px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+}
+
+.upload-form {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.upload-form input[type="file"] {
+    flex: 1;
+    min-width: 0;
+    padding: 6px 10px;
+    font-size: 0.85rem;
+}
+
+.upload-form .btn {
+    padding: 6px 14px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    white-space: nowrap;
+}
+
+/* 基本信息 - 紧凑网格 */
+.info-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.info-item {
+    padding: 8px 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    border-left: 3px solid #e5e7eb;
+}
+
+.info-item.important {
+    border-left-color: #3b82f6;
+    background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.1) 100%);
+}
+
+.info-label {
+    font-size: 0.75rem;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+    font-weight: 500;
+}
+
+.info-value {
+    font-size: 0.9rem;
+    color: #1f2937;
+    font-weight: 500;
+}
+
+.info-value code {
+    background: rgba(59, 130, 246, 0.1);
+    color: #1d4ed8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 0.85rem;
+}
+
+.info-value.fw-bold {
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.description-box {
+    margin-top: 10px;
+    padding: 10px 12px;
+    background: #f9fafb;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    color: #4b5563;
+    border: 1px solid #e5e7eb;
+}
+
+/* 物资明细表格 */
+.items-table {
+    margin-bottom: 0;
+}
+
+.items-table thead th {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    color: #4b5563;
+    padding: 10px 8px;
+    border: none;
+}
+
+.items-table tbody td {
+    padding: 10px 8px;
+    font-size: 0.85rem;
+    vertical-align: middle;
+}
+
+.items-table tbody tr:hover {
+    background: #f9fafb;
+}
+
+/* 审批历史时间轴 */
+.timeline {
+    position: relative;
+    padding-left: 20px;
+}
+
+.timeline::before {
+    content: '';
+    position: absolute;
+    left: 8px;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e5e7eb;
+}
+
+.timeline-item {
+    position: relative;
+    padding-left: 24px;
+    padding-bottom: 16px;
+}
+
+.timeline-item:last-child {
+    padding-bottom: 0;
+}
+
+.timeline-badge {
+    position: absolute;
+    left: -20px;
+    top: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.65rem;
+    color: white;
+    font-weight: 600;
+}
+
+.timeline-badge.bg-success { background: #10b981; }
+.timeline-badge.bg-danger { background: #ef4444; }
+.timeline-badge.bg-primary { background: #3b82f6; }
+
+.timeline-content {
+    background: #f9fafb;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid #e5e7eb;
+}
+
+.timeline-content p {
+    font-size: 0.9rem;
+    margin-bottom: 6px;
+}
+
+.timeline-content small {
+    font-size: 0.8rem;
+    color: #6b7280;
+}
+
+/* 空状态 */
+.empty-state {
+    text-align: center;
+    padding: 30px 20px;
+    color: #9ca3af;
+}
+
+.empty-state i {
+    font-size: 3rem;
+}
+
+.empty-state p {
+    font-size: 0.95rem;
+}
+
+/* 按钮样式 */
+.btn {
+    padding: 7px 14px;
+    font-size: 0.9rem;
+    border-radius: 6px;
+    font-weight: 500;
+    transition: all 0.2s;
+}
+
+.btn-sm {
+    padding: 5px 10px;
+    font-size: 0.85rem;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
+    border: none;
+}
+
+.btn-primary:hover {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.35);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border: none;
+}
+
+.btn-success:hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+}
+
+/* 响应式 */
+@media (max-width: 768px) {
+    .page-header {
+        flex-direction: column;
+        gap: 12px;
+        align-items: flex-start;
+    }
+
+    .file-section {
+        flex-direction: column;
+    }
+
+    .info-grid {
+        grid-template-columns: 1fr;
+    }
+}
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- 页面头部 -->
 <div class="page-header">
@@ -19,32 +415,29 @@
 </div>
 
 <!-- 状态卡片 -->
-<div class="card mb-4 border-0">
-    <div class="card-body" style="background: linear-gradient(135deg, {{ '#6c757d' if plan.status == 'draft' else '#ffc107' if plan.status == 'pending' else '#198754' if plan.status == 'approved' else '#dc3545' if plan.status == 'rejected' else '#0dcaf0' }} 0%, {{ '#495057' if plan.status == 'draft' else '#ff9800' if plan.status == 'pending' else '#0ca678' if plan.status == 'approved' else '#c92a2a' if plan.status == 'rejected' else '#0ab5d6' }} 100%); color: white;">
-        <div class="row align-items-center">
+<div class="card status-card" style="background: linear-gradient(135deg, {{ '#6c757d' if plan.status == 'draft' else '#ffc107' if plan.status == 'pending' else '#198754' if plan.status == 'approved' else '#dc3545' if plan.status == 'rejected' else '#0dcaf0' }} 0%, {{ '#495057' if plan.status == 'draft' else '#ff9800' if plan.status == 'pending' else '#0ca678' if plan.status == 'approved' else '#c92a2a' if plan.status == 'rejected' else '#0ab5d6' }} 100%);">
+    <div class="card-body" style="color: white;">
+        <div class="row align-items-center g-2">
             <div class="col-md-8">
-                <div class="d-flex align-items-center gap-3">
-                    <i class="bi bi-info-circle" style="font-size: 2rem;"></i>
-                    <div>
-                        <h5 class="mb-1">当前状态：<span class="badge bg-light text-dark">{{ plan.status_label }}</span></h5>
-                        {% if plan.submitted_at %}
-                        <small style="opacity: 0.9;">
-                            <i class="bi bi-clock"></i> 提交时间：{{ plan.submitted_at.strftime('%Y-%m-%d %H:%M') }}
-                        </small>
-                        {% endif %}
-                        {% if plan.approved_at %}
-                        <small style="opacity: 0.9;">
-                            <i class="bi bi-check-circle"></i> 批准时间：{{ plan.approved_at.strftime('%Y-%m-%d %H:%M') }}
-                        </small>
-                        {% endif %}
-                    </div>
-                </div>
+                <h5 class="mb-1">
+                    <i class="bi bi-info-circle-fill me-2"></i>
+                    当前状态：<span class="badge bg-light text-dark ms-1">{{ plan.status_label }}</span>
+                </h5>
+                <small style="opacity: 0.9;">
+                    {% if plan.submitted_at %}
+                    <i class="bi bi-clock me-1"></i> 提交：{{ plan.submitted_at.strftime('%Y-%m-%d %H:%M') }}
+                    &nbsp;&nbsp;
+                    {% endif %}
+                    {% if plan.approved_at %}
+                    <i class="bi bi-check-circle me-1"></i> 批准：{{ plan.approved_at.strftime('%Y-%m-%d %H:%M') }}
+                    {% endif %}
+                </small>
             </div>
-            <div class="col-md-4 text-md-end mt-3 mt-md-0">
+            <div class="col-md-4 text-md-end mt-2 mt-md-0">
                 {% if plan.status == 'draft' and plan.created_by == current_user.id %}
                 <form method="POST" action="{{ url_for('plan.submit', id=plan.id) }}" class="d-inline">
                     <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                    <button type="submit" class="btn btn-light" onclick="return confirm('确定要提交审批吗？')">
+                    <button type="submit" class="btn btn-light btn-sm" onclick="return confirm('确定要提交审批吗？')">
                         <i class="bi bi-send"></i> 提交审批
                     </button>
                 </form>
@@ -55,165 +448,148 @@
 </div>
 
 <!-- 文件管理 -->
-<div class="card mb-4">
+<div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="bi bi-folder"></i> 文件管理</h5>
+        <h5><i class="bi bi-folder"></i> 文件管理</h5>
         <a href="{{ url_for('plan.preview', id=plan.id) }}" class="btn btn-sm btn-outline-light">
             <i class="bi bi-eye"></i> 预览
         </a>
     </div>
     <div class="card-body">
-        <div class="row">
+        <div class="file-section">
             <!-- PDF 导出 -->
-            <div class="col-md-6 mb-3">
-                <div class="file-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-danger bg-opacity-10 rounded p-2 me-3">
-                            <i class="bi bi-file-earmark-pdf text-danger" style="font-size: 1.5rem;"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-0">采购计划 PDF</h6>
-                            <small class="text-muted">系统生成的采购计划 PDF 文件</small>
-                        </div>
+            <div class="file-box">
+                <div class="file-box-header">
+                    <div class="file-box-icon pdf">
+                        <i class="bi bi-file-earmark-pdf"></i>
                     </div>
+                    <div>
+                        <h6 class="file-box-title">采购计划 PDF</h6>
+                        <p class="file-box-desc">系统生成的标准格式文档</p>
+                    </div>
+                </div>
+                <div class="file-box-actions">
                     {% if plan.pdf_path %}
-                    <div class="alert alert-success d-flex align-items-center mb-2">
-                        <i class="bi bi-check-circle me-2"></i>
-                        <span class="small mb-0">已生成</span>
-                    </div>
+                    <span class="file-box-status success"><i class="bi bi-check-circle"></i> 已生成</span>
                     {% endif %}
                     <a href="{{ url_for('plan.export_pdf', id=plan.id) }}" class="btn btn-primary btn-sm">
-                        <i class="bi bi-download"></i> 导出 PDF
+                        <i class="bi bi-download"></i> 导出
                     </a>
                 </div>
             </div>
 
             <!-- 扫描件上传 -->
-            <div class="col-md-6 mb-3">
-                <div class="file-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="bg-success bg-opacity-10 rounded p-2 me-3">
-                            <i class="bi bi-file-earmark-arrow-up text-success" style="font-size: 1.5rem;"></i>
-                        </div>
-                        <div>
-                            <h6 class="mb-0">签字扫描件</h6>
-                            <small class="text-muted">上传签字盖章后的扫描件 PDF</small>
-                        </div>
+            <div class="file-box">
+                <div class="file-box-header">
+                    <div class="file-box-icon upload">
+                        <i class="bi bi-file-earmark-arrow-up"></i>
                     </div>
-
-                    {% if plan.scanned_path %}
-                    <div class="alert alert-success d-flex align-items-center justify-content-between mb-2">
-                        <div class="d-flex align-items-center">
-                            <i class="bi bi-check-circle me-2"></i>
-                            <span class="small mb-0">已上传</span>
-                        </div>
-                        <a href="{{ url_for('plan.download_scanned', id=plan.id) }}" class="btn btn-outline-success btn-sm">
-                            <i class="bi bi-download"></i> 下载
-                        </a>
+                    <div>
+                        <h6 class="file-box-title">签字扫描件</h6>
+                        <p class="file-box-desc">上传签字盖章后的 PDF</p>
                     </div>
-                    {% else %}
-                    <div class="alert alert-warning d-flex align-items-center mb-2">
-                        <i class="bi bi-exclamation-circle me-2"></i>
-                        <span class="small mb-0">未上传</span>
-                    </div>
-                    {% endif %}
-
-                    <form method="POST" action="{{ url_for('plan.upload_scanned', id=plan.id) }}" enctype="multipart/form-data" class="d-flex gap-2">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="file" name="scanned_file" class="form-control form-control-sm" accept=".pdf" required>
-                        <button type="submit" class="btn btn-success btn-sm">
-                            <i class="bi bi-upload"></i> 上传
-                        </button>
-                    </form>
-                    <small class="text-muted">仅支持 PDF 格式，最大 10MB</small>
                 </div>
+                <div class="file-box-actions">
+                    {% if plan.scanned_path %}
+                    <span class="file-box-status success"><i class="bi bi-check-circle"></i> 已上传</span>
+                    <a href="{{ url_for('plan.download_scanned', id=plan.id) }}" class="btn btn-outline-success btn-sm">
+                        <i class="bi bi-download"></i> 下载
+                    </a>
+                    {% else %}
+                    <span class="file-box-status warning"><i class="bi bi-exclamation-circle"></i> 未上传</span>
+                    {% endif %}
+                </div>
+                {% if not plan.scanned_path %}
+                <form method="POST" action="{{ url_for('plan.upload_scanned', id=plan.id) }}" enctype="multipart/form-data" class="upload-form">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                    <input type="file" name="scanned_file" class="form-control form-control-sm" accept=".pdf" required>
+                    <button type="submit" class="btn btn-success btn-sm">
+                        <i class="bi bi-upload"></i> 上传
+                    </button>
+                </form>
+                <small class="text-muted" style="font-size: 0.75rem;">仅支持 PDF，最大 10MB</small>
+                {% endif %}
             </div>
         </div>
     </div>
 </div>
 
 <!-- 基本信息 -->
-<div class="card mb-4">
+<div class="card">
     <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-info-circle"></i> 基本信息</h5>
+        <h5><i class="bi bi-info-circle"></i> 基本信息</h5>
     </div>
     <div class="card-body">
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <label class="detail-label">计划编号</label>
-                <div class="detail-value"><code>{{ plan.plan_number }}</code></div>
+        <div class="info-grid">
+            <div class="info-item important">
+                <div class="info-label">计划编号</div>
+                <div class="info-value"><code>{{ plan.plan_number }}</code></div>
             </div>
-            <div class="col-md-4 mb-3">
-                <label class="detail-label">项目名称</label>
-                <div class="detail-value fw-bold">{{ plan.plan_name }}</div>
+            <div class="info-item important">
+                <div class="info-label">项目名称</div>
+                <div class="info-value fw-bold">{{ plan.plan_name }}</div>
             </div>
-            <div class="col-md-4 mb-3">
-                <label class="detail-label">项目经理</label>
-                <div class="detail-value">{{ plan.project_manager or '-' }}</div>
+            <div class="info-item">
+                <div class="info-label">项目经理</div>
+                <div class="info-value">{{ plan.project_manager or '-' }}</div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-4 mb-3">
-                <label class="detail-label">创建人</label>
-                <div class="detail-value">{{ plan.creator.username if plan.creator else '-' }}</div>
+            <div class="info-item">
+                <div class="info-label">创建人</div>
+                <div class="info-value">{{ plan.creator.username if plan.creator else '-' }}</div>
             </div>
-            <div class="col-md-4 mb-3">
-                <label class="detail-label">创建日期</label>
-                <div class="detail-value">{{ plan.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
+            <div class="info-item">
+                <div class="info-label">创建日期</div>
+                <div class="info-value">{{ plan.created_at.strftime('%Y-%m-%d %H:%M') }}</div>
             </div>
-            <div class="col-md-4 mb-3">
-                <label class="detail-label">当前状态</label>
-                <div class="detail-value">
+            <div class="info-item">
+                <div class="info-label">当前状态</div>
+                <div class="info-value">
                     <span class="badge bg-{{ 'secondary' if plan.status == 'draft' else 'warning' if plan.status == 'pending' else 'success' if plan.status == 'approved' else 'danger' }}">{{ plan.status_label }}</span>
                 </div>
             </div>
-        </div>
-        <div class="row">
-            <div class="col-md-3 mb-3">
-                <label class="detail-label">开工日期</label>
-                <div class="detail-value">{{ plan.start_date.strftime('%Y-%m-%d') if plan.start_date else '-' }}</div>
+            <div class="info-item">
+                <div class="info-label">开工日期</div>
+                <div class="info-value">{{ plan.start_date.strftime('%Y-%m-%d') if plan.start_date else '-' }}</div>
             </div>
-            <div class="col-md-3 mb-3">
-                <label class="detail-label">预计完工日期</label>
-                <div class="detail-value">{{ plan.end_date.strftime('%Y-%m-%d') if plan.end_date else '-' }}</div>
+            <div class="info-item">
+                <div class="info-label">预计完工日期</div>
+                <div class="info-value">{{ plan.end_date.strftime('%Y-%m-%d') if plan.end_date else '-' }}</div>
+            </div>
+            <div class="info-item">
+                <div class="info-label">采购说明</div>
+                <div class="info-value">{{ plan.description or '-' }}</div>
             </div>
         </div>
-        {% if plan.description %}
-        <div class="mt-3">
-            <label class="detail-label">采购说明</label>
-            <div class="detail-value p-3 bg-light rounded">{{ plan.description }}</div>
-        </div>
-        {% endif %}
     </div>
 </div>
 
 <!-- 物资明细 -->
-<div class="card mb-4">
+<div class="card">
     <div class="card-header d-flex justify-content-between align-items-center">
-        <h5 class="mb-0"><i class="bi bi-list-ul"></i> 物资明细</h5>
+        <h5><i class="bi bi-list-ul"></i> 物资明细</h5>
         <span class="badge bg-light text-dark">{{ items|length }} 项</span>
     </div>
     <div class="card-body p-0">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover items-table mb-0">
                 <thead>
                     <tr>
-                        <th>序号</th>
+                        <th style="width: 40px;">序号</th>
                         <th>物资名称</th>
                         <th>品牌型号</th>
                         <th>主要规格</th>
-                        <th>数量</th>
-                        <th>单位</th>
-                        <th>批次数量</th>
-                        <th>合同外数量</th>
-                        <th>计划到货时间</th>
+                        <th style="width: 60px;">数量</th>
+                        <th style="width: 50px;">单位</th>
+                        <th style="width: 70px;">批次数量</th>
+                        <th style="width: 70px;">合同外数量</th>
+                        <th style="width: 90px;">计划到货时间</th>
                         <th>备注</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in items %}
                     <tr>
-                        <td>{{ loop.index }}</td>
+                        <td class="text-center fw-bold text-muted">{{ loop.index }}</td>
                         <td class="fw-bold">{{ item.item_name }}</td>
                         <td>{{ item.brand_model or '-' }}</td>
                         <td>{{ item.specification or '-' }}</td>
@@ -232,9 +608,9 @@
 </div>
 
 <!-- 审批历史 -->
-<div class="card mb-4">
+<div class="card">
     <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-clock-history"></i> 审批历史</h5>
+        <h5><i class="bi bi-clock-history"></i> 审批历史</h5>
     </div>
     <div class="card-body">
         {% if approval_logs %}
@@ -242,12 +618,12 @@
             {% for log in approval_logs %}
             <div class="timeline-item">
                 <span class="timeline-badge bg-{{ 'success' if log.action == 'approve' else 'danger' if log.action == 'reject' else 'primary' }}">
-                    {{ '同意' if log.action == 'approve' else '拒绝' if log.action == 'reject' else log.action }}
+                    {{ '同' if log.action == 'approve' else '拒' if log.action == 'reject' else '记' }}
                 </span>
                 <div class="timeline-content">
-                    <p class="mb-1">{{ log.comments or '-' }}</p>
+                    <p class="mb-1">{{ log.comments or '无审批意见' }}</p>
                     <small class="text-muted">
-                        <i class="bi bi-clock"></i> {{ log.created_at.strftime('%Y-%m-%d %H:%M') }} -
+                        <i class="bi bi-clock"></i> {{ log.created_at.strftime('%Y-%m-%d %H:%M') }} &nbsp;
                         <i class="bi bi-person"></i> {{ log.operator.username }}
                     </small>
                 </div>
@@ -263,24 +639,24 @@
     </div>
 </div>
 
-<!-- 审批操作（仅管理员在待审批状态可见） -->
+<!-- 审批操作 -->
 {% if plan.status == 'pending' and current_user.is_administrator() %}
-<div class="card border-primary mb-4">
+<div class="card border-primary">
     <div class="card-header">
-        <h5 class="mb-0"><i class="bi bi-pencil-square"></i> 审批操作</h5>
+        <h5><i class="bi bi-pencil-square"></i> 审批操作</h5>
     </div>
     <div class="card-body">
         <form method="POST" action="{{ url_for('plan.approve', id=plan.id) }}">
             <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
             <div class="mb-3">
-                <label for="comments" class="form-label">审批意见</label>
-                <textarea name="comments" id="comments" class="form-control" rows="3" placeholder="请输入审批意见..."></textarea>
+                <label for="comments" class="form-label form-label-sm">审批意见</label>
+                <textarea name="comments" id="comments" class="form-control form-control-sm" rows="2" placeholder="请输入审批意见..."></textarea>
             </div>
             <div class="d-flex gap-2">
-                <button type="submit" name="action" value="approve" class="btn btn-success">
+                <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">
                     <i class="bi bi-check-circle"></i> 同意
                 </button>
-                <button type="submit" name="action" value="reject" class="btn btn-danger" onclick="return confirm('确定要拒绝此采购计划吗？');">
+                <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm" onclick="return confirm('确定要拒绝吗？')">
                     <i class="bi bi-x-circle"></i> 拒绝
                 </button>
             </div>
@@ -289,19 +665,19 @@
 </div>
 {% endif %}
 
-<!-- 删除确认（仅草稿可删除） -->
+<!-- 删除操作 -->
 {% if plan.status in ['draft', 'cancelled'] and (plan.created_by == current_user.id or current_user.is_administrator()) %}
 <div class="card border-danger">
-    <div class="card-body">
+    <div class="card-body py-3">
         <div class="d-flex align-items-center justify-content-between">
             <div>
-                <h6 class="text-danger fw-bold mb-1"><i class="bi bi-exclamation-triangle"></i> 危险操作</h6>
-                <p class="text-muted mb-0 small">删除后将无法恢复，请谨慎操作。</p>
+                <h6 class="text-danger fw-bold mb-1"><i class="bi bi-exclamation-triangle"></i> 删除此计划</h6>
+                <p class="text-muted mb-0 small">删除后将无法恢复</p>
             </div>
-            <form method="POST" action="{{ url_for('plan.delete', id=plan.id) }}" onsubmit="return confirm('确定要删除此采购计划吗？');">
+            <form method="POST" action="{{ url_for('plan.delete', id=plan.id) }}" onsubmit="return confirm('确定要删除吗？');">
                 <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                <button type="submit" class="btn btn-outline-danger">
-                    <i class="bi bi-trash"></i> 删除此计划
+                <button type="submit" class="btn btn-outline-danger btn-sm">
+                    <i class="bi bi-trash"></i> 删除
                 </button>
             </form>
         </div>
