@@ -16,8 +16,7 @@ cryptography>=41.0.0
 python-dotenv>=1.0.0
 
 # PDF Generation (optional)
-WeasyPrint>=60.0
-pdfkit>=1.0.0
+reportlab==4.0.4
 
 # Development
 Werkzeug>=2.3.0
