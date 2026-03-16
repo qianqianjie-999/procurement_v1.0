@@ -70,6 +70,15 @@
             border-collapse: collapse;
             margin-bottom: 20px;
             font-size: 11px;
+            page-break-inside: auto;  /* 允许表格内部分页 */
+        }
+
+        .items-table thead {
+            display: table-header-group;  /* 确保每页都显示表头 */
+        }
+
+        .items-table tr {
+            page-break-inside: avoid;  /* 避免行被拆分 */
         }
 
         .items-table th,
@@ -106,6 +115,8 @@
         .signature-section {
             margin-top: 20px;
             margin-bottom: 15px;
+            page-break-inside: avoid;  /* 避免签字栏被分页 */
+            break-inside: avoid;
         }
 
         .signature-title {
@@ -114,11 +125,14 @@
             margin-bottom: 10px;
             border-bottom: 1px solid #000;
             padding-bottom: 5px;
+            page-break-after: avoid;
         }
 
         .signature-grid {
             width: 100%;
             border-collapse: collapse;
+            page-break-inside: avoid;  /* 避免表格被分页 */
+            break-inside: avoid;
         }
 
         .signature-grid td {
