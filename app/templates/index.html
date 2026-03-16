@@ -6,16 +6,16 @@
 {% if current_user.is_authenticated %}
 <!-- 欢迎横幅 -->
 <div class="card mb-4 border-0 welcome-banner">
-    <div class="card-body" style="background: linear-gradient(135deg, #3b5cdb 0%, #1070ff 100%); color: white;">
+    <div class="card-body" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white;">
         <div class="row align-items-center">
-            <div class="col-md-8">
-                <h2 class="mb-2"><i class="bi bi-house-door"></i> 采购管理系统</h2>
-                <p class="mb-0" style="opacity: 0.95; font-size: 1.05rem;">欢迎回来，{{ current_user.username }}！高效、便捷的采购管理平台，助您轻松完成采购流程</p>
+            <div class="col-md-7">
+                <h2 class="mb-2"><i class="bi bi-house-door-fill"></i> 采购管理系统</h2>
+                <p class="mb-0" style="opacity: 0.9; font-size: 1rem;">欢迎回来，<strong>{{ current_user.username }}</strong>！高效、便捷的采购管理平台</p>
             </div>
-            <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <div style="display: inline-block; padding: 12px 20px; border: 1px solid rgba(255,255,255,0.3); border-radius: 8px; background: rgba(255,255,255,0.1);">
-                    <div style="color: rgba(255,255,255,0.85); font-size: 0.75rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px;">当前时间</div>
-                    <div id="current-time" style="font-size: 1.1rem; font-family: monospace; color: #fff; font-weight: bold; text-shadow: 0 1px 2px rgba(0,0,0,0.3);">--</div>
+            <div class="col-md-5 text-md-end mt-3 mt-md-0">
+                <div class="time-widget">
+                    <div class="time-label"><i class="bi bi-clock"></i> 当前时间</div>
+                    <div class="time-value" id="current-time">--</div>
                 </div>
             </div>
         </div>
@@ -27,76 +27,84 @@
 <div class="row mb-4 stats-row g-3">
     <div class="col-md-3">
         <div class="stat-card stat-card-blue">
-            <div class="stat-value">{{ plan_stats.total }}</div>
-            <div class="stat-label">总计划数</div>
-            <i class="bi bi-file-earmark-text stat-icon"></i>
+            <div class="stat-icon-wrapper"><i class="bi bi-file-earmark-text"></i></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ plan_stats.total }}</div>
+                <div class="stat-label">总计划数</div>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card stat-card-green">
-            <div class="stat-value">{{ plan_stats.approved }}</div>
-            <div class="stat-label">已批准</div>
-            <i class="bi bi-check-circle stat-icon"></i>
+            <div class="stat-icon-wrapper"><i class="bi bi-check-circle-fill"></i></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ plan_stats.approved }}</div>
+                <div class="stat-label">已批准</div>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card stat-card-yellow">
-            <div class="stat-value">{{ plan_stats.pending }}</div>
-            <div class="stat-label">待审批</div>
-            <i class="bi bi-clock stat-icon"></i>
+            <div class="stat-icon-wrapper"><i class="bi bi-clock-fill"></i></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ plan_stats.pending }}</div>
+                <div class="stat-label">待审批</div>
+            </div>
         </div>
     </div>
     <div class="col-md-3">
         <div class="stat-card stat-card-cyan">
-            <div class="stat-value">{{ plan_stats.draft }}</div>
-            <div class="stat-label">草稿</div>
-            <i class="bi bi-file-earmark stat-icon"></i>
+            <div class="stat-icon-wrapper"><i class="bi bi-file-earmark-fill"></i></div>
+            <div class="stat-content">
+                <div class="stat-value">{{ plan_stats.draft }}</div>
+                <div class="stat-label">草稿</div>
+            </div>
         </div>
     </div>
 </div>
 {% endif %}
 
-<div class="row features-section">
+<div class="row g-4">
     <!-- 系统核心功能 -->
-    <div class="col-lg-8 mb-4">
-        <div class="card border-0 h-100">
-            <div class="card-header">
-                <h5 class="mb-0"><i class="bi bi-star"></i> 系统核心功能</h5>
+    <div class="col-lg-8">
+        <div class="card border-0 h-100 feature-card">
+            <div class="card-header bg-transparent">
+                <h5 class="mb-0"><i class="bi bi-star-fill text-warning"></i> 系统核心功能</h5>
             </div>
             <div class="card-body">
-                <div class="row g-3">
+                <div class="row g-4">
                     <div class="col-md-4">
-                        <div class="function-card h-100">
-                            <div class="icon-wrapper icon-blue">
+                        <div class="feature-item text-center p-3">
+                            <div class="feature-icon feature-icon-blue mb-3">
                                 <i class="bi bi-pencil-square"></i>
                             </div>
-                            <h5>采购申请</h5>
-                            <p class="small mb-3">在线填写和提交采购申请表单</p>
-                            <a href="{{ url_for('plan.create') }}" class="btn btn-primary btn-sm">
+                            <h6 class="fw-bold mb-2">采购申请</h6>
+                            <p class="small text-muted mb-3">在线填写和提交采购申请表单</p>
+                            <a href="{{ url_for('plan.create') }}" class="btn btn-primary btn-sm rounded-pill px-4">
                                 <i class="bi bi-plus"></i> 开始申请
                             </a>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="function-card h-100">
-                            <div class="icon-wrapper icon-green">
+                        <div class="feature-item text-center p-3">
+                            <div class="feature-icon feature-icon-green mb-3">
                                 <i class="bi bi-clock-history"></i>
                             </div>
-                            <h5>申请历史</h5>
-                            <p class="small mb-3">查看历史申请记录和审批状态</p>
-                            <a href="{{ url_for('plan.index') }}" class="btn btn-success btn-sm">
+                            <h6 class="fw-bold mb-2">申请历史</h6>
+                            <p class="small text-muted mb-3">查看历史申请记录和审批状态</p>
+                            <a href="{{ url_for('plan.index') }}" class="btn btn-success btn-sm rounded-pill px-4">
                                 <i class="bi bi-list-ul"></i> 查看历史
                             </a>
                         </div>
                     </div>
                     <div class="col-md-4">
-                        <div class="function-card h-100">
-                            <div class="icon-wrapper icon-red">
+                        <div class="feature-item text-center p-3">
+                            <div class="feature-icon feature-icon-red mb-3">
                                 <i class="bi bi-file-earmark-pdf"></i>
                             </div>
-                            <h5>PDF 导出</h5>
-                            <p class="small mb-3">导出标准格式的采购文档</p>
-                            <a href="{{ url_for('plan.index') }}" class="btn btn-danger btn-sm">
+                            <h6 class="fw-bold mb-2">PDF 导出</h6>
+                            <p class="small text-muted mb-3">导出标准格式的采购文档</p>
+                            <a href="{{ url_for('plan.index') }}" class="btn btn-danger btn-sm rounded-pill px-4">
                                 <i class="bi bi-download"></i> 导出
                             </a>
                         </div>
@@ -106,75 +114,291 @@
         </div>
     </div>
 
-    <!-- 用户信息 -->
-    <div class="col-lg-4 mb-4">
-        <div class="card border-0 h-100 quick-action-card">
-            <div class="card-body">
-                <!-- 用户信息卡片 -->
-                <div class="user-info-card mb-4">
-                    <div class="user-avatar">
-                        <i class="bi bi-person"></i>
-                    </div>
-                    <div class="user-name">{{ current_user.username }}</div>
-                    <div class="user-role">
-                        {% if current_user.is_administrator() %}
-                        <span class="badge bg-danger">管理员</span>
-                        {% else %}
-                        <span class="badge bg-light text-dark">普通用户</span>
-                        {% endif %}
+    <!-- 用户信息卡片 -->
+    <div class="col-lg-4">
+        <div class="card border-0 h-100 user-card">
+            <div class="card-body text-center">
+                <div class="user-avatar-wrapper mb-3">
+                    <div class="user-avatar-lg">
+                        <i class="bi bi-person-fill"></i>
                     </div>
                 </div>
-
-                <!-- 快捷操作 -->
-                <h6 class="mb-3"><i class="bi bi-flash"></i> 快捷操作</h6>
-                <ul class="quick-action-list">
-                    <li>
-                        <a href="{{ url_for('plan.index') }}">
-                            <i class="bi bi-file-earmark-text text-primary"></i>
-                            <span>我的采购计划</span>
-                        </a>
-                    </li>
+                <h5 class="fw-bold mb-1">{{ current_user.username }}</h5>
+                <div class="mb-4">
                     {% if current_user.is_administrator() %}
-                    <li>
-                        <a href="{{ url_for('plan.index') }}?status=pending">
-                            <i class="bi bi-clock-history text-warning"></i>
-                            <span>待审批管理</span>
-                        </a>
-                    </li>
+                    <span class="badge bg-danger px-3 py-2 rounded-pill">管理员</span>
+                    {% else %}
+                    <span class="badge bg-secondary px-3 py-2 rounded-pill">普通用户</span>
                     {% endif %}
-                    <li>
-                        <a href="{{ url_for('plan.create') }}">
-                            <i class="bi bi-plus-circle text-success"></i>
-                            <span>新建采购计划</span>
-                        </a>
-                    </li>
-                </ul>
+                </div>
+
+                <div class="quick-actions text-start">
+                    <h6 class="fw-bold mb-3"><i class="bi bi-flash-fill text-primary"></i> 快捷操作</h6>
+                    <a href="{{ url_for('plan.index') }}" class="quick-action-item">
+                        <i class="bi bi-file-earmark-text text-primary"></i>
+                        <span>我的采购计划</span>
+                        <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                    </a>
+                    {% if current_user.is_administrator() %}
+                    <a href="{{ url_for('plan.index') }}?status=pending" class="quick-action-item">
+                        <i class="bi bi-clock-history text-warning"></i>
+                        <span>待审批管理</span>
+                        <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('plan.create') }}" class="quick-action-item">
+                        <i class="bi bi-plus-circle text-success"></i>
+                        <span>新建采购计划</span>
+                        <i class="bi bi-chevron-right ms-auto text-muted"></i>
+                    </a>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <!-- 快速申请入口 -->
-<div class="card border-0 quick-action-card">
-    <div class="card-body" style="background: linear-gradient(135deg, #00b5d6 0%, #0096b3 100%); color: white;">
+<div class="card mt-4 border-0 quick-action-banner">
+    <div class="card-body" style="background: linear-gradient(135deg, #06b6d4 0%, #0891b2 100%); color: white;">
         <div class="row align-items-center">
-            <div class="col-md-8">
-                <h4 class="mb-2"><i class="bi bi-lightning-charge"></i> 快速申请入口</h4>
-                <p class="mb-0" style="opacity: 0.95;">立即开始新的采购申请，快速填写申请表单，提交后系统将自动处理并生成申请记录</p>
+            <div class="col-md-9">
+                <h5 class="mb-2"><i class="bi bi-lightning-charge-fill"></i> 快速申请入口</h5>
+                <p class="mb-0 opacity-90">立即开始新的采购申请，快速填写申请表单，提交后系统将自动处理</p>
             </div>
-            <div class="col-md-4 text-md-end mt-3 mt-md-0">
-                <a href="{{ url_for('plan.create') }}" class="btn btn-light btn-lg" style="border-radius: 50px; padding: 0.75rem 2rem;">
-                    <i class="bi bi-send"></i> 开始申请
+            <div class="col-md-3 text-md-end mt-3 mt-md-0">
+                <a href="{{ url_for('plan.create') }}" class="btn btn-light btn-lg rounded-pill px-4 shadow">
+                    <i class="bi bi-send-fill"></i> 开始申请
                 </a>
             </div>
         </div>
     </div>
 </div>
 
+<style>
+/* 时间组件 */
+.time-widget {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    border-radius: 12px;
+    padding: 10px 20px;
+    text-align: left;
+}
+
+.time-label {
+    font-size: 0.75rem;
+    opacity: 0.85;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    margin-bottom: 4px;
+}
+
+.time-value {
+    font-size: 1.2rem;
+    font-weight: 700;
+    font-family: 'SF Mono', 'Monaco', 'Consolas', monospace;
+    color: #fff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+/* 统计卡片优化 */
+.stat-card {
+    position: relative;
+    border-radius: 12px;
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.stat-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+}
+
+.stat-card-blue { background: linear-gradient(135deg, #2563eb 0%, #3b82f6 100%); color: white; }
+.stat-card-green { background: linear-gradient(135deg, #059669 0%, #10b981 100%); color: white; }
+.stat-card-yellow { background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%); color: white; }
+.stat-card-cyan { background: linear-gradient(135deg, #0891b2 0%, #06b6d4 100%); color: white; }
+
+.stat-icon-wrapper {
+    width: 50px;
+    height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 12px;
+    font-size: 1.5rem;
+}
+
+.stat-content { flex: 1; }
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 4px;
+}
+
+.stat-label {
+    font-size: 0.85rem;
+    opacity: 0.9;
+}
+
+/* 功能卡片 */
+.feature-card {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+}
+
+.feature-card .card-header {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.1) 0%, rgba(245, 158, 11, 0.15) 100%);
+    border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+    padding: 16px 20px;
+}
+
+.feature-item {
+    border-radius: 12px;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+}
+
+.feature-item:hover {
+    background: #f8fafc;
+    border-color: #e2e8f0;
+}
+
+.feature-icon {
+    width: 70px;
+    height: 70px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    font-size: 1.75rem;
+    transition: transform 0.3s;
+}
+
+.feature-item:hover .feature-icon {
+    transform: scale(1.1);
+}
+
+.feature-icon-blue { background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); color: #2563eb; }
+.feature-icon-green { background: linear-gradient(135deg, #d1fae5 0%, #a7f3d0 100%); color: #059669; }
+.feature-icon-red { background: linear-gradient(135deg, #fee2e2 0%, #fecaca 100%); color: #dc2626; }
+
+/* 用户卡片 */
+.user-card {
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
+    border-radius: 12px;
+}
+
+.user-avatar-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.user-avatar-lg {
+    width: 90px;
+    height: 90px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    border-radius: 50%;
+    color: white;
+    font-size: 2.5rem;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
+}
+
+.quick-actions {
+    text-align: left;
+    padding-top: 15px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.quick-action-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 0;
+    text-decoration: none;
+    color: #374151;
+    transition: all 0.2s;
+    border-bottom: 1px solid #f3f4f6;
+}
+
+.quick-action-item:last-child {
+    border-bottom: none;
+}
+
+.quick-action-item:hover {
+    color: #2563eb;
+    padding-left: 8px;
+}
+
+.quick-action-item i:first-child {
+    font-size: 1.2rem;
+}
+
+/* 快速申请横幅 */
+.quick-action-banner {
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+.quick-action-banner .btn-light {
+    background: white;
+    border: none;
+    color: #0891b2;
+    font-weight: 600;
+    transition: all 0.3s;
+}
+
+.quick-action-banner .btn-light:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.3);
+}
+
+/* 欢迎横幅 */
+.welcome-banner {
+    box-shadow: 0 4px 20px rgba(30, 64, 175, 0.25);
+    border-radius: 12px;
+    overflow: hidden;
+}
+</style>
+
+<script>
+// 更新当前时间
+function updateTime() {
+    const now = new Date();
+    const timeStr = now.toLocaleString('zh-CN', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit'
+    });
+    const el = document.getElementById('current-time');
+    if (el) el.textContent = timeStr;
+}
+updateTime();
+setInterval(updateTime, 1000);
+</script>
+
 {% else %}
 <!-- 未登录时的欢迎页面 -->
 <div class="card mb-4 border-0">
-    <div class="card-body" style="background: linear-gradient(135deg, #3b5cdb 0%, #1070ff 100%); color: white;">
+    <div class="card-body" style="background: linear-gradient(135deg, #1e40af 0%, #3b82f6 100%); color: white;">
         <div class="row align-items-center">
             <div class="col-md-8">
                 <h1 class="display-5 mb-3"><i class="bi bi-cart4"></i> 采购管理系统</h1>
@@ -219,71 +443,5 @@
         </div>
     </div>
 </div>
-
-<div class="row mb-4">
-    <div class="col-md-4 mb-4">
-        <div class="function-card h-100">
-            <div class="icon-wrapper icon-yellow">
-                <i class="bi bi-cloud-upload"></i>
-            </div>
-            <h5>扫描件管理</h5>
-            <p class="small text-muted">上传签字盖章后的扫描件 PDF，支持在线下载预览，方便档案管理</p>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="function-card h-100">
-            <div class="icon-wrapper icon-red">
-                <i class="bi bi-people"></i>
-            </div>
-            <h5>权限控制</h5>
-            <p class="small text-muted">基于角色的权限管理，用户只能操作自己的计划，管理员拥有全部权限</p>
-        </div>
-    </div>
-    <div class="col-md-4 mb-4">
-        <div class="function-card h-100">
-            <div class="icon-wrapper icon-success">
-                <i class="bi bi-graph-up"></i>
-            </div>
-            <h5>数据统计</h5>
-            <p class="small text-muted">实时统计采购数据，预算金额、实际金额一目了然，支持多维度筛选</p>
-        </div>
-    </div>
-</div>
-
-<!-- 注册引导 -->
-<div class="card border-0 text-center py-5" style="background: linear-gradient(135deg, #f5f7fa 0%, #e8eaec 100%);">
-    <div class="card-body">
-        <h3 class="mb-3">还没有账号？</h3>
-        <p class="text-muted mb-4">立即注册，开始使用高效便捷的采购管理系统</p>
-        <a href="{{ url_for('auth.register') }}" class="btn btn-primary btn-lg">
-            <i class="bi bi-person-plus"></i> 免费注册
-        </a>
-    </div>
-</div>
 {% endif %}
-
-<script>
-// 更新当前时间
-function updateTime() {
-    const now = new Date();
-    const timeStr = now.toLocaleString('zh-CN', {
-        year: 'numeric',
-        month: '2-digit',
-        day: '2-digit',
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit'
-    });
-    const el = document.getElementById('current-time');
-    console.log('Updating time:', timeStr);  // 调试
-    if (el) {
-        el.textContent = timeStr;
-        el.style.color = '#fff';  // 确保文字是白色
-    } else {
-        console.error('current-time element not found');
-    }
-}
-updateTime();
-setInterval(updateTime, 1000);  // 每秒更新
-</script>
 {% endblock %}
