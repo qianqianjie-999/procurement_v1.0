@@ -437,19 +437,13 @@ def preview(id):
 @login_required
 def export_pdf(id):
     """
-    导出采购计划为 PDF - 使用 ReportLab 快速生成
+    导出采购计划为 PDF - 直接下载不保存
     """
     try:
-        from reportlab.lib import colors
-        from reportlab.lib.pagesizes import A4
-        from reportlab.lib.styles import getSampleStyleSheet, ParagraphStyle
-        from reportlab.lib.units import mm, cm
-        from reportlab.platypus import SimpleDocTemplate, Table, TableStyle, Paragraph, Spacer
-        from reportlab.pdfbase import pdfmetrics
-        from reportlab.pdfbase.ttfonts import TTFont
-        from io import BytesIO
+        from weasyprint import HTML, CSS
+        from weasyprint.text.fonts import FontConfiguration
     except ImportError:
-        flash('未安装 ReportLab，请先运行：pip install reportlab==4.0.4', 'warning')
+        flash('未安装 WeasyPrint，请先运行：pip install weasyprint', 'warning')
         return redirect(url_for('plan.plan_list'))
 
     plan = PurchasePlan.query.get_or_404(id)
@@ -458,168 +452,44 @@ def export_pdf(id):
     # 获取配置
     chinese_font_path = current_app.config.get('CHINESE_FONT_PATH')
 
-    # 创建 PDF 缓冲区
-    buffer = BytesIO()
-    doc = SimpleDocTemplate(
-        buffer,
-        pagesize=A4,
-        rightMargin=15 * mm,
-        leftMargin=15 * mm,
-        topMargin=15 * mm,
-        bottomMargin=15 * mm
-    )
+    # 渲染简化的 HTML 模板（专为 PDF 优化）
+    html_content = render_template('plan/plan_pdf.html', plan=plan, items=items)
 
-    # 注册中文字体
-    if chinese_font_path:
-        pdfmetrics.registerFont(TTFont('SimSun', chinese_font_path))
-        font_name = 'SimSun'
-    else:
-        font_name = 'Helvetica'
+    # 生成 PDF - 优化性能
+    try:
+        html = HTML(string=html_content)
 
-    # 定义样式
-    styles = getSampleStyleSheet()
-    title_style = ParagraphStyle(
-        name='Title',
-        parent=styles['Heading1'],
-        fontName=font_name,
-        fontSize=18,
-        alignment=1,  # 居中
-        spaceAfter=20
-    )
+        # 优化：使用 FontConfiguration 预加载字体，加快渲染速度
+        font_config = FontConfiguration()
+        if chinese_font_path:
+            css = CSS(string=f"""
+                @font-face {{
+                    font-family: 'SimSun';
+                    src: url('file://{chinese_font_path}');
+                }}
+                body {{ font-family: 'SimSun', sans-serif; }}
+            """, font_config=font_config)
+            pdf_file = html.write_pdf(
+                stylesheets=[css],
+                font_config=font_config,
+                optimize_size=('fonts', 'images'),
+                zoom=1.0
+            )
+        else:
+            pdf_file = html.write_pdf(optimize_size=('fonts', 'images'))
 
-    normal_style = ParagraphStyle(
-        name='NormalCN',
-        parent=styles['Normal'],
-        fontName=font_name,
-        fontSize=10,
-        spaceAfter=6
-    )
+        # 直接返回 PDF 下载，不保存到服务器
+        response = make_response(pdf_file)
+        response.headers['Content-Type'] = 'application/pdf'
+        response.headers['Content-Disposition'] = f'attachment; filename={plan.plan_number}_purchase_plan.pdf'
+        response.headers['Content-Length'] = str(len(pdf_file))
 
-    label_style = ParagraphStyle(
-        name='Label',
-        parent=styles['Normal'],
-        fontName=font_name,
-        fontSize=10,
-        spaceAfter=3
-    )
+        return response
 
-    # 构建 PDF 内容
-    elements = []
-
-    # 标题
-    elements.append(Paragraph('采购计划表', title_style))
-    elements.append(Spacer(1, 10))
-
-    # 基本信息表格
-    info_data = [
-        [Paragraph(f'采购编号：{plan.plan_number}', label_style),
-         Paragraph(f'计划名称：{plan.plan_name}', label_style)],
-        [Paragraph(f'采购类型：{plan.plan_type_label}', label_style),
-         Paragraph(f'采购方式：{plan.procurement_method or "未指定"}', label_style)],
-        [Paragraph(f'预算金额：¥{plan.budget_amount:,.2f} {plan.currency}', label_style),
-         Paragraph(f'实际金额：¥{plan.actual_amount:,.2f} {plan.currency}', label_style)],
-        [Paragraph(f'申请部门：{plan.department or "未指定"}', label_style),
-         Paragraph(f'项目经理：{plan.project_manager or "未指定"}', label_style)],
-        [Paragraph(f'状态：{plan.status_label}', label_style),
-         Paragraph(f'创建时间：{plan.created_at.strftime("%Y-%m-%d")}', label_style)],
-    ]
-
-    info_table = Table(info_data, colWidths=[90 * mm, 90 * mm])
-    info_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (0, 0), colors.lightgrey),
-        ('BACKGROUND', (1, 0), (1, 0), colors.lightgrey),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'MIDDLE'),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-        ('TOPPADDING', (0, 0), (-1, -1), 6),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 6),
-    ]))
-    elements.append(info_table)
-    elements.append(Spacer(1, 15))
-
-    # 采购明细表格
-    elements.append(Paragraph('采购明细', normal_style))
-    elements.append(Spacer(1, 5))
-
-    # 表头
-    table_data = [[
-        Paragraph('序号', label_style),
-        Paragraph('物资名称', label_style),
-        Paragraph('规格型号', label_style),
-        Paragraph('数量', label_style),
-        Paragraph('单位', label_style),
-        Paragraph('备注', label_style),
-    ]]
-
-    # 表内容
-    for idx, item in enumerate(items, 1):
-        table_data.append([
-            Paragraph(str(idx), normal_style),
-            Paragraph(item.item_name or '', normal_style),
-            Paragraph(item.specification or item.brand_model or '', normal_style),
-            Paragraph(str(item.quantity) if item.quantity else '', normal_style),
-            Paragraph(item.unit or '', normal_style),
-            Paragraph(item.remarks or '', normal_style),
-        ])
-
-    # 创建明细表格
-    detail_table = Table(table_data, colWidths=[12*mm, 40*mm, 35*mm, 15*mm, 12*mm, 36*mm])
-    detail_table.setStyle(TableStyle([
-        ('BACKGROUND', (0, 0), (-1, 0), colors.grey),
-        ('TEXTCOLOR', (0, 0), (-1, 0), colors.whitesmoke),
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
-        ('LEFTPADDING', (0, 0), (-1, -1), 4),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 4),
-        ('TOPPADDING', (0, 0), (-1, -1), 4),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 4),
-        ('BACKGROUND', (0, 0), (-1, 0), colors.darkblue),
-    ]))
-    elements.append(detail_table)
-
-    # 如果有说明
-    if plan.description:
-        elements.append(Spacer(1, 15))
-        elements.append(Paragraph('采购说明:', label_style))
-        elements.append(Paragraph(plan.description, normal_style))
-
-    # 如果有备注
-    if plan.remarks:
-        elements.append(Spacer(1, 10))
-        elements.append(Paragraph('备注:', label_style))
-        elements.append(Paragraph(plan.remarks, normal_style))
-
-    # 底部签名栏
-    elements.append(Spacer(1, 30))
-    signature_data = [
-        [Paragraph('制表人：____________', label_style),
-         Paragraph('审核人：____________', label_style),
-         Paragraph('批准人：____________', label_style)],
-    ]
-    signature_table = Table(signature_data, colWidths=[60*mm, 60*mm, 60*mm])
-    signature_table.setStyle(TableStyle([
-        ('GRID', (0, 0), (-1, -1), 0.5, colors.black),
-        ('ALIGN', (0, 0), (-1, -1), 'CENTER'),
-        ('LEFTPADDING', (0, 0), (-1, -1), 6),
-        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
-        ('TOPPADDING', (0, 0), (-1, -1), 8),
-        ('BOTTOMPADDING', (0, 0), (-1, -1), 8),
-    ]))
-    elements.append(signature_table)
-
-    # 生成 PDF
-    doc.build(elements)
-    pdf_data = buffer.getvalue()
-    buffer.close()
-
-    # 返回 PDF 下载
-    response = make_response(pdf_data)
-    response.headers['Content-Type'] = 'application/pdf'
-    response.headers['Content-Disposition'] = f'attachment; filename={plan.plan_number}_purchase_plan.pdf'
-    response.headers['Content-Length'] = str(len(pdf_data))
-
-    return response
+    except Exception as e:
+        current_app.logger.error(f'PDF 生成失败：{str(e)}')
+        flash(f'生成 PDF 失败：{str(e)}', 'danger')
+        return redirect(url_for('plan.preview', id=id))
 
 
 @plan_bp.route('/<int:id>/upload', methods=['POST'])

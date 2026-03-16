@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>采购计划表 - {{ plan.plan_number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        body {
+            font-family: 'SimSun', sans-serif;
+            font-size: 11px;
+            color: #000;
+            line-height: 1.4;
+        }
+
+        /* 标题 */
+        .header {
+            text-align: center;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #000;
+            padding-bottom: 8px;
+        }
+
+        .header h1 {
+            font-size: 20px;
+            font-weight: bold;
+            margin: 0;
+        }
+
+        /* 信息表格 */
+        .info-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+
+        .info-table td {
+            border: 1px solid #000;
+            padding: 5px 8px;
+        }
+
+        .info-table .label {
+            font-weight: bold;
+            width: 90px;
+            background-color: #f5f5f5;
+        }
+
+        /* 明细表格 */
+        .items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+            font-size: 10px;
+        }
+
+        .items-table th,
+        .items-table td {
+            border: 1px solid #000;
+            padding: 6px 4px;
+            text-align: center;
+        }
+
+        .items-table th {
+            background-color: #e0e0e0;
+            font-weight: bold;
+            font-size: 10px;
+        }
+
+        .items-table .left {
+            text-align: left;
+        }
+
+        /* 签字栏 */
+        .signature {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .signature td {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: center;
+            background-color: #fafafa;
+        }
+    </style>
+</head>
+<body>
+    <!-- 标题 -->
+    <div class="header">
+        <h1>采购计划表</h1>
+    </div>
+
+    <!-- 基本信息 -->
+    <table class="info-table">
+        <tr>
+            <td class="label">采购编号</td>
+            <td>{{ plan.plan_number }}</td>
+            <td class="label">计划名称</td>
+            <td>{{ plan.plan_name }}</td>
+        </tr>
+        <tr>
+            <td class="label">采购类型</td>
+            <td>{{ plan.plan_type_label }}</td>
+            <td class="label">采购方式</td>
+            <td>{{ plan.procurement_method or '未指定' }}</td>
+        </tr>
+        <tr>
+            <td class="label">预算金额</td>
+            <td>¥{{ plan.budget_amount|default('0.00') }} {{ plan.currency }}</td>
+            <td class="label">实际金额</td>
+            <td>¥{{ plan.actual_amount|default('0.00') }} {{ plan.currency }}</td>
+        </tr>
+        <tr>
+            <td class="label">申请部门</td>
+            <td>{{ plan.department or '未指定' }}</td>
+            <td class="label">项目经理</td>
+            <td>{{ plan.project_manager or '未指定' }}</td>
+        </tr>
+        <tr>
+            <td class="label">状态</td>
+            <td>{{ plan.status_label }}</td>
+            <td class="label">创建时间</td>
+            <td>{{ plan.created_at.strftime('%Y-%m-%d') }}</td>
+        </tr>
+    </table>
+
+    <!-- 采购明细 -->
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th style="width: 5%">序号</th>
+                <th style="width: 20%">物资名称</th>
+                <th style="width: 20%">规格型号</th>
+                <th style="width: 10%">数量</th>
+                <th style="width: 8%">单位</th>
+                <th style="width: 27%">备注</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td>{{ loop.index }}</td>
+                <td class="left">{{ item.item_name or '' }}</td>
+                <td class="left">{{ item.specification or item.brand_model or '' }}</td>
+                <td>{{ '%.2f'|format(item.quantity|default(0)) }}</td>
+                <td>{{ item.unit or '' }}</td>
+                <td class="left">{{ item.remarks or '' }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <!-- 采购说明 -->
+    {% if plan.description %}
+    <div style="margin-bottom: 10px;">
+        <strong>采购说明：</strong>
+        <div style="padding: 5px; border: 1px solid #000; background: #fafafa;">
+            {{ plan.description }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 备注 -->
+    {% if plan.remarks %}
+    <div style="margin-bottom: 10px;">
+        <strong>备注：</strong>
+        <div style="padding: 5px; border: 1px solid #000; background: #fafafa;">
+            {{ plan.remarks }}
+        </div>
+    </div>
+    {% endif %}
+
+    <!-- 签字栏 -->
+    <table class="signature">
+        <tr>
+            <td style="width: 33%"><strong>制表人：</strong>____________</td>
+            <td style="width: 33%"><strong>审核人：</strong>____________</td>
+            <td style="width: 33%"><strong>批准人：</strong>____________</td>
+        </tr>
+    </table>
+</body>
+</html>
