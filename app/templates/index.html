@@ -271,12 +271,19 @@ function updateTime() {
         month: '2-digit',
         day: '2-digit',
         hour: '2-digit',
-        minute: '2-digit'
+        minute: '2-digit',
+        second: '2-digit'
     });
     const el = document.getElementById('current-time');
-    if (el) el.textContent = timeStr;
+    console.log('Updating time:', timeStr);  // 调试
+    if (el) {
+        el.textContent = timeStr;
+        el.style.color = '#fff';  // 确保文字是白色
+    } else {
+        console.error('current-time element not found');
+    }
 }
 updateTime();
-setInterval(updateTime, 60000);
+setInterval(updateTime, 1000);  // 每秒更新
 </script>
 {% endblock %}
