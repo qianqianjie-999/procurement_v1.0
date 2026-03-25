@@ -598,9 +598,8 @@ def download_scanned(id):
         flash('未找到扫描件。', 'warning')
         return redirect(url_for('plan.detail', id=plan.id))
 
-    # 构建文件路径 - 使用项目根目录（app 的父目录）
-    project_root = os.path.dirname(current_app.root_path)
-    scanned_filepath = os.path.join(project_root, plan.scanned_path)
+    # 构建文件路径 - 使用 app 目录（current_app.root_path）
+    scanned_filepath = os.path.join(current_app.root_path, plan.scanned_path)
 
     if not os.path.exists(scanned_filepath):
         flash('扫描件文件不存在。', 'danger')
