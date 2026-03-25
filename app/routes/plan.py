@@ -544,7 +544,7 @@ def upload_scanned(id):
 
     scanned_filename = f"{plan.id}_{timestamp}_{safe_filename}"
     scanned_filepath = os.path.join(scanned_storage_path, scanned_filename)
-    scanned_relative_path = f"static/scanned/{scanned_filename}"
+    scanned_relative_path = f"static/uploads/scanned/{scanned_filename}"
 
     try:
         # 保存文件
