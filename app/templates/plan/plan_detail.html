@@ -492,8 +492,8 @@
                 <div class="file-box-actions">
                     {% if plan.scanned_path %}
                     <span class="file-box-status success"><i class="bi bi-check-circle"></i> 已上传</span>
-                    <a href="{{ url_for('plan.download_scanned', id=plan.id) }}" class="btn btn-outline-success btn-sm">
-                        <i class="bi bi-download"></i> 下载
+                    <a href="{{ url_for('plan.view_scanned', id=plan.id) }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                        <i class="bi bi-eye"></i> 在线预览
                     </a>
                     {% else %}
                     <span class="file-box-status warning"><i class="bi bi-exclamation-circle"></i> 未上传</span>

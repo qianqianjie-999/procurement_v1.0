@@ -583,11 +583,11 @@ def upload_scanned(id):
     return redirect(url_for('plan.detail', id=plan.id))
 
 
-@plan_bp.route('/<int:id>/download-scanned', methods=['GET'])
+@plan_bp.route('/<int:id>/view-scanned', methods=['GET'])
 @login_required
-def download_scanned(id):
+def view_scanned(id):
     """
-    下载已上传的扫描件 PDF
+    在线查看已上传的扫描件 PDF（浏览器内嵌预览）
     """
     from flask import send_file
     import os
@@ -607,7 +607,7 @@ def download_scanned(id):
 
     return send_file(
         scanned_filepath,
-        as_attachment=True,
+        as_attachment=False,  # 内联显示，不强制下载
         download_name=f'{plan.plan_number}_scanned.pdf'
     )
 
