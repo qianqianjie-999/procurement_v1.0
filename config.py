@@ -25,7 +25,12 @@ class DevelopmentConfig(Config):
     # 开发环境数据库地址（根据你的实际配置修改）
     SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
         'mysql+pymysql://root:你的密码@localhost/procurement_dev'
-    
+
+    # 开发环境连接池配置
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_pre_ping': True,  # 自动检测并重连
+    }
+
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)  # 现在父类有 init_app 方法了，不会报错
@@ -49,6 +54,15 @@ class ProductionConfig(Config):
     # 生产环境数据库地址（根据你的实际配置修改）
     SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
         'mysql+pymysql://procurement:YourSecurePassword123!@127.0.0.1/procurement_system'
+
+    # 数据库连接池配置 - 防止 "MySQL server has gone away" 错误
+    SQLALCHEMY_ENGINE_OPTIONS = {
+        'pool_size': 10,              # 连接池大小
+        'max_overflow': 20,           # 超过 pool_size 后允许的连接数
+        'pool_timeout': 30,           # 等待连接的超时时间（秒）
+        'pool_recycle': 1800,         # 连接回收时间（秒），防止连接过期
+        'pool_pre_ping': True,        # 每次使用前检查连接是否有效，自动重连
+    }
 
     # PDF 导出配置
     PDF_STORAGE_PATH = '/var/www/html/procurement/app/static/pdfs'
