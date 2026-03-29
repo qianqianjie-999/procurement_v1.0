@@ -58,7 +58,7 @@
             }
             // 填充数量
             if (data.quantity) {
-                row.querySelector('.quantity').value = parseFloat(data.quantity).toFixed(4);
+                row.querySelector('.quantity').value = parseFloat(data.quantity).toFixed(2);
             } else {
                 row.querySelector('.quantity').value = '';
             }
@@ -68,13 +68,13 @@
             }
             // 填充批次数量
             if (data.batch_quantity) {
-                row.querySelector('input[name="batch_quantities[]"]').value = parseFloat(data.batch_quantity).toFixed(4);
+                row.querySelector('input[name="batch_quantities[]"]').value = parseFloat(data.batch_quantity).toFixed(2);
             } else {
                 row.querySelector('input[name="batch_quantities[]"]').value = '';
             }
             // 填充合同外数量
             if (data.extra_contract_quantity) {
-                row.querySelector('input[name="extra_contract_quantities[]"]').value = parseFloat(data.extra_contract_quantity).toFixed(4);
+                row.querySelector('input[name="extra_contract_quantities[]"]').value = parseFloat(data.extra_contract_quantity).toFixed(2);
             } else {
                 row.querySelector('input[name="extra_contract_quantities[]"]').value = '';
             }
@@ -150,7 +150,7 @@
         const quantityInput = row.querySelector('.quantity');
         quantityInput.addEventListener('blur', function() {
             if (this.value) {
-                this.value = parseFloat(this.value).toFixed(4);
+                this.value = parseFloat(this.value).toFixed(2);
             }
         });
 
