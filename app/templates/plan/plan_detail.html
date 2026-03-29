@@ -81,62 +81,68 @@
             <i class="bi bi-eye"></i> 预览
         </a>
     </div>
-    <div class="card-body">
-        <div class="row g-3">
+    <div class="card-body py-2">
+        <div class="row g-2">
             <!-- PDF 导出 -->
             <div class="col-md-6">
-                <div class="file-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="file-box-icon pdf me-3">
-                            <i class="bi bi-file-earmark-pdf"></i>
+                <div class="file-card file-card-compact">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="file-box-icon pdf me-2">
+                                <i class="bi bi-file-earmark-pdf"></i>
+                            </div>
+                            <div>
+                                <h6 class="file-box-title mb-0">采购计划 PDF</h6>
+                                <p class="file-box-desc mb-0">系统生成的标准格式文档</p>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="file-box-title">采购计划 PDF</h6>
-                            <p class="file-box-desc">系统生成的标准格式文档</p>
+                        <div class="file-box-actions">
+                            {% if plan.pdf_path %}
+                            <span class="file-box-status success"><i class="bi bi-check-circle"></i> 已生成</span>
+                            {% endif %}
+                            <a href="{{ url_for('plan.export_pdf', id=plan.id) }}" class="btn btn-primary btn-sm">
+                                <i class="bi bi-download"></i> 导出
+                            </a>
                         </div>
-                    </div>
-                    <div class="file-box-actions">
-                        {% if plan.pdf_path %}
-                        <span class="file-box-status success"><i class="bi bi-check-circle"></i> 已生成</span>
-                        {% endif %}
-                        <a href="{{ url_for('plan.export_pdf', id=plan.id) }}" class="btn btn-primary btn-sm">
-                            <i class="bi bi-download"></i> 导出
-                        </a>
                     </div>
                 </div>
             </div>
 
             <!-- 扫描件上传 -->
             <div class="col-md-6">
-                <div class="file-card">
-                    <div class="d-flex align-items-center mb-3">
-                        <div class="file-box-icon upload me-3">
-                            <i class="bi bi-file-earmark-arrow-up"></i>
+                <div class="file-card file-card-compact">
+                    <div class="d-flex align-items-center justify-content-between">
+                        <div class="d-flex align-items-center">
+                            <div class="file-box-icon upload me-2">
+                                <i class="bi bi-file-earmark-arrow-up"></i>
+                            </div>
+                            <div>
+                                <h6 class="file-box-title mb-0">签字扫描件</h6>
+                                <p class="file-box-desc mb-0">上传签字盖章后的 PDF</p>
+                            </div>
                         </div>
-                        <div>
-                            <h6 class="file-box-title">签字扫描件</h6>
-                            <p class="file-box-desc">上传签字盖章后的 PDF</p>
+                        <div class="file-box-actions text-end">
+                            {% if plan.scanned_path %}
+                            <span class="file-box-status success"><i class="bi bi-check-circle"></i> 已上传</span>
+                            <a href="{{ url_for('plan.view_scanned', id=plan.id) }}" class="btn btn-outline-primary btn-sm" target="_blank">
+                                <i class="bi bi-eye"></i> 在线预览
+                            </a>
+                            {% else %}
+                            <span class="file-box-status warning"><i class="bi bi-exclamation-circle"></i> 未上传</span>
+                            {% endif %}
                         </div>
-                    </div>
-                    <div class="file-box-actions">
-                        {% if plan.scanned_path %}
-                        <span class="file-box-status success"><i class="bi bi-check-circle"></i> 已上传</span>
-                        <a href="{{ url_for('plan.view_scanned', id=plan.id) }}" class="btn btn-outline-primary btn-sm" target="_blank">
-                            <i class="bi bi-eye"></i> 在线预览
-                        </a>
-                        {% else %}
-                        <span class="file-box-status warning"><i class="bi bi-exclamation-circle"></i> 未上传</span>
-                        {% endif %}
                     </div>
                     {% if not plan.scanned_path %}
-                    <form method="POST" action="{{ url_for('plan.upload_scanned', id=plan.id) }}" enctype="multipart/form-data" class="upload-form mt-3">
-                        <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
-                        <input type="file" name="scanned_file" class="form-control form-control-sm" accept=".pdf" required>
-                        <button type="submit" class="btn btn-success btn-sm mt-2">
-                            <i class="bi bi-upload"></i> 上传
-                        </button>
+                    <form method="POST" action="{{ url_for('plan.upload_scanned', id=plan.id) }}" enctype="multipart/form-data" class="upload-form mt-2">
+                        <div class="d-flex gap-2 align-items-center">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}">
+                            <input type="file" name="scanned_file" class="form-control form-control-sm flex-grow-1" accept=".pdf" required>
+                            <button type="submit" class="btn btn-success btn-sm">
+                                <i class="bi bi-upload"></i> 上传
+                            </button>
+                        </div>
                     </form>
-                    <small class="text-muted" style="font-size: 0.75rem;">仅支持 PDF，最大 10MB</small>
+                    <small class="text-muted" style="font-size: 0.7rem;">仅支持 PDF，最大 10MB</small>
                     {% endif %}
                 </div>
             </div>

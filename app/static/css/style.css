@@ -769,6 +769,28 @@ code {
     overflow: hidden;
 }
 
+/* 紧凑文件卡片 */
+.file-card-compact {
+    padding: 0.75rem 1rem !important;
+}
+
+.file-card-compact .file-box-title {
+    font-size: 0.875rem;
+    margin-bottom: 0.15rem !important;
+}
+
+.file-card-compact .file-box-desc {
+    font-size: 0.75rem;
+}
+
+.file-card-compact .file-box-icon {
+    font-size: 1.25rem;
+}
+
+.file-card-compact .upload-form {
+    margin-top: 0.5rem !important;
+}
+
 .file-card::before {
     content: '';
     position: absolute;
