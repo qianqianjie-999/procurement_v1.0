@@ -5,6 +5,7 @@
  * 1. 动态添加/删除物资明细行
  * 2. 行号自动更新
  * 3. 表单提交前验证
+ * 4. 更好的用户体验和动画效果
  */
 
 (function() {
@@ -84,8 +85,11 @@
         // 绑定事件
         bindRowEvents(row);
 
-        // 添加到表格
+        // 添加到表格并添加动画
         itemsBody.appendChild(row);
+        setTimeout(() => {
+            row.classList.add('animate-add');
+        }, 10);
     }
 
     /**
@@ -99,11 +103,16 @@
             return;
         }
 
-        // 删除行
-        row.remove();
-
-        // 重新编号
-        renumberRows();
+        // 添加删除动画
+        row.classList.add('animate-remove');
+        
+        setTimeout(() => {
+            // 删除行
+            row.remove();
+            
+            // 重新编号
+            renumberRows();
+        }, 300);
     }
 
     /**
@@ -111,8 +120,9 @@
      */
     function renumberRows() {
         rowCount = 0;
-        itemsBody.querySelectorAll('.item-row').forEach(row => {
-            rowCount++;
+        const rows = itemsBody.querySelectorAll('.item-row');
+        rows.forEach((row, index) => {
+            rowCount = index + 1;
             row.querySelector('.row-number').textContent = rowCount;
         });
     }
@@ -137,6 +147,30 @@
                 this.value = parseFloat(this.value).toFixed(4);
             }
         });
+
+        // 实时验证输入
+        const inputs = row.querySelectorAll('input');
+        inputs.forEach(input => {
+            input.addEventListener('input', function() {
+                validateRow(row);
+            });
+        });
+    }
+
+    /**
+     * 验证单行数据
+     * @param {HTMLElement} row - 行元素
+     */
+    function validateRow(row) {
+        const itemName = row.querySelector('.item-name').value.trim();
+        const quantity = row.querySelector('.quantity').value;
+        
+        // 如果有名称但没有数量，或者有数量但没有名称，标记为无效
+        if ((itemName && !quantity) || (!itemName && quantity)) {
+            row.style.backgroundColor = 'rgba(239, 68, 68, 0.05)';
+        } else {
+            row.style.backgroundColor = '';
+        }
     }
 
     /**
@@ -146,11 +180,19 @@
      */
     function showToast(message, type = 'info') {
         // 创建 toast 元素
+        const existingToast = document.querySelector('.custom-toast');
+        if (existingToast) {
+            existingToast.remove();
+        }
+
         const toast = document.createElement('div');
-        toast.className = `alert alert-${type} alert-dismissible fade show position-fixed`;
-        toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px;';
+        toast.className = `alert alert-${type} alert-dismissible fade show custom-toast position-fixed`;
+        toast.style.cssText = 'top: 20px; right: 20px; z-index: 9999; min-width: 300px; animation: fadeInUp 0.3s ease-out;';
         toast.innerHTML = `
-            ${message}
+            <div class="d-flex align-items-center">
+                <i class="bi bi-${type === 'success' ? 'check-circle-fill' : type === 'danger' ? 'x-circle-fill' : type === 'warning' ? 'exclamation-triangle-fill' : 'info-circle-fill'} me-2"></i>
+                <span>${message}</span>
+            </div>
             <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
         `;
 
@@ -158,7 +200,10 @@
 
         // 5 秒后自动移除
         setTimeout(() => {
-            toast.remove();
+            toast.classList.add('fade');
+            setTimeout(() => {
+                toast.remove();
+            }, 300);
         }, 5000);
     }
 
@@ -215,7 +260,29 @@
             return false;
         }
 
+        // 显示加载状态
+        showLoading(true);
         return true;
+    }
+
+    /**
+     * 显示/隐藏加载状态
+     * @param {boolean} show - 是否显示
+     */
+    function showLoading(show) {
+        let loadingOverlay = document.querySelector('.loading-overlay');
+        if (!loadingOverlay) {
+            loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'loading-overlay';
+            loadingOverlay.innerHTML = '<div class="loading-spinner"></div>';
+            document.body.appendChild(loadingOverlay);
+        }
+
+        if (show) {
+            loadingOverlay.classList.add('active');
+        } else {
+            loadingOverlay.classList.remove('active');
+        }
     }
 
     /**
@@ -231,7 +298,7 @@
         planForm.addEventListener('submit', validateForm);
 
         // 加载初始数据
-        if (initialItems && initialItems.length > 0) {
+        if (typeof initialItems !== 'undefined' && initialItems && initialItems.length > 0) {
             initialItems.forEach(function(item) {
                 addRow(item);
             });
@@ -239,6 +306,11 @@
             // 添加一行空行
             addRow();
         }
+
+        // 页面卸载时隐藏加载状态
+        window.addEventListener('beforeunload', function() {
+            showLoading(false);
+        });
     }
 
     // DOM 加载完成后初始化

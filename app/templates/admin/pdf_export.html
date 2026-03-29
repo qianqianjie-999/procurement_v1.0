@@ -1,0 +1,105 @@
+{% extends "base.html" %}
+
+{% block title %}pdf签字版查看 - 采购管理系统{% endblock %}
+{% block page_title %}pdf签字版查看{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-file-earmark-pdf"></i> pdf签字版查看</h2>
+    </div>
+    
+    {% if plans.items %}
+    <div class="data-table">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>计划编号</th>
+                        <th>项目名称</th>
+                        <th>申请人</th>
+                        <th>创建时间</th>
+                        <th>签字版状态</th>
+                        <th class="text-end">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plan in plans.items %}
+                    <tr>
+                        <td>{{ plan.plan_number }}</td>
+                        <td>{{ plan.plan_name }}</td>
+                        <td>{{ plan.creator.username if plan.creator else '未知' }}</td>
+                        <td>{{ plan.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if plan.scanned_path %}
+                            <span class="status-badge status-approved">已上传</span>
+                            {% else %}
+                            <span class="status-badge status-rejected">无签字版</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            {% if plan.scanned_path %}
+                            <div class="action-buttons">
+                                <a href="{{ url_for('static', filename='uploads/scanned/' + plan.scanned_path.split('/')[-1]) }}" target="_blank" class="btn-action btn btn-sm btn-outline-success">
+                                    <i class="bi bi-eye"></i> 预览
+                                </a>
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    {% if plans.pages > 1 %}
+    <div class="pagination-container">
+        <nav>
+            <ul class="pagination">
+                {% if plans.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.pdf_export', page=plans.prev_num) }}">«</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in plans.iter_pages() %}
+                {% if page_num %}
+                {% if page_num != plans.page %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.pdf_export', page=page_num) }}">{{ page_num }}</a>
+                </li>
+                {% else %}
+                <li class="page-item active">
+                    <span class="page-link">{{ page_num }}</span>
+                </li>
+                {% endif %}
+                {% else %}
+                <li class="page-item disabled">
+                    <span class="page-link">…</span>
+                </li>
+                {% endif %}
+                {% endfor %}
+                
+                {% if plans.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('admin.pdf_export', page=plans.next_num) }}">»</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <div class="empty-state">
+        <i class="bi bi-file-earmark-pdf empty-icon"></i>
+        <h4 class="empty-title">暂无采购计划</h4>
+        <p class="empty-description">您还没有创建任何采购计划。请先创建采购计划并上传签字版PDF。</p>
+        <a href="{{ url_for('plan.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 创建采购计划
+        </a>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}

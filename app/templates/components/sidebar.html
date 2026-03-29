@@ -1,0 +1,70 @@
+<!-- 侧边栏导航 -->
+<div class="sidebar" id="sidebar">
+    <div class="sidebar-header">
+        <a href="{{ url_for('main.index') }}" class="sidebar-brand">
+            <i class="bi bi-cart4"></i>
+            <span>采购管理系统</span>
+        </a>
+    </div>
+    
+    <nav class="sidebar-nav">
+        <div class="nav-item">
+            <a href="{{ url_for('main.index') }}" class="nav-link {% if request.endpoint == 'main.index' %}active{% endif %}">
+                <i class="bi bi-house-door"></i>
+                <span>仪表板</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="{{ url_for('plan.index') }}" class="nav-link {% if request.endpoint == 'plan.index' %}active{% endif %}">
+                <i class="bi bi-file-earmark-text"></i>
+                <span>采购计划</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="{{ url_for('plan.create') }}" class="nav-link {% if request.endpoint == 'plan.create' %}active{% endif %}">
+                <i class="bi bi-plus-circle"></i>
+                <span>新建计划</span>
+            </a>
+        </div>
+        
+        {% if current_user.is_administrator() %}
+        <div class="nav-item">
+            <a href="{{ url_for('plan.index', status='pending') }}" class="nav-link {% if request.args.get('status') == 'pending' %}active{% endif %}">
+                <i class="bi bi-clock-history"></i>
+                <span>待审批</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="{{ url_for('admin.users') }}" class="nav-link">
+                <i class="bi bi-people"></i>
+                <span>用户管理</span>
+            </a>
+        </div>
+        {% endif %}
+        
+        <!-- pdf签字版查看对所有用户可用 -->
+        <div class="nav-item">
+            <a href="{{ url_for('pdf.signed_pdf_view') }}" class="nav-link">
+                <i class="bi bi-file-earmark-pdf"></i>
+                <span>pdf签字版查看</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="{{ url_for('admin.reports') }}" class="nav-link">
+                <i class="bi bi-graph-up"></i>
+                <span>统计报表</span>
+            </a>
+        </div>
+        
+        <div class="nav-item">
+            <a href="{{ url_for('admin.settings') }}" class="nav-link">
+                <i class="bi bi-gear"></i>
+                <span>系统设置</span>
+            </a>
+        </div>
+    </nav>
+</div>

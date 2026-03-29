@@ -1,0 +1,225 @@
+{% extends "base.html" %}
+
+{% block title %}采购计划 - 采购管理系统{% endblock %}
+{% block page_title %}采购计划{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- 页面标题和操作按钮 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-file-earmark-text"></i> 采购计划管理</h2>
+        <a href="{{ url_for('plan.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 新建计划
+        </a>
+    </div>
+    
+    <!-- 筛选和搜索 -->
+    <div class="form-section mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">状态筛选</label>
+                <select class="form-select" id="statusFilter">
+                    <option value="">全部状态</option>
+                    <option value="draft" {% if request.args.get('status') == 'draft' %}selected{% endif %}>草稿</option>
+                    <option value="pending" {% if request.args.get('status') == 'pending' %}selected{% endif %}>待审批</option>
+                    <option value="approved" {% if request.args.get('status') == 'approved' %}selected{% endif %}>已批准</option>
+                    <option value="rejected" {% if request.args.get('status') == 'rejected' %}selected{% endif %}>已拒绝</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">搜索计划</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="输入计划名称或编号..." id="searchInput" value="{{ request.args.get('q', '') }}">
+                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                        <i class="bi bi-search"></i> 搜索
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">操作</label>
+                <div class="d-grid">
+                    <button class="btn btn-outline-secondary" type="button" id="resetBtn">
+                        <i class="bi bi-arrow-clockwise"></i> 重置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 数据表格 -->
+    {% if plans %}
+    <div class="data-table">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>计划编号</th>
+                        <th>项目名称</th>
+                        <th>项目经理</th>
+                        <th>申请人</th>
+                        <th>创建时间</th>
+                        <th>状态</th>
+                        <th class="text-end">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plan in plans %}
+                    <tr>
+                        <td>{{ plan.plan_number }}</td>
+                        <td>{{ plan.plan_name }}</td>
+                        <td>{{ plan.project_manager or '-' }}</td>
+                        <td>{{ plan.creator.username if plan.creator else '未知' }}</td>
+                        <td>{{ plan.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if plan.status == 'draft' %}
+                            <span class="status-badge status-draft">草稿</span>
+                            {% elif plan.status == 'pending' %}
+                            <span class="status-badge status-pending">待审批</span>
+                            {% elif plan.status == 'approved' %}
+                            <span class="status-badge status-approved">已批准</span>
+                            {% elif plan.status == 'rejected' %}
+                            <span class="status-badge status-rejected">已拒绝</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="action-buttons">
+                                <a href="{{ url_for('plan.detail', id=plan.id) }}" class="btn-action btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> 查看
+                                </a>
+                                {% if plan.status == 'draft' %}
+                                <a href="{{ url_for('plan.edit', id=plan.id) }}" class="btn-action btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i> 编辑
+                                </a>
+                                {% endif %}
+                                {% if plan.pdf_path %}
+                                <a href="{{ url_for('static', filename='pdfs/' + plan.pdf_path.split('/')[-1]) }}" target="_blank" class="btn-action btn btn-sm btn-outline-info">
+                                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                                </a>
+                                {% endif %}
+                                {% if plan.scanned_path %}
+                                <a href="{{ url_for('static', filename='uploads/scanned/' + plan.scanned_path.split('/')[-1]) }}" target="_blank" class="btn-action btn btn-sm btn-outline-success">
+                                    <i class="bi bi-signature"></i> 签字版
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- 分页 -->
+    {% if pagination %}
+    <div class="pagination-container">
+        <nav>
+            <ul class="pagination">
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('plan.index', page=pagination.prev_num, **request.args) }}">«</a>
+                </li>
+                {% endif %}
+                
+                {% for page_num in pagination.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != pagination.page %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('plan.index', page=page_num, **request.args) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+                
+                {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('plan.index', page=pagination.next_num, **request.args) }}">»</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+    
+    {% else %}
+    <!-- 空状态 -->
+    <div class="empty-state">
+        <i class="bi bi-clipboard-data empty-icon"></i>
+        <h4 class="empty-title">暂无采购计划</h4>
+        <p class="empty-description">
+            {% if request.args %}
+            没有找到匹配的采购计划。尝试调整筛选条件或搜索关键词。
+            {% else %}
+            您还没有创建任何采购计划。点击下方按钮开始创建您的第一个采购计划。
+            {% endif %}
+        </p>
+        <a href="{{ url_for('plan.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 创建采购计划
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 状态筛选
+    const statusFilter = document.getElementById('statusFilter');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resetBtn = document.getElementById('resetBtn');
+    
+    // 状态筛选改变时自动提交
+    if (statusFilter) {
+        statusFilter.addEventListener('change', function() {
+            const url = new URL(window.location);
+            if (this.value) {
+                url.searchParams.set('status', this.value);
+            } else {
+                url.searchParams.delete('status');
+            }
+            url.searchParams.delete('page'); // 重置分页
+            window.location.href = url.toString();
+        });
+    }
+    
+    // 搜索功能
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            const url = new URL(window.location);
+            if (query) {
+                url.searchParams.set('q', query);
+            } else {
+                url.searchParams.delete('q');
+            }
+            url.searchParams.delete('page'); // 重置分页
+            window.location.href = url.toString();
+        });
+    }
+    
+    // 回车搜索
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+    }
+    
+    // 重置功能
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            window.location.href = '{{ url_for("plan.index") }}';
+        });
+    }
+});
+</script>
+{% endblock %}

@@ -237,8 +237,8 @@
                 <td class="left-align">{{ item.specification or '-' }}</td>
                 <td>{{ "%.1f"|format(item.quantity|default(0)) }}</td>
                 <td>{{ item.unit or '-' }}</td>
-                <td>{{ item.batch_quantity if item.batch_quantity else '-' }}</td>
-                <td>{{ item.extra_contract_quantity if item.extra_contract_quantity else '-' }}</td>
+                <td>{{ "%.1f"|format(item.batch_quantity) if item.batch_quantity else '-' }}</td>
+                <td>{{ "%.1f"|format(item.extra_contract_quantity) if item.extra_contract_quantity else '-' }}</td>
                 <td>{{ item.required_date.strftime('%Y-%m-%d') if item.required_date else '-' }}</td>
                 <td class="left-align">{{ item.remarks or '-' }}</td>
             </tr>

@@ -1,0 +1,98 @@
+/* ============================================
+   功能模块对齐修复 - 确保4个卡片完美对齐
+   ============================================ */
+
+.module-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+    align-items: stretch;
+}
+
+/* 确保所有卡片有相同的最小高度 */
+.module-card {
+    min-height: 320px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+/* 模块头部统一样式 */
+.module-header {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    padding: 1.5rem;
+}
+
+/* 图标居中 */
+.module-icon {
+    margin: 0 auto 1rem auto;
+    width: 60px;
+    height: 60px;
+    border-radius: var(--radius-xl);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.75rem;
+    background: rgba(30, 64, 175, 0.1);
+    color: var(--primary-blue);
+}
+
+/* 标题和描述居中 */
+.module-title,
+.module-description {
+    text-align: center;
+}
+
+/* 按钮区域固定在底部 */
+.module-footer {
+    padding: 1.5rem;
+    text-align: center;
+}
+
+/* 按钮样式统一 */
+.module-footer .btn {
+    width: 100%;
+    justify-content: center;
+    min-height: 44px;
+}
+
+/* 响应式调整 */
+@media (min-width: 768px) {
+    .module-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (min-width: 992px) {
+    .module-grid {
+        grid-template-columns: repeat(4, 1fr);
+    }
+}
+
+@media (max-width: 767px) {
+    .module-card {
+        min-height: 280px;
+    }
+    
+    .module-icon {
+        width: 50px;
+        height: 50px;
+        font-size: 1.5rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .module-title {
+        font-size: 1.1rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .module-description {
+        font-size: 0.85rem;
+        padding: 0 0.5rem;
+    }
+}

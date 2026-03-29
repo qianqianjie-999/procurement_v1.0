@@ -38,12 +38,12 @@ def login():
             # 验证密码
             if not user.check_password(form.password.data):
                 flash('用户名或密码错误。', 'danger')
-                return render_template('auth/login.html', form=form)
+                return render_template('auth/login_enhanced.html', form=form)
 
             # 检查账户是否被禁用
             if not user.is_active:
                 flash('您的账户已被禁用，请联系管理员。', 'danger')
-                return render_template('auth/login.html', form=form)
+                return render_template('auth/login_enhanced.html', form=form)
 
             # 登录用户
             login_user(user, remember=form.remember_me.data)
@@ -60,7 +60,7 @@ def login():
         else:
             flash('表单验证失败，请检查输入。', 'danger')
 
-    return render_template('auth/login.html', form=form)
+    return render_template('auth/login_enhanced.html', form=form)
 
 
 @auth_bp.route('/logout')

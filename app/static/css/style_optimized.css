@@ -1184,17 +1184,15 @@ code {
 
 /* 用户信息卡片 - 个性化 */
 .user-info-card {
-    background: linear-gradient(135deg, #059669 0%, #047857 100%);
+    background: linear-gradient(135deg, var(--success-green) 0%, var(--success-green-dark) 100%);
     color: white;
     border-radius: var(--radius-xl);
     padding: 2.5rem 2rem;
     margin-bottom: 1.5rem;
     text-align: center;
-    box-shadow: var(--shadow-2xl);
+    box-shadow: var(--shadow-xl);
     position: relative;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(12px);
 }
 
 .user-info-card::before {

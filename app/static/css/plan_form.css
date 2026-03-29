@@ -1,4 +1,4 @@
-/* 采购计划表单样式 */
+/* 采购计划表单样式 - 优化版 */
 
 .page-header {
     display: flex;
@@ -6,13 +6,13 @@
     align-items: center;
     margin-bottom: 1.75rem;
     padding-bottom: 1.25rem;
-    border-bottom: 1px solid #e8eaec;
+    border-bottom: 1px solid var(--border-color);
 }
 
 .page-header h1 {
     font-size: 1.6rem;
     font-weight: 700;
-    color: #1d2129;
+    color: var(--text-primary);
     margin: 0;
     display: flex;
     align-items: center;
@@ -25,11 +25,15 @@
     font-weight: 600;
     color: #fff;
     margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 /* 表格样式 */
 #itemsTable {
     min-width: 1400px;
+    width: 100%;
 }
 
 #itemsTable thead th {
@@ -40,58 +44,63 @@
     text-transform: uppercase;
     letter-spacing: 0.3px;
     padding: 0.875rem 0.75rem;
-    background-color: #f8f9fa;
-    border-bottom: 2px solid #1070ff;
-    color: #1d2129;
+    background-color: var(--bg-light);
+    border-bottom: 2px solid var(--primary-blue);
+    color: var(--text-primary);
+    position: sticky;
+    top: 0;
+    z-index: 10;
 }
 
 #itemsTable tbody td {
     vertical-align: middle;
     padding: 0.75rem;
-    border-color: #f0f0f0;
+    border-color: var(--border-light);
+    transition: background-color var(--transition-fast);
 }
 
 #itemsTable tbody tr:hover {
-    background-color: rgba(16, 112, 255, 0.03);
+    background-color: rgba(59, 130, 246, 0.03);
     transform: scale(1.001);
-    transition: all 0.2s;
+    transition: all var(--transition-fast) var(--ease-in-out);
 }
 
 /* 输入框样式 */
 #itemsTable input.form-control,
 #itemsTable select.form-select {
-    border-width: 1.5px;
-    border-radius: 6px;
+    border: 2px solid var(--border-color);
+    border-radius: var(--radius);
     font-size: 0.9rem;
     padding: 0.5rem 0.625rem;
-    transition: all 0.2s;
+    transition: all var(--transition-fast) var(--ease-in-out);
+    background-color: white;
 }
 
 #itemsTable input.form-control:focus,
 #itemsTable select.form-select:focus {
-    border-color: #1070ff;
-    box-shadow: 0 0 0 3px rgba(16, 112, 255, 0.12);
+    border-color: var(--primary-blue);
+    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
     outline: none;
 }
 
 #itemsTable input.form-control::placeholder {
-    color: #86909c;
+    color: var(--text-light);
     opacity: 0.7;
 }
 
 /* 小计列样式 */
 .total-price {
     font-weight: 500;
-    color: #00a854;
-    background-color: rgba(0, 168, 84, 0.05);
-    border-radius: 4px;
+    color: var(--success-green);
+    background-color: rgba(16, 185, 129, 0.05);
+    border-radius: var(--radius-xs);
     padding: 0.25rem 0.5rem;
 }
 
 /* 行号样式 */
 .row-number {
     font-weight: 600;
-    color: #86909c;
+    color: var(--text-muted);
     text-align: center;
     display: block;
 }
@@ -99,23 +108,29 @@
 /* 删除按钮样式 */
 .delete-row {
     opacity: 0.6;
-    transition: all 0.2s;
+    transition: all var(--transition-fast) var(--ease-in-out);
     border: none;
     background: transparent;
-    color: #e03131;
+    color: var(--danger-red);
     padding: 0.25rem;
-    border-radius: 4px;
+    border-radius: var(--radius-xs);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 32px;
+    height: 32px;
 }
 
 .delete-row:hover {
     opacity: 1;
-    background-color: rgba(224, 49, 49, 0.1);
+    background-color: rgba(239, 68, 68, 0.1);
     transform: scale(1.15);
+    color: var(--danger-red-dark);
 }
 
 /* 必填标记样式 */
 .text-danger {
-    color: #e03131 !important;
+    color: var(--danger-red) !important;
 }
 
 /* 响应式调整 */
@@ -128,13 +143,17 @@
     .page-header h1 {
         font-size: 1.25rem;
     }
+    
+    #itemsTable {
+        min-width: 1200px;
+    }
 }
 
 /* 空状态提示 */
 .empty-state {
     text-align: center;
     padding: 3rem 1rem;
-    color: #86909c;
+    color: var(--text-muted);
 }
 
 .empty-state i {
@@ -145,25 +164,32 @@
 
 /* 表单验证样式 */
 .is-invalid {
-    border-color: #e03131 !important;
+    border-color: var(--danger-red) !important;
+    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15) !important;
 }
 
 .is-invalid ~ .invalid-feedback {
     display: block;
     font-size: 0.825rem;
     margin-top: 0.35rem;
-    color: #e03131;
+    color: var(--danger-red);
     font-weight: 500;
 }
 
 /* 添加一行按钮 */
 #addRowBtn {
-    transition: all 0.2s;
+    transition: all var(--transition-normal) var(--ease-in-out);
+    font-weight: 500;
+    padding: 0.5rem 1rem;
+    border-radius: var(--radius);
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
 }
 
 #addRowBtn:hover {
     transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(16, 112, 255, 0.3);
+    box-shadow: var(--shadow-sm);
 }
 
 /* 表单底部操作区 */
@@ -173,30 +199,131 @@
     justify-content: flex-end;
     margin-top: 1.5rem;
     padding-top: 1.5rem;
-    border-top: 1px solid #e8eaec;
+    border-top: 1px solid var(--border-color);
 }
 
 .form-actions .btn {
     min-width: 100px;
     font-weight: 500;
-    transition: all 0.2s;
+    transition: all var(--transition-normal) var(--ease-in-out);
 }
 
 .form-actions .btn:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-sm);
 }
 
 /* 输入框占位符颜色 */
 ::placeholder {
-    color: #86909c;
+    color: var(--text-light);
     opacity: 1;
 }
 
 :-ms-input-placeholder {
-    color: #86909c;
+    color: var(--text-light);
 }
 
 ::-ms-input-placeholder {
-    color: #86909c;
+    color: var(--text-light);
+}
+
+/* 物资明细卡片头部 */
+.items-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.items-card-header .btn {
+    font-weight: 500;
+    padding: 0.4rem 0.8rem;
+    font-size: 0.85rem;
+}
+
+/* 表格容器 */
+.table-container {
+    overflow-x: auto;
+    border-radius: var(--radius-lg);
+    border: 1px solid var(--border-color);
+}
+
+/* 表格行动画 */
+.item-row {
+    transition: all var(--transition-fast) var(--ease-in-out);
+}
+
+.item-row.animate-remove {
+    opacity: 0;
+    transform: translateX(-20px);
+}
+
+.item-row.animate-add {
+    animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 必填字段高亮 */
+.required-field {
+    position: relative;
+}
+
+.required-field::after {
+    content: '*';
+    position: absolute;
+    right: -8px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--danger-red);
+    font-weight: bold;
+}
+
+/* 表单组间距 */
+.form-group {
+    margin-bottom: 1rem;
+}
+
+/* 加载状态 */
+.loading-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.8);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity var(--transition-normal), visibility var(--transition-normal);
+}
+
+.loading-overlay.active {
+    opacity: 1;
+    visibility: visible;
+}
+
+.loading-spinner {
+    width: 3rem;
+    height: 3rem;
+    border: 4px solid rgba(59, 130, 246, 0.2);
+    border-top: 4px solid var(--primary-blue);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
 }

@@ -1,0 +1,116 @@
+/* ============================================
+   卡片组件增强 - 更明显的分界线和底色
+   ============================================ */
+
+/* 统一卡片基础样式 */
+.card-enhanced {
+    background: linear-gradient(145deg, #ffffff 0%, #fafbff 100%);
+    border-radius: var(--radius-xl);
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    backdrop-filter: blur(8px);
+    transition: all var(--transition-normal) var(--ease-in-out);
+}
+
+.card-enhanced:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-2px);
+}
+
+/* 统计卡片增强 */
+.stat-card-enhanced {
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: var(--radius-xl);
+    padding: 1.5rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-color);
+    backdrop-filter: blur(10px);
+    position: relative;
+    overflow: hidden;
+    transition: all var(--transition-normal) var(--ease-in-out);
+}
+
+.stat-card-enhanced:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-4px);
+}
+
+/* 功能模块卡片增强 */
+.module-card-enhanced {
+    background: linear-gradient(145deg, #ffffff 0%, #f9fafb 100%);
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    backdrop-filter: blur(8px);
+    transition: all var(--transition-normal) var(--ease-in-out);
+}
+
+.module-card-enhanced:hover {
+    box-shadow: var(--shadow-xl);
+    transform: translateY(-6px);
+}
+
+/* 表单区域增强 */
+.form-section-enhanced {
+    background: linear-gradient(145deg, #ffffff 0%, #fafbff 100%);
+    border-radius: var(--radius-xl);
+    padding: 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    backdrop-filter: blur(6px);
+    margin-bottom: 2rem;
+}
+
+/* 数据表格增强 */
+.data-table-enhanced {
+    background: linear-gradient(145deg, #ffffff 0%, #f8fafc 100%);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    border: 1px solid var(--border-light);
+    backdrop-filter: blur(6px);
+}
+
+/* 空状态卡片增强 */
+.empty-state-enhanced {
+    background: linear-gradient(145deg, #ffffff 0%, #fafbff 100%);
+    border-radius: var(--radius-xl);
+    padding: 4rem 2rem;
+    box-shadow: var(--shadow-lg);
+    border: 1px dashed var(--border-color);
+    backdrop-filter: blur(6px);
+    text-align: center;
+}
+
+/* 欢迎横幅增强 */
+.welcome-banner-enhanced {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+    box-shadow: var(--shadow-2xl);
+    margin-bottom: 2rem;
+    backdrop-filter: blur(12px);
+    border: 1px solid var(--border-light);
+}
+
+.welcome-banner-enhanced .card-body {
+    padding: 2.5rem;
+    background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
+    color: white;
+}
+
+/* 快速操作卡片增强 */
+.quick-action-card-enhanced {
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-lg);
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal);
+    background: linear-gradient(145deg, #ffffff 0%, #f9fafb 100%);
+    border: 1px solid var(--border-light);
+    backdrop-filter: blur(6px);
+}
+
+.quick-action-card-enhanced:hover {
+    transform: translateY(-6px);
+    box-shadow: var(--shadow-xl);
+}

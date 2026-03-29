@@ -145,7 +145,7 @@ def index():
 
     # 获取筛选参数
     status_filter = request.args.get('status', '', type=str)
-    search = request.args.get('search', '', type=str)
+    search_query = request.args.get('q', '', type=str)
 
     # 查询当前用户的采购计划
     query = PurchasePlan.query.filter_by(created_by=current_user.id)
@@ -159,8 +159,8 @@ def index():
         query = query.filter_by(status=status_filter)
 
     # 应用搜索（计划名称或编号）
-    if search:
-        search_pattern = f'%{search}%'
+    if search_query:
+        search_pattern = f'%{search_query}%'
         query = query.filter(
             db.or_(
                 PurchasePlan.plan_name.like(search_pattern),
@@ -185,7 +185,7 @@ def index():
         'approved': base_query.filter_by(status='approved').count()
     }
 
-    return render_template('plan/plan_list.html',
+    return render_template('plan/list.html',
                           plans=plans,
                           pagination=pagination,
                           stats=stats,

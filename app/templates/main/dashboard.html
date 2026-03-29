@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+
+{% block title %}仪表板 - 采购管理系统{% endblock %}
+{% block page_title %}仪表板{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- 统计概览 -->
+    {% if plan_stats %}
+    <div class="dashboard-container">
+        <div class="stat-card">
+            <div class="stat-card-content">
+                <div class="stat-icon stat-blue">
+                    <i class="bi bi-file-earmark-text"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-value">{{ plan_stats.total }}</div>
+                    <div class="stat-label">总计划数</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-content">
+                <div class="stat-icon stat-green">
+                    <i class="bi bi-check-circle-fill"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-value">{{ plan_stats.approved }}</div>
+                    <div class="stat-label">已批准</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-content">
+                <div class="stat-icon stat-orange">
+                    <i class="bi bi-clock-fill"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-value">{{ plan_stats.pending }}</div>
+                    <div class="stat-label">待审批</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="stat-card">
+            <div class="stat-card-content">
+                <div class="stat-icon stat-red">
+                    <i class="bi bi-file-earmark"></i>
+                </div>
+                <div class="stat-text">
+                    <div class="stat-value">{{ plan_stats.draft }}</div>
+                    <div class="stat-label">草稿</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endif %}
+    
+    <!-- 核心功能模块 -->
+    <div class="module-grid">
+        <a href="{{ url_for('plan.create') }}" class="module-card text-decoration-none">
+            <div class="module-header">
+                <div class="module-icon">
+                    <i class="bi bi-pencil-square"></i>
+                </div>
+                <h3 class="module-title">采购申请</h3>
+                <p class="module-description">在线填写和提交采购申请表单，支持多行物资明细录入</p>
+            </div>
+            <div class="module-footer">
+                <span class="btn btn-primary w-100">
+                    <i class="bi bi-plus"></i> 开始申请
+                </span>
+            </div>
+        </a>
+        
+        <a href="{{ url_for('plan.index') }}" class="module-card text-decoration-none">
+            <div class="module-header">
+                <div class="module-icon">
+                    <i class="bi bi-clock-history"></i>
+                </div>
+                <h3 class="module-title">申请历史</h3>
+                <p class="module-description">查看历史申请记录和审批状态，支持筛选和搜索</p>
+            </div>
+            <div class="module-footer">
+                <span class="btn btn-success w-100">
+                    <i class="bi bi-list-ul"></i> 查看历史
+                </span>
+            </div>
+        </a>
+        
+        <a href="{{ url_for('plan.index') }}" class="module-card text-decoration-none">
+            <div class="module-header">
+                <div class="module-icon">
+                    <i class="bi bi-file-earmark-pdf"></i>
+                </div>
+                <h3 class="module-title">PDF导出</h3>
+                <p class="module-description">一键生成标准格式PDF文档，支持中文字体和正式打印</p>
+            </div>
+            <div class="module-footer">
+                <span class="btn btn-danger w-100">
+                    <i class="bi bi-download"></i> 导出文档
+                </span>
+            </div>
+        </a>
+        
+        <a href="{{ url_for('main.index') }}" class="module-card text-decoration-none">
+            <div class="module-header">
+                <div class="module-icon">
+                    <i class="bi bi-graph-up"></i>
+                </div>
+                <h3 class="module-title">统计报表</h3>
+                <p class="module-description">查看采购数据分析和趋势图表，支持自定义时间段</p>
+            </div>
+            <div class="module-footer">
+                <span class="btn btn-info w-100">
+                    <i class="bi bi-bar-chart"></i> 查看报表
+                </span>
+            </div>
+        </a>
+    </div>
+    
+    <!-- 快速操作 -->
+    <div class="form-section">
+        <h3 class="mb-4"><i class="bi bi-lightning-charge"></i> 快速操作</h3>
+        <div class="row g-3">
+            <div class="col-md-6">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="bg-blue-100 p-3 rounded-circle">
+                        <i class="bi bi-send text-blue-600 fs-4"></i>
+                    </div>
+                    <div>
+                        <h5 class="mb-1">新建采购计划</h5>
+                        <p class="text-muted mb-0">快速创建新的采购申请</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-6 text-end">
+                <a href="{{ url_for('plan.create') }}" class="btn btn-primary btn-lg">
+                    <i class="bi bi-plus-circle"></i> 立即创建
+                </a>
+            </div>
+        </div>
+    </div>
+    
+    <!-- 最近活动 -->
+    <div class="form-section">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3><i class="bi bi-activity"></i> 最近活动</h3>
+            <a href="{{ url_for('plan.index') }}" class="text-primary text-decoration-none">
+                查看全部 <i class="bi bi-chevron-right"></i>
+            </a>
+        </div>
+        
+        {% if recent_plans %}
+        <div class="table-responsive">
+            <table class="table table-hover">
+                <thead>
+                    <tr>
+                        <th>计划名称</th>
+                        <th>申请人</th>
+                        <th>创建时间</th>
+                        <th>状态</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for plan in recent_plans %}
+                    <tr>
+                        <td>{{ plan.plan_name }}</td>
+                        <td>{{ plan.creator.username if plan.creator else '未知' }}</td>
+                        <td>{{ plan.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if plan.status == 'draft' %}
+                            <span class="status-badge status-draft">草稿</span>
+                            {% elif plan.status == 'pending' %}
+                            <span class="status-badge status-pending">待审批</span>
+                            {% elif plan.status == 'approved' %}
+                            <span class="status-badge status-approved">已批准</span>
+                            {% elif plan.status == 'rejected' %}
+                            <span class="status-badge status-rejected">已拒绝</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <div class="action-buttons">
+                                <a href="{{ url_for('plan.detail', id=plan.id) }}" class="btn-action btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> 查看
+                                </a>
+                                {% if plan.status == 'draft' %}
+                                <a href="{{ url_for('plan.edit', id=plan.id) }}" class="btn-action btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i> 编辑
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+        {% else %}
+        <div class="empty-state">
+            <i class="bi bi-clipboard-data empty-icon"></i>
+            <h4 class="empty-title">暂无采购计划</h4>
+            <p class="empty-description">您还没有创建任何采购计划。点击下方按钮开始创建您的第一个采购计划。</p>
+            <a href="{{ url_for('plan.create') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> 创建采购计划
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+// 添加一些交互效果
+document.addEventListener('DOMContentLoaded', function() {
+    // 统计卡片悬停效果
+    const statCards = document.querySelectorAll('.stat-card');
+    statCards.forEach(card => {
+        card.addEventListener('mouseenter', function() {
+            this.classList.add('pulse');
+        });
+        card.addEventListener('mouseleave', function() {
+            this.classList.remove('pulse');
+        });
+    });
+});
+</script>
+{% endblock %}

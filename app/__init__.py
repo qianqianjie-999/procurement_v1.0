@@ -55,4 +55,10 @@ def create_app(config_name=None):
     from app.routes.auth import auth_bp
     app.register_blueprint(auth_bp)
 
+    from app.routes.admin import admin_bp
+    app.register_blueprint(admin_bp)
+
+    from app.routes.pdf_view import pdf_bp
+    app.register_blueprint(pdf_bp)
+
     return app

@@ -22,19 +22,35 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     SQLALCHEMY_ECHO = True
-    # 开发环境数据库地址（根据你的实际配置修改）
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
-        'mysql+pymysql://root:你的密码@localhost/procurement_dev'
+    # 开发环境数据库地址（优先从环境变量读取，否则使用 SQLite）
+    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
+        'sqlite:///procurement.db'
 
-    # 开发环境连接池配置
-    SQLALCHEMY_ENGINE_OPTIONS = {
-        'pool_pre_ping': True,  # 自动检测并重连
-    }
+    # SQLite 不需要连接池配置
+    SQLALCHEMY_ENGINE_OPTIONS = {}
+
+    # PDF 导出配置（开发环境）
+    PDF_STORAGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app', 'static', 'pdfs')
+    CHINESE_FONT_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app', 'static', 'fonts', 'SimSun.ttf')
+
+    # 上传文件配置（开发环境）
+    SCANNED_STORAGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app', 'static', 'uploads', 'scanned')
+    ATTACHMENT_STORAGE_PATH = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'app', 'static', 'uploads', 'attachments')
+
+    # 上传文件大小限制 (16MB)
+    MAX_CONTENT_LENGTH = 16 * 1024 * 1024
+    ALLOWED_SCANNED_EXTENSIONS = {'pdf'}
+    ALLOWED_ATTACHMENT_EXTENSIONS = {'pdf', 'doc', 'docx', 'xls', 'xlsx'}
 
     @classmethod
     def init_app(cls, app):
         Config.init_app(app)  # 现在父类有 init_app 方法了，不会报错
         app.logger.info('Development config initialized')
+        
+        # 确保上传目录存在
+        os.makedirs(cls.PDF_STORAGE_PATH, exist_ok=True)
+        os.makedirs(cls.SCANNED_STORAGE_PATH, exist_ok=True)
+        os.makedirs(cls.ATTACHMENT_STORAGE_PATH, exist_ok=True)
 
 # 测试环境配置（如果有）
 class TestingConfig(Config):
