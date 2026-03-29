@@ -2,6 +2,28 @@
 
 {% block title %}{{ plan.plan_name }} - 采购计划详情{% endblock %}
 
+{% block styles %}
+{{ super() }}
+<style>
+    /* 紧凑卡片间距 */
+    .card + .card {
+        margin-top: 0.75rem !important;
+    }
+    .card {
+        margin-bottom: 0.75rem !important;
+    }
+    /* 文件卡片内部间距 */
+    .file-card {
+        padding: 1rem !important;
+    }
+    /* 基本信息卡片 */
+    .detail-section {
+        margin-bottom: 0.75rem !important;
+        padding: 1rem !important;
+    }
+</style>
+{% endblock %}
+
 {% block content %}
 <!-- 页面头部 -->
 <div class="page-header">
