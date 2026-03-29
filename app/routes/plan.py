@@ -257,7 +257,7 @@ def create():
         'item_name': '',
         'brand_model': '',
         'specification': '',
-        'quantity': 1,
+        'quantity': None,
         'unit': '',
         'batch_quantity': None,
         'extra_contract_quantity': None,
