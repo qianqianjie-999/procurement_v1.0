@@ -1,7 +1,8 @@
 #!/bin/bash
 # ============================================================================
 # 采购管理系统 - 服务器拉取部署脚本
-# 用法：bash pull_deploy.sh
+# 用法：bash pull_deploy.sh [version]
+#       version: 可选，指定版本号 (如 v1.0, v2.0)，不指定则使用 main 分支
 # ============================================================================
 
 set -e
@@ -27,10 +28,16 @@ log_error() {
 # 配置变量
 APP_DIR="/var/www/html/procurement"
 PYTHON_VERSION="python3.9"
+VERSION="${1:-}"  # 可选的版本参数
 
 echo ""
 log_info "=========================================="
 log_info "采购管理系统 - 从 GitHub 拉取部署"
+if [[ -n "$VERSION" ]]; then
+    log_info "部署版本：$VERSION"
+else
+    log_info "部署分支：main"
+fi
 log_info "=========================================="
 echo ""
 
@@ -51,8 +58,16 @@ if [[ ! -d ".git" ]]; then
     exit 1
 fi
 
-git fetch origin main
-git reset --hard origin/main
+if [[ -n "$VERSION" ]]; then
+    # 指定版本部署
+    log_info "切换到版本：$VERSION"
+    git fetch origin tag "$VERSION"
+    git checkout "$VERSION"
+else
+    # main 分支部署
+    git fetch origin main
+    git reset --hard origin/main
+fi
 log_info "代码拉取完成"
 
 # 2. 检查虚拟环境
