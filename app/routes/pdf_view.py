@@ -1,7 +1,7 @@
 """
 PDF签字版查看路由
 """
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, make_response
 from flask_login import login_required, current_user
 from app.models import PurchasePlan
 from app import db
@@ -21,5 +21,10 @@ def signed_pdf_view():
     # 按创建时间倒序排列
     plans = query.order_by(PurchasePlan.created_at.desc())\
         .paginate(page=page, per_page=per_page, error_out=False)
-    
-    return render_template('pdf/signed_pdf_view.html', plans=plans)
+
+    response = make_response(render_template('pdf/signed_pdf_view.html', plans=plans))
+    # 禁止浏览器缓存，确保每次都从服务器获取最新数据
+    response.headers['Cache-Control'] = 'no-cache, no-store, must-revalidate'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '0'
+    return response
