@@ -15,8 +15,11 @@ def signed_pdf_view():
     page = request.args.get('page', 1, type=int)
     per_page = 20
     
-    # 查询当前用户的所有采购计划
-    query = PurchasePlan.query.filter_by(created_by=current_user.id)
+    # 查询当前用户的所有采购计划（管理员可以看到所有计划）
+    if current_user.is_administrator():
+        query = PurchasePlan.query
+    else:
+        query = PurchasePlan.query.filter_by(created_by=current_user.id)
     
     # 按创建时间倒序排列
     plans = query.order_by(PurchasePlan.created_at.desc())\
