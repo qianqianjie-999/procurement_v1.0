@@ -608,6 +608,16 @@ code {
     animation: fadeInUp 0.6s ease-out;
 }
 
+/* 注册页面容器 */
+.register-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 50%, #bae6fd 100%);
+    padding: 2rem 1rem;
+}
+
 @keyframes fadeInUp {
     from {
         opacity: 0;
