@@ -12,8 +12,8 @@ class LoginForm(FlaskForm):
 class RegistrationForm(FlaskForm):
     username = StringField('用户名', validators=[DataRequired(), Length(1, 64)])
     email = StringField('邮箱', validators=[DataRequired(), Email()])
-    full_name = StringField('姓名', validators=[Length(0, 100)])
-    department = StringField('部门', validators=[Length(0, 100)])
+    full_name = StringField('姓名', validators=[Optional(), Length(0, 100)])
+    department = StringField('部门', validators=[Optional(), Length(0, 100)])
     password = PasswordField('密码', validators=[DataRequired()])
     password2 = PasswordField('确认密码', validators=[DataRequired(), EqualTo('password')])
     submit = SubmitField('注册')
