@@ -72,3 +72,12 @@ class PurchaseItemForm(FlaskForm):
     extra_contract_quantity = DecimalField('合同外数量', validators=[Optional()], places=2)
     required_date = DateField('需求日期', validators=[Optional()])
     remarks = StringField('备注', validators=[Length(0, 200)])
+
+# 事务审批单表单
+class ApprovalRequestForm(FlaskForm):
+    department = StringField('请示部门', validators=[Length(0, 100)])
+    applicant_name = StringField('申请人', validators=[Length(0, 100)])
+    subject = StringField('请示主题', validators=[DataRequired(), Length(1, 500)])
+    content = TextAreaField('请示内容', validators=[DataRequired(), Length(1, 5000)])
+    submit = SubmitField('保存')
+    submit_and_submit = SubmitField('提交审批')

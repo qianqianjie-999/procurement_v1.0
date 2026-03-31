@@ -349,3 +349,56 @@ def drop_db(app):
     """删除所有表（慎用）"""
     with app.app_context():
         db.drop_all()
+
+
+# ============================================================================
+# 事务审批单模型
+# ============================================================================
+
+class ApprovalRequest(db.Model):
+    """事务审批单"""
+    __tablename__ = 'approval_requests'
+
+    id = db.Column(db.Integer, primary_key=True)
+    request_number = db.Column(db.String(50), unique=True, nullable=False, index=True)  # 审批单编号
+    department = db.Column(db.String(100))  # 请示部门
+    applicant_name = db.Column(db.String(100))  # 申请人
+    subject = db.Column(db.String(500), nullable=False)  # 请示主题
+    content = db.Column(db.Text, nullable=False)  # 请示内容
+
+    # 审批意见
+    manager_comment = db.Column(db.Text)  # 分管领导审批意见
+    manager_signed_at = db.Column(db.DateTime)  # 分管领导签字日期
+    company_leader_comment = db.Column(db.Text)  # 公司领导审批意见
+    company_leader_signed_at = db.Column(db.DateTime)  # 公司领导签字日期
+
+    # 状态
+    status = db.Column(db.String(20), default='draft')  # draft, pending, approved
+    created_by = db.Column(db.Integer, db.ForeignKey('users.id'))  # 创建人
+    scanned_path = db.Column(db.String(500))  # 扫描件路径
+
+    created_at = db.Column(db.DateTime, default=datetime.utcnow)
+    submitted_at = db.Column(db.DateTime)
+    approved_at = db.Column(db.DateTime)
+
+    # 关联创建人
+    creator = db.relationship('User', foreign_keys=[created_by], backref='approval_requests')
+
+    __table_args__ = (
+        db.Index('idx_request_status', 'status'),
+        db.Index('idx_request_created_at', 'created_at'),
+    )
+
+    @property
+    def status_label(self):
+        """获取状态的中文标签"""
+        labels = {
+            'draft': '草稿',
+            'pending': '待审批',
+            'approved': '已批准',
+            'rejected': '已拒绝'
+        }
+        return labels.get(self.status, self.status)
+
+    def __repr__(self):
+        return f'<ApprovalRequest {self.request_number}>'

@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>事务工作请示审批单 - {{ approval_request.request_number }}</title>
+    <style>
+        @page {
+            size: A4;
+            margin: 15mm;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "SimSun", "Songti SC", "STSong", sans-serif;
+            font-size: 10.5pt;
+            line-height: 1.5;
+            color: #000;
+        }
+
+        /* 标题 */
+        .header {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 16pt;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* 表格样式 */
+        .main-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .main-table td, .main-table th {
+            border: 1px solid #000;
+            padding: 6px 8px;
+        }
+
+        /* 基本信息行 */
+        .info-label {
+            font-weight: bold;
+            width: 80px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+
+        /* 请示内容 */
+        .content-cell {
+            height: 300px;
+            vertical-align: top;
+            padding: 10px 8px !important;
+        }
+
+        .content-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 5px;
+        }
+
+        .content-text {
+            white-space: pre-line;
+            line-height: 1.8;
+            word-break: break-all;
+        }
+
+        /* 审批意见单元格 */
+        .approval-cell {
+            height: 140px;
+            vertical-align: top;
+            padding: 8px !important;
+            width: 50%;
+        }
+
+        .approval-label {
+            font-weight: bold;
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        .signature-area {
+            margin-top: 40px;
+        }
+
+        .signature-row {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .signature-label {
+            font-weight: normal;
+            margin-right: 10px;
+        }
+
+        .signature-line {
+            flex-grow: 1;
+            height: 1px;
+            background: transparent;
+            border-bottom: 1px dotted #999;
+            min-width: 100px;
+        }
+
+        .date-area {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+        }
+
+        .date-label {
+            font-size: 9pt;
+        }
+
+        .date-space {
+            display: inline-block;
+            width: 30px;
+            border-bottom: 1px dotted #999;
+            margin: 0 3px;
+        }
+
+        /* 已填审批意见样式 */
+        .filled-comment {
+            background-color: #f5f5f5;
+            padding: 8px;
+            border: 1px dashed #0d6efd;
+            margin-top: 5px;
+            font-size: 9pt;
+        }
+
+        .filled-comment small {
+            color: #666;
+            display: block;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 标题 -->
+    <div class="header">
+        <h1>科威达公司事务工作请示审批单</h1>
+    </div>
+
+    <!-- 主表格 -->
+    <table class="main-table">
+        <!-- 基本信息 -->
+        <tr>
+            <td class="info-label">请示部门</td>
+            <td style="width: 25%;">{{ approval_request.department or '' }}</td>
+            <td class="info-label">申请人</td>
+            <td style="width: 25%;">{{ approval_request.applicant_name or '' }}</td>
+            <td class="info-label" style="width: 50px; white-space: nowrap;">时间</td>
+            <td style="white-space: nowrap;">{{ approval_request.created_at.strftime('%Y 年%m 月%d 日') }}</td>
+        </tr>
+
+        <!-- 请示主题 -->
+        <tr>
+            <td class="info-label">请示主题</td>
+            <td colspan="5">关于 {{ approval_request.subject }} 的请示</td>
+        </tr>
+
+        <!-- 请示内容 -->
+        <tr>
+            <td colspan="6" class="content-cell">
+                <span class="content-label">请示内容：</span>
+                <div class="content-text">{{ approval_request.content }}</div>
+            </td>
+        </tr>
+
+        <!-- 分管领导审批意见 | 公司领导审批意见 -->
+        <tr>
+            <td colspan="3" class="approval-cell">
+                <span class="approval-label">分管领导审批意见：</span>
+                {% if approval_request.manager_comment %}
+                <div class="filled-comment">
+                    {{ approval_request.manager_comment }}
+                    <small>{{ approval_request.manager_signed_at.strftime('%Y-%m-%d %H:%M') if approval_request.manager_signed_at else '' }}</small>
+                </div>
+                {% else %}
+                <div class="signature-area">
+                    <div class="signature-row">
+                        <span class="signature-label">签字：</span>
+                        <div class="signature-line"></div>
+                    </div>
+                    <div class="date-area">
+                        <span class="date-label">年</span><span class="date-space"></span>月<span class="date-space"></span>日<span class="date-space"></span>
+                    </div>
+                </div>
+                {% endif %}
+            </td>
+            <td colspan="3" class="approval-cell">
+                <span class="approval-label">公司领导审批意见：</span>
+                {% if approval_request.company_leader_comment %}
+                <div class="filled-comment" style="border-color: #198754;">
+                    {{ approval_request.company_leader_comment }}
+                    <small>{{ approval_request.company_leader_signed_at.strftime('%Y-%m-%d %H:%M') if approval_request.company_leader_signed_at else '' }}</small>
+                </div>
+                {% else %}
+                <div class="signature-area">
+                    <div class="signature-row">
+                        <span class="signature-label">签字：</span>
+                        <div class="signature-line"></div>
+                    </div>
+                    <div class="date-area">
+                        <span class="date-label">年</span><span class="date-space"></span>月<span class="date-space"></span>日<span class="date-space"></span>
+                    </div>
+                </div>
+                {% endif %}
+            </td>
+        </tr>
+    </table>
+
+    <!-- 页脚 -->
+    <div style="margin-top: 12px; text-align: center; font-size: 9pt; color: #666;">
+        <p>审批单编号：{{ approval_request.request_number }} &nbsp;&nbsp;&nbsp; 打印日期：{{ now().strftime('%Y 年%m 月%d 日 %H:%M') }}</p>
+    </div>
+</body>
+</html>

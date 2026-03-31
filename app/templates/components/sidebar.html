@@ -28,7 +28,14 @@
                 <span>新建计划</span>
             </a>
         </div>
-        
+
+        <div class="nav-item">
+            <a href="{{ url_for('approval_request.index') }}" class="nav-link {% if request.endpoint == 'approval_request.index' %}active{% endif %}">
+                <i class="bi bi-file-earmark-check"></i>
+                <span>事务审批单</span>
+            </a>
+        </div>
+
         {% if current_user.is_administrator() %}
         <div class="nav-item">
             <a href="{{ url_for('plan.index', status='pending') }}" class="nav-link {% if request.args.get('status') == 'pending' %}active{% endif %}">

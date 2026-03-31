@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}事务审批单 - 采购管理系统{% endblock %}
+{% block page_title %}事务审批单管理{% endblock %}
+
+{% block content %}
+<div class="fade-in">
+    <!-- 页面标题和操作按钮 -->
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2><i class="bi bi-file-earmark-check"></i> 事务审批单管理</h2>
+        <a href="{{ url_for('approval_request.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 新建审批单
+        </a>
+    </div>
+
+    <!-- 筛选和搜索 -->
+    <div class="form-section mb-4">
+        <div class="row g-3">
+            <div class="col-md-3">
+                <label class="form-label">状态筛选</label>
+                <select class="form-select" id="statusFilter">
+                    <option value="">全部状态</option>
+                    <option value="draft" {% if request.args.get('status') == 'draft' %}selected{% endif %}>草稿</option>
+                    <option value="pending" {% if request.args.get('status') == 'pending' %}selected{% endif %}>待审批</option>
+                    <option value="approved" {% if request.args.get('status') == 'approved' %}selected{% endif %}>已批准</option>
+                </select>
+            </div>
+            <div class="col-md-6">
+                <label class="form-label">搜索</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" placeholder="输入审批单主题或编号..." id="searchInput" value="{{ request.args.get('q', '') }}">
+                    <button class="btn btn-outline-secondary" type="button" id="searchBtn">
+                        <i class="bi bi-search"></i> 搜索
+                    </button>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <label class="form-label">操作</label>
+                <div class="d-grid">
+                    <button class="btn btn-outline-secondary" type="button" id="resetBtn">
+                        <i class="bi bi-arrow-clockwise"></i> 重置
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 数据表格 -->
+    {% if requests %}
+    <div class="data-table">
+        <div class="table-responsive">
+            <table class="table table-hover mb-0">
+                <thead>
+                    <tr>
+                        <th>审批单编号</th>
+                        <th>请示主题</th>
+                        <th>请示部门</th>
+                        <th>申请人</th>
+                        <th>创建时间</th>
+                        <th>状态</th>
+                        <th class="text-end">操作</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for req in requests %}
+                    <tr>
+                        <td>{{ req.request_number }}</td>
+                        <td>{{ req.subject }}</td>
+                        <td>{{ req.department or '-' }}</td>
+                        <td>{{ req.applicant_name or '-' }}</td>
+                        <td>{{ req.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                        <td>
+                            {% if req.status == 'draft' %}
+                            <span class="status-badge status-draft">草稿</span>
+                            {% elif req.status == 'pending' %}
+                            <span class="status-badge status-pending">待审批</span>
+                            {% elif req.status == 'approved' %}
+                            <span class="status-badge status-approved">已批准</span>
+                            {% elif req.status == 'rejected' %}
+                            <span class="status-badge status-rejected">已拒绝</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-end">
+                            <div class="action-buttons">
+                                <a href="{{ url_for('approval_request.detail', id=req.id) }}" class="btn-action btn btn-sm btn-outline-primary">
+                                    <i class="bi bi-eye"></i> 查看
+                                </a>
+                                {% if req.status == 'draft' %}
+                                <a href="{{ url_for('approval_request.edit', id=req.id) }}" class="btn-action btn btn-sm btn-outline-secondary">
+                                    <i class="bi bi-pencil"></i> 编辑
+                                </a>
+                                {% endif %}
+                                <a href="{{ url_for('approval_request.export_pdf', id=req.id) }}" target="_blank" class="btn-action btn btn-sm btn-outline-info">
+                                    <i class="bi bi-file-earmark-pdf"></i> PDF
+                                </a>
+                                {% if req.scanned_path %}
+                                <a href="{{ url_for('approval_request.view_scanned', id=req.id) }}" target="_blank" class="btn-action btn btn-sm btn-outline-success">
+                                    <i class="bi bi-signature"></i> 签字版
+                                </a>
+                                {% endif %}
+                            </div>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 分页 -->
+    {% if pagination %}
+    <div class="pagination-container">
+        <nav>
+            <ul class="pagination">
+                {% if pagination.has_prev %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('approval_request.index', page=pagination.prev_num, **request.args) }}">«</a>
+                </li>
+                {% endif %}
+
+                {% for page_num in pagination.iter_pages() %}
+                    {% if page_num %}
+                        {% if page_num != pagination.page %}
+                        <li class="page-item">
+                            <a class="page-link" href="{{ url_for('approval_request.index', page=page_num, **request.args) }}">{{ page_num }}</a>
+                        </li>
+                        {% else %}
+                        <li class="page-item active">
+                            <span class="page-link">{{ page_num }}</span>
+                        </li>
+                        {% endif %}
+                    {% else %}
+                    <li class="page-item disabled">
+                        <span class="page-link">…</span>
+                    </li>
+                    {% endif %}
+                {% endfor %}
+
+                {% if pagination.has_next %}
+                <li class="page-item">
+                    <a class="page-link" href="{{ url_for('approval_request.index', page=pagination.next_num, **request.args) }}">»</a>
+                </li>
+                {% endif %}
+            </ul>
+        </nav>
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- 空状态 -->
+    <div class="empty-state">
+        <i class="bi bi-clipboard-data empty-icon"></i>
+        <h4 class="empty-title">暂无事务审批单</h4>
+        <p class="empty-description">
+            {% if request.args %}
+            没有找到匹配的审批单。尝试调整筛选条件或搜索关键词。
+            {% else %}
+            您还没有创建任何事务审批单。点击下方按钮开始创建您的第一个审批单。
+            {% endif %}
+        </p>
+        <a href="{{ url_for('approval_request.create') }}" class="btn btn-primary">
+            <i class="bi bi-plus-circle"></i> 创建事务审批单
+        </a>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusFilter = document.getElementById('statusFilter');
+    const searchInput = document.getElementById('searchInput');
+    const searchBtn = document.getElementById('searchBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    if (statusFilter) {
+        statusFilter.addEventListener('change', function() {
+            const url = new URL(window.location);
+            if (this.value) {
+                url.searchParams.set('status', this.value);
+            } else {
+                url.searchParams.delete('status');
+            }
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
+        });
+    }
+
+    if (searchBtn) {
+        searchBtn.addEventListener('click', function() {
+            const query = searchInput.value.trim();
+            const url = new URL(window.location);
+            if (query) {
+                url.searchParams.set('q', query);
+            } else {
+                url.searchParams.delete('q');
+            }
+            url.searchParams.delete('page');
+            window.location.href = url.toString();
+        });
+    }
+
+    if (searchInput) {
+        searchInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchBtn.click();
+            }
+        });
+    }
+
+    if (resetBtn) {
+        resetBtn.addEventListener('click', function() {
+            window.location.href = '{{ url_for("approval_request.index") }}';
+        });
+    }
+});
+</script>
+{% endblock %}
