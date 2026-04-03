@@ -61,15 +61,22 @@
         white-space: normal;
         vertical-align: top;
     }
-    .items-table .text-wrap {
-        max-width: 200px;
+    /* 物资名称、品牌型号、规格、备注、备注 - 强制换行 */
+    .items-table .col-name-cell,
+    .items-table .col-brand-cell,
+    .items-table .col-spec-cell,
+    .items-table .col-remark-cell {
+        max-width: 180px;
         word-wrap: break-word;
-        white-space: normal;
-    }
-    .items-table .col-url {
-        max-width: 300px;
         word-break: break-all;
         white-space: normal;
+    }
+    /* 长 URL 特殊处理 */
+    .items-table .col-url {
+        max-width: 200px;
+        word-break: break-all;
+        white-space: normal;
+        font-size: 0.85rem;
     }
 </style>
 {% endblock %}
@@ -279,30 +286,30 @@
                 <thead>
                     <tr>
                         <th style="width: 40px;">序号</th>
-                        <th style="max-width: 150px;">物资名称</th>
-                        <th style="max-width: 120px;">品牌型号</th>
-                        <th style="max-width: 150px;">主要规格</th>
+                        <th style="width: 18%;">物资名称</th>
+                        <th style="width: 15%;">品牌型号</th>
+                        <th style="width: 18%;">主要规格</th>
                         <th style="width: 60px;">数量</th>
                         <th style="width: 50px;">单位</th>
                         <th style="width: 70px;">批次数量</th>
                         <th style="width: 70px;">合同外数量</th>
                         <th style="width: 90px;">计划到货时间</th>
-                        <th style="max-width: 200px;">备注</th>
+                        <th style="width: 20%;">备注</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for item in items %}
                     <tr>
                         <td class="text-center fw-bold text-muted">{{ loop.index }}</td>
-                        <td class="text-wrap">{{ item.item_name }}</td>
-                        <td class="text-wrap">{{ item.brand_model or '-' }}</td>
-                        <td class="text-wrap">{{ item.specification or '-' }}</td>
+                        <td class="col-name-cell">{{ item.item_name }}</td>
+                        <td class="col-brand-cell">{{ item.brand_model or '-' }}</td>
+                        <td class="col-spec-cell">{{ item.specification or '-' }}</td>
                         <td>{{ "%.1f"|format(item.quantity) }}</td>
                         <td>{{ item.unit or '-' }}</td>
                         <td>{{ "%.1f"|format(item.batch_quantity) if item.batch_quantity else '-' }}</td>
                         <td>{{ "%.1f"|format(item.extra_contract_quantity) if item.extra_contract_quantity else '-' }}</td>
                         <td>{{ item.required_date.strftime('%Y-%m-%d') if item.required_date else '-' }}</td>
-                        <td class="text-wrap">{{ item.remarks or '-' }}</td>
+                        <td class="col-remark-cell">{{ item.remarks or '-' }}</td>
                     </tr>
                     {% endfor %}
                 </tbody>
