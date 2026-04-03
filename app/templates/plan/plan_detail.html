@@ -61,7 +61,7 @@
         white-space: normal;
         vertical-align: top;
     }
-    /* 物资名称、品牌型号、规格、备注、备注 - 强制换行 */
+    /* 物资名称、品牌型号、规格、备注 - 强制换行 */
     .items-table .col-name-cell,
     .items-table .col-brand-cell,
     .items-table .col-spec-cell,
@@ -70,6 +70,12 @@
         word-wrap: break-word;
         word-break: break-all;
         white-space: normal;
+    }
+    /* 数量、单位、计划到货时间 - 保持一行不换行 */
+    .items-table .col-qty-cell,
+    .items-table .col-unit-cell,
+    .items-table .col-date-cell {
+        white-space: nowrap;
     }
     /* 长 URL 特殊处理 */
     .items-table .col-url {
@@ -304,11 +310,11 @@
                         <td class="col-name-cell">{{ item.item_name }}</td>
                         <td class="col-brand-cell">{{ item.brand_model or '-' }}</td>
                         <td class="col-spec-cell">{{ item.specification or '-' }}</td>
-                        <td>{{ "%.1f"|format(item.quantity) }}</td>
-                        <td>{{ item.unit or '-' }}</td>
+                        <td class="col-qty-cell">{{ "%.1f"|format(item.quantity) }}</td>
+                        <td class="col-unit-cell">{{ item.unit or '-' }}</td>
                         <td>{{ "%.1f"|format(item.batch_quantity) if item.batch_quantity else '-' }}</td>
                         <td>{{ "%.1f"|format(item.extra_contract_quantity) if item.extra_contract_quantity else '-' }}</td>
-                        <td>{{ item.required_date.strftime('%Y-%m-%d') if item.required_date else '-' }}</td>
+                        <td class="col-date-cell">{{ item.required_date.strftime('%Y-%m-%d') if item.required_date else '-' }}</td>
                         <td class="col-remark-cell">{{ item.remarks or '-' }}</td>
                     </tr>
                     {% endfor %}
