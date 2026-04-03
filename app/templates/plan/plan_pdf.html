@@ -17,30 +17,30 @@
 
         body {
             font-family: "SimSun", "Songti SC", "STSong", sans-serif;
-            font-size: 12px;
-            line-height: 1.5;
+            font-size: 10px;
+            line-height: 1.4;
             color: #000;
         }
 
         /* 标题样式 */
         .header {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
             border-bottom: 2px solid #000;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
         }
 
         .header .company-name {
-            font-size: 16px;
+            font-size: 14px;
             font-weight: bold;
             color: #333;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .header h1 {
-            font-size: 22px;
+            font-size: 18px;
             font-weight: bold;
-            letter-spacing: 2px;
+            letter-spacing: 1px;
         }
 
         /* 基本信息表格 */
@@ -52,107 +52,97 @@
 
         .info-table td {
             border: 1px solid #000;
-            padding: 6px 10px;
-            word-break: break-word;
+            padding: 5px 8px;
+            word-break: break-all;
             white-space: normal;
         }
 
         .info-table .label {
             font-weight: bold;
-            width: 100px;
-            background-color: #f9f9f9;
-            word-break: keep-all;
+            width: 90px;
+            background-color: #f5f5f5;
         }
 
         /* 物资明细表格 */
         .items-table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
-            font-size: 11px;
-            page-break-inside: auto;  /* 允许表格内部分页 */
+            margin-bottom: 15px;
+            font-size: 9px;
+            table-layout: fixed;
         }
 
         .items-table thead {
-            display: table-header-group;  /* 确保每页都显示表头 */
+            display: table-header-group;
         }
 
         .items-table tr {
-            page-break-inside: avoid;  /* 避免行被拆分 */
+            page-break-inside: avoid;
         }
 
         .items-table th,
         .items-table td {
             border: 1px solid #000;
             padding: 6px 4px;
-            text-align: center;
             word-wrap: break-word;
-            word-break: break-word;
+            word-break: break-all;
             white-space: normal;
-            vertical-align: middle;
+            vertical-align: top;
+            overflow-wrap: break-word;
         }
 
         .items-table th {
             background-color: #e8e8e8;
             font-weight: bold;
-            word-break: keep-all;
+            text-align: center;
         }
 
-        .items-table td.left-align {
+        .items-table td {
             text-align: left;
-            vertical-align: top;
-            word-wrap: break-word;
-            word-break: break-word;
-            white-space: normal;
         }
 
-        /* 列宽 */
-        .items-table .col-name { width: 4%; }
+        /* 列宽 - 使用固定宽度 */
+        .items-table .col-num { width: 30px; }
+        .items-table .col-name { width: 18%; }
         .items-table .col-brand { width: 20%; }
-        .items-table .col-spec { width: 20%; }
-        .items-table .col-quantity { width: 6%; }
-        .items-table .col-unit { width: 5%; }
-        .items-table .col-batch { width: 6%; }
-        .items-table .col-extra { width: 6%; }
-        .items-table .col-date { width: 8%; }
-        .items-table .col-remark { width: 25%; }
+        .items-table .col-spec { width: 25%; }
+        .items-table .col-qty { width: 50px; text-align: center; }
+        .items-table .col-unit { width: 40px; text-align: center; }
+        .items-table .col-batch { width: 60px; text-align: center; }
+        .items-table .col-extra { width: 60px; text-align: center; }
+        .items-table .col-date { width: 80px; text-align: center; }
+        .items-table .col-remark { width: 22%; }
 
         /* 签字栏 */
         .signature-section {
-            margin-top: 20px;
-            margin-bottom: 15px;
-            page-break-inside: avoid;  /* 避免签字栏被分页 */
-            break-inside: avoid;
+            margin-top: 15px;
+            page-break-inside: avoid;
         }
 
         .signature-title {
-            font-size: 14px;
+            font-size: 12px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 8px;
             border-bottom: 1px solid #000;
-            padding-bottom: 5px;
-            page-break-after: avoid;
+            padding-bottom: 4px;
         }
 
         .signature-grid {
             width: 100%;
             border-collapse: collapse;
-            page-break-inside: avoid;  /* 避免表格被分页 */
-            break-inside: avoid;
+            page-break-inside: avoid;
         }
 
         .signature-grid td {
             border: 1px solid #000;
-            padding: 12px 8px;
-            height: 40px;
+            padding: 10px 6px;
+            height: 35px;
         }
 
         .signature-grid .sig-label {
             font-weight: bold;
             width: 22%;
-            text-align: left;
             background-color: #f5f5f5;
-            padding-left: 15px;
         }
 
         .signature-grid .sig-space {
@@ -165,19 +155,26 @@
 
         /* 备注说明 */
         .gm-approval-note {
-            margin-top: 15px;
-            padding: 10px;
+            margin-top: 10px;
+            padding: 8px;
             border: 1px solid #000;
             background-color: #fafafa;
-            font-size: 10px;
+            font-size: 8px;
         }
 
         .gm-approval-note p {
-            margin: 4px 0;
+            margin: 3px 0;
         }
 
         .gm-approval-note strong {
             font-weight: bold;
+        }
+
+        /* 页脚 */
+        .footer {
+            margin-top: 10px;
+            font-size: 8px;
+            text-align: center;
         }
     </style>
 </head>
@@ -222,11 +219,11 @@
     <table class="items-table">
         <thead>
             <tr>
-                <th class="col-name">序号</th>
+                <th class="col-num">序号</th>
                 <th class="col-name">物资名称</th>
                 <th class="col-brand">品牌型号</th>
                 <th class="col-spec">主要规格</th>
-                <th class="col-quantity">数量</th>
+                <th class="col-qty">数量</th>
                 <th class="col-unit">单位</th>
                 <th class="col-batch">批次数量</th>
                 <th class="col-extra">合同外数量</th>
@@ -237,16 +234,16 @@
         <tbody>
             {% for item in items %}
             <tr>
-                <td>{{ loop.index }}</td>
-                <td class="left-align">{{ item.item_name or '-' }}</td>
-                <td class="left-align">{{ item.brand_model or '-' }}</td>
-                <td class="left-align">{{ item.specification or '-' }}</td>
-                <td>{{ "%.1f"|format(item.quantity|default(0)) }}</td>
-                <td>{{ item.unit or '-' }}</td>
-                <td>{{ "%.1f"|format(item.batch_quantity) if item.batch_quantity else '-' }}</td>
-                <td>{{ "%.1f"|format(item.extra_contract_quantity) if item.extra_contract_quantity else '-' }}</td>
-                <td>{{ item.required_date.strftime('%Y-%m-%d') if item.required_date else '-' }}</td>
-                <td class="left-align">{{ item.remarks or '-' }}</td>
+                <td style="text-align: center;">{{ loop.index }}</td>
+                <td>{{ item.item_name or '-' }}</td>
+                <td>{{ item.brand_model or '-' }}</td>
+                <td>{{ item.specification or '-' }}</td>
+                <td style="text-align: center;">{{ "%.1f"|format(item.quantity|default(0)) }}</td>
+                <td style="text-align: center;">{{ item.unit or '-' }}</td>
+                <td style="text-align: center;">{{ "%.1f"|format(item.batch_quantity) if item.batch_quantity else '-' }}</td>
+                <td style="text-align: center;">{{ "%.1f"|format(item.extra_contract_quantity) if item.extra_contract_quantity else '-' }}</td>
+                <td style="text-align: center;">{{ item.required_date.strftime('%Y-%m-%d') if item.required_date else '-' }}</td>
+                <td>{{ item.remarks or '-' }}</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -288,7 +285,7 @@
     </div>
 
     <!-- 页脚 -->
-    <div style="margin-top: 15px; font-size: 10px; text-align: center;">
+    <div class="footer">
         <p>制表人：{{ plan.creator.username if plan.creator else '-' }}</p>
     </div>
 </body>
