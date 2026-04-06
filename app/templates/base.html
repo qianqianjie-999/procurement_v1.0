@@ -24,6 +24,9 @@
     <!-- 侧边栏导航 -->
     {% include 'components/sidebar.html' %}
     
+    <!-- 侧边栏遮罩 -->
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    
     <!-- 主内容区域 -->
     <div class="main-content" id="mainContent">
         <!-- 顶部导航栏 -->
@@ -130,11 +133,30 @@
         document.addEventListener('DOMContentLoaded', function() {
             const sidebar = document.getElementById('sidebar');
             const sidebarToggle = document.getElementById('sidebarToggle');
+            const sidebarOverlay = document.getElementById('sidebarOverlay');
             const mainContent = document.getElementById('mainContent');
             
-            if (sidebarToggle && sidebar) {
-                sidebarToggle.addEventListener('click', function() {
+            if (sidebarToggle && sidebar && sidebarOverlay) {
+                // 切换侧边栏
+                function toggleSidebar() {
                     sidebar.classList.toggle('show');
+                    sidebarOverlay.classList.toggle('show');
+                }
+                
+                // 关闭侧边栏
+                function closeSidebar() {
+                    sidebar.classList.remove('show');
+                    sidebarOverlay.classList.remove('show');
+                }
+                
+                // 点击切换按钮
+                sidebarToggle.addEventListener('click', function() {
+                    toggleSidebar();
+                });
+                
+                // 点击遮罩关闭侧边栏
+                sidebarOverlay.addEventListener('click', function() {
+                    closeSidebar();
                 });
                 
                 // 点击外部关闭侧边栏（移动端）
@@ -142,8 +164,15 @@
                     if (window.innerWidth <= 1200 && 
                         !sidebar.contains(e.target) && 
                         e.target !== sidebarToggle && 
-                        !sidebar.classList.contains('show')) {
-                        sidebar.classList.remove('show');
+                        sidebar.classList.contains('show')) {
+                        closeSidebar();
+                    }
+                });
+                
+                // 按ESC键关闭侧边栏
+                document.addEventListener('keydown', function(e) {
+                    if (e.key === 'Escape' && sidebar.classList.contains('show')) {
+                        closeSidebar();
                     }
                 });
             }
