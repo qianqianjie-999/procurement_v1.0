@@ -9,8 +9,8 @@
     <link href="{{ url_for('static', filename='vendor/bootstrap.min.css') }}" rel="stylesheet">
     <!-- Bootstrap Icons -->
     <link href="{{ url_for('static', filename='vendor/bootstrap-icons.css') }}" rel="stylesheet">
-    <!-- Google Fonts - Inter (现代化字体) -->
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- 本地字体 - 系统字体栈，无CDN依赖 -->
+    <link href="{{ url_for('static', filename='css/fonts-local.css') }}" rel="stylesheet">
 
     {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">

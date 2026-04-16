@@ -1,0 +1,78 @@
+/* ============================================
+   本地字体配置 - 系统字体栈
+   本地加载，速度更快，无CDN依赖
+   ============================================ */
+
+/* Inter字体的本地替代方案 - 使用系统等宽字体栈 */
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 300;
+    font-display: swap;
+    src: local('Inter Light'), local('InterLight');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local('Inter Regular'), local('Inter-Regular');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 500;
+    font-display: swap;
+    src: local('Inter Medium'), local('Inter-Medium');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 600;
+    font-display: swap;
+    src: local('Inter SemiBold'), local('Inter-SemiBold');
+}
+
+@font-face {
+    font-family: 'Inter';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: local('Inter Bold'), local('Inter-Bold');
+}
+
+/* 系统字体栈 - 跨平台最佳实践 */
+.system-font-stack {
+    font-family: -apple-system BlinkMacSystemFont 'SF Pro Display' 'Segoe UI' Roboto 'Helvetica Neue' Arial sans-serif;
+}
+
+/* 中文字体栈 - 优化中文显示 */
+.chinese-font-stack {
+    font-family: 'PingFang SC' 'Hiragino Sans GB' 'Microsoft YaHei' 'Noto Sans CJK SC' sans-serif;
+}
+
+/* 等宽字体 - 用于代码和数据 */
+.monospace-font-stack {
+    font-family: 'SF Mono' Monaco Consolas 'Liberation Mono' 'Courier New' monospace;
+}
+
+/* 全局字体应用 */
+body {
+    font-family: -apple-system BlinkMacSystemFont 'SF Pro Display' 'Segoe UI' Roboto 'Helvetica Neue' Arial 'PingFang SC' 'Hiragino Sans GB' 'Microsoft YaHei' 'Noto Sans CJK SC' sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* 标题字体 - 使用Inter替代方案 */
+h1, h2, h3, h4, h5, h6 {
+    font-family: -apple-system BlinkMacSystemFont 'SF Pro Display' 'Segoe UI' Roboto 'Helvetica Neue' Arial 'PingFang SC' 'Hiragino Sans GB' 'Microsoft YaHei' 'Noto Sans CJK SC' sans-serif;
+    font-weight: 600;
+}
+
+/* 代码字体 */
+code, pre, kbd, samp {
+    font-family: 'SF Mono' Monaco Consolas 'Liberation Mono' 'Courier New' monospace;
+}
