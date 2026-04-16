@@ -1,78 +1,87 @@
 /* ============================================
-   本地字体配置 - 系统字体栈
-   本地加载，速度更快，无CDN依赖
+   本地字体配置 - 内嵌字体文件
+   使用 Liberation Sans (开源) + SimSun (宋体)
+   无CDN依赖，加载速度更快
    ============================================ */
 
-/* Inter字体的本地替代方案 - 使用系统等宽字体栈 */
+/* Liberation Sans Regular - 主要西文字体 */
 @font-face {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 300;
-    font-display: swap;
-    src: local('Inter Light'), local('InterLight');
-}
-
-@font-face {
-    font-family: 'Inter';
+    font-family: 'LiberationSans';
     font-style: normal;
     font-weight: 400;
     font-display: swap;
-    src: local('Inter Regular'), local('Inter-Regular');
+    src: url('../fonts/LiberationSans-Regular.ttf') format('truetype');
 }
 
 @font-face {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 500;
+    font-family: 'LiberationSans';
+    font-style: italic;
+    font-weight: 400;
     font-display: swap;
-    src: local('Inter Medium'), local('Inter-Medium');
+    src: url('../fonts/LiberationSans-Italic.ttf') format('truetype');
 }
 
 @font-face {
-    font-family: 'Inter';
-    font-style: normal;
-    font-weight: 600;
-    font-display: swap;
-    src: local('Inter SemiBold'), local('Inter-SemiBold');
-}
-
-@font-face {
-    font-family: 'Inter';
+    font-family: 'LiberationSans';
     font-style: normal;
     font-weight: 700;
     font-display: swap;
-    src: local('Inter Bold'), local('Inter-Bold');
+    src: url('../fonts/LiberationSans-Bold.ttf') format('truetype');
 }
 
-/* 系统字体栈 - 跨平台最佳实践 */
-.system-font-stack {
-    font-family: -apple-system BlinkMacSystemFont 'SF Pro Display' 'Segoe UI' Roboto 'Helvetica Neue' Arial sans-serif;
+@font-face {
+    font-family: 'LiberationSans';
+    font-style: italic;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../fonts/LiberationSans-BoldItalic.ttf') format('truetype');
 }
 
-/* 中文字体栈 - 优化中文显示 */
-.chinese-font-stack {
-    font-family: 'PingFang SC' 'Hiragino Sans GB' 'Microsoft YaHei' 'Noto Sans CJK SC' sans-serif;
+/* Liberation Serif - 衬线字体 */
+@font-face {
+    font-family: 'LiberationSerif';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/LiberationSerif-Regular.ttf') format('truetype');
 }
 
-/* 等宽字体 - 用于代码和数据 */
-.monospace-font-stack {
-    font-family: 'SF Mono' Monaco Consolas 'Liberation Mono' 'Courier New' monospace;
+@font-face {
+    font-family: 'LiberationSerif';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: url('../fonts/LiberationSerif-Bold.ttf') format('truetype');
 }
 
-/* 全局字体应用 */
+/* Liberation Mono - 等宽字体 */
+@font-face {
+    font-family: 'LiberationMono';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: url('../fonts/LiberationMono-Regular.ttf') format('truetype');
+}
+
+/* 全局字体应用 - 混合字体栈 */
 body {
-    font-family: -apple-system BlinkMacSystemFont 'SF Pro Display' 'Segoe UI' Roboto 'Helvetica Neue' Arial 'PingFang SC' 'Hiragino Sans GB' 'Microsoft YaHei' 'Noto Sans CJK SC' sans-serif;
+    font-family: 'LiberationSans', 'SimSun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* 标题字体 - 使用Inter替代方案 */
+/* 标题字体 */
 h1, h2, h3, h4, h5, h6 {
-    font-family: -apple-system BlinkMacSystemFont 'SF Pro Display' 'Segoe UI' Roboto 'Helvetica Neue' Arial 'PingFang SC' 'Hiragino Sans GB' 'Microsoft YaHei' 'Noto Sans CJK SC' sans-serif;
-    font-weight: 600;
+    font-family: 'LiberationSans', 'SimSun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+    font-weight: 700;
 }
 
 /* 代码字体 */
 code, pre, kbd, samp {
-    font-family: 'SF Mono' Monaco Consolas 'Liberation Mono' 'Courier New' monospace;
+    font-family: 'LiberationMono', 'Courier New', Consolas, monospace;
+}
+
+/* 表单元素字体 */
+input, textarea, select, button {
+    font-family: inherit;
 }
