@@ -193,7 +193,7 @@
             }
         });
     </script>
-    
+
     {% block scripts %}{% endblock %}
 
     <script>
@@ -204,6 +204,112 @@
                 .catch(err => console.log('SW registration failed:', err));
         });
     }
+
+    let deferredPrompt;
+    window.addEventListener('beforeinstallprompt', (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        showInstallBanner();
+    });
+
+    function showInstallBanner() {
+        if (document.getElementById('pwa-install-banner')) return;
+        const banner = document.createElement('div');
+        banner.id = 'pwa-install-banner';
+        banner.innerHTML = `
+            <div class="pwa-banner-content">
+                <div class="pwa-banner-icon"><i class="bi bi-download"></i></div>
+                <div class="pwa-banner-text">
+                    <strong>安装采购系统</strong>
+                    <span>添加到主屏幕，快速访问</span>
+                </div>
+                <div class="pwa-banner-actions">
+                    <button class="btn btn-light btn-sm" onclick="dismissInstallBanner()">稍后</button>
+                    <button class="btn btn-primary btn-sm" onclick="installPWA()">安装</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(banner);
+        requestAnimationFrame(() => banner.classList.add('show'));
+    }
+
+    function installPWA() {
+        if (!deferredPrompt) return;
+        deferredPrompt.prompt();
+        deferredPrompt.userChoice.then((result) => {
+            if (result.outcome === 'accepted') {
+                console.log('User accepted install');
+            }
+            deferredPrompt = null;
+            dismissInstallBanner();
+        });
+    }
+
+    function dismissInstallBanner() {
+        const banner = document.getElementById('pwa-install-banner');
+        if (banner) {
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 300);
+        }
+    }
     </script>
+
+    <style>
+    #pwa-install-banner {
+        position: fixed;
+        bottom: -100px;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #1e3a5f 0%, #0f2744 100%);
+        color: white;
+        padding: 12px 16px;
+        z-index: 9999;
+        transition: bottom 0.3s ease;
+        box-shadow: 0 -4px 20px rgba(0,0,0,0.3);
+    }
+    #pwa-install-banner.show {
+        bottom: 0;
+    }
+    .pwa-banner-content {
+        max-width: 600px;
+        margin: 0 auto;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+    }
+    .pwa-banner-icon {
+        font-size: 1.75rem;
+        opacity: 0.9;
+    }
+    .pwa-banner-text {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .pwa-banner-text strong {
+        font-size: 0.95rem;
+    }
+    .pwa-banner-text span {
+        font-size: 0.8rem;
+        opacity: 0.8;
+    }
+    .pwa-banner-actions {
+        display: flex;
+        gap: 8px;
+    }
+    .pwa-banner-actions .btn-light {
+        color: #333;
+        border: none;
+    }
+    @media (max-width: 480px) {
+        .pwa-banner-text {
+            font-size: 0.85rem;
+        }
+        .pwa-banner-actions .btn {
+            padding: 6px 12px;
+            font-size: 0.8rem;
+        }
+    }
+    </style>
 </body>
 </html>
