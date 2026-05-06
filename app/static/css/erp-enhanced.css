@@ -1025,3 +1025,193 @@ body {
         background: rgba(59, 130, 246, 0.1);
     }
 }
+
+/* ============================================
+   移动端卡片视图 - 列表页
+   ============================================ */
+@media (max-width: 767px) {
+    .plan-card {
+        background: white;
+        border-radius: var(--radius-lg);
+        box-shadow: var(--shadow-sm);
+        padding: 1rem;
+        margin-bottom: 1rem;
+        border-left: 4px solid var(--primary-blue);
+    }
+
+    .plan-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        margin-bottom: 0.75rem;
+    }
+
+    .plan-card-title {
+        font-size: 1rem;
+        font-weight: 600;
+        color: var(--text-primary);
+        margin: 0;
+    }
+
+    .plan-card-meta {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+        font-size: 0.85rem;
+        color: var(--text-secondary);
+        margin-bottom: 0.75rem;
+    }
+
+    .plan-card-meta-item {
+        display: flex;
+        align-items: center;
+        gap: 0.35rem;
+    }
+
+    .plan-card-meta-item i {
+        color: var(--text-muted);
+        width: 16px;
+    }
+
+    .plan-card-actions {
+        display: flex;
+        gap: 0.5rem;
+        padding-top: 0.75rem;
+        border-top: 1px solid var(--border-light);
+    }
+
+    .plan-card-actions .btn {
+        flex: 1;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 0.35rem;
+        font-size: 0.85rem;
+    }
+
+    .list-card .table {
+        display: none;
+    }
+
+    .list-card .table-responsive {
+        display: none;
+    }
+
+    .list-card .card-body {
+        padding: 0.5rem;
+    }
+
+    .mobile-card-list {
+        display: block;
+    }
+}
+
+@media (min-width: 768px) {
+    .mobile-card-list {
+        display: none;
+    }
+
+    .plan-card {
+        display: none;
+    }
+}
+
+/* ============================================
+   移动端筛选表单折叠
+   ============================================ */
+@media (max-width: 767px) {
+    .filter-card .card-header {
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .filter-card .card-header::after {
+        content: '\f282';
+        font-family: 'bootstrap-icons';
+        font-size: 0.9rem;
+        transition: transform var(--transition-fast);
+    }
+
+    .filter-card.collapsed .card-header::after {
+        transform: rotate(-90deg);
+    }
+
+    .filter-card .card-body {
+        transition: all var(--transition-fast);
+    }
+
+    .filter-card.collapsed .card-body {
+        display: none;
+    }
+
+    .filter-card .row.g-3 {
+        padding-top: 0.5rem;
+    }
+}
+
+/* ============================================
+   移动端分页按钮优化
+   ============================================ */
+@media (max-width: 767px) {
+    .pagination-container .pagination {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 0.5rem;
+    }
+
+    .pagination .page-link {
+        min-width: 44px;
+        min-height: 44px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0.5rem 0.75rem;
+        font-size: 0.9rem;
+        border-radius: var(--radius);
+    }
+
+    .pagination .page-item.active .page-link {
+        font-weight: 600;
+    }
+}
+
+/* ============================================
+   移动端底部固定操作栏 - 表单页
+   ============================================ */
+@media (max-width: 767px) {
+    .form-page-content {
+        padding-bottom: 100px;
+    }
+
+    .mobile-fixed-actions {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background: white;
+        padding: 1rem;
+        box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+        display: flex;
+        gap: 0.75rem;
+        z-index: 100;
+    }
+
+    .mobile-fixed-actions .btn {
+        flex: 1;
+        min-height: 48px;
+        font-size: 1rem;
+    }
+
+    .submit-group {
+        display: none;
+    }
+}
+
+@media (min-width: 768px) {
+    .mobile-fixed-actions {
+        display: none;
+    }
+}

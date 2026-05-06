@@ -12,6 +12,11 @@
     <!-- 本地字体 - 系统字体栈，无CDN依赖 -->
     <link href="{{ url_for('static', filename='css/fonts-local.css') }}" rel="stylesheet">
 
+    <!-- PWA Support -->
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
+    <meta name="theme-color" content="#3b82f6">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='pwa/icon-192.png') }}">
+
     {% block styles %}
     <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/erp-enhanced.css') }}">
@@ -190,5 +195,15 @@
     </script>
     
     {% block scripts %}{% endblock %}
+
+    <script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', () => {
+            navigator.serviceWorker.register('/static/sw.js')
+                .then(reg => console.log('SW registered'))
+                .catch(err => console.log('SW registration failed:', err));
+        });
+    }
+    </script>
 </body>
 </html>

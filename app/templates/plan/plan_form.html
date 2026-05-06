@@ -12,9 +12,10 @@
 {% block content %}
 <div class="page-header">
     <h1><i class="bi bi-pencil-square"></i> {{ '编辑采购计划' if edit_mode else '新建采购计划' }}</h1>
-    <a href="{{ url_for('plan.index') }}" class="btn btn-secondary"><i class="bi bi-arrow-left"></i> 返回列表</a>
+    <a href="{{ url_for('plan.index') }}" class="btn btn-secondary d-none d-md-inline-flex"><i class="bi bi-arrow-left"></i> 返回列表</a>
 </div>
 
+<div class="form-page-content">
 <form method="POST" id="planForm" novalidate>
     {{ form.hidden_tag() }}
 
@@ -112,6 +113,16 @@
                 </div>
             </div>
         </div>
+    </div>
+
+    <!-- 移动端底部固定操作栏 -->
+    <div class="mobile-fixed-actions d-md-none">
+        <a href="{{ url_for('plan.index') }}" class="btn btn-secondary">
+            <i class="bi bi-x-circle"></i> 取消
+        </a>
+        <button type="submit" class="btn btn-primary" form="planForm">
+            <i class="bi bi-check-lg"></i> 保存
+        </button>
     </div>
 </form>
 

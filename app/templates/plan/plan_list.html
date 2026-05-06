@@ -12,8 +12,8 @@
 </div>
 
 <!-- 筛选和搜索 -->
-<div class="card filter-card">
-    <div class="card-header">
+<div class="card filter-card" id="filterCard">
+    <div class="card-header" onclick="toggleFilter()">
         <h5><i class="bi bi-funnel"></i> 数据筛选</h5>
     </div>
     <div class="card-body">
@@ -46,8 +46,8 @@
     </div>
 </div>
 
-<!-- 计划列表 -->
-<div class="card list-card">
+<!-- 计划列表 - 桌面端表格视图 -->
+<div class="card list-card d-none d-md-block">
     <div class="card-header d-flex justify-content-between align-items-center">
         <h5><i class="bi bi-list-task"></i> 申请记录列表</h5>
         <span class="badge bg-light text-dark">{{ plans|length }} 条记录</span>
@@ -112,10 +112,72 @@
             </table>
         </div>
     </div>
+</div>
+
+<!-- 计划列表 - 移动端卡片视图 -->
+<div class="card list-card d-block d-md-none">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5><i class="bi bi-list-task"></i> 申请记录</h5>
+        <span class="badge bg-light text-dark">{{ plans|length }} 条</span>
+    </div>
+    <div class="card-body p-2">
+        <div class="mobile-card-list">
+            {% for plan in plans %}
+            <div class="plan-card">
+                <div class="plan-card-header">
+                    <h6 class="plan-card-title">{{ plan.plan_name }}</h6>
+                    <span class="badge bg-{{ 'secondary' if plan.status == 'draft' else 'warning' if plan.status == 'pending' else 'success' if plan.status == 'approved' else 'danger' if plan.status == 'rejected' else 'info' if plan.status == 'completed' else 'dark' }}">
+                        {{ plan.status_label }}
+                    </span>
+                </div>
+                <div class="plan-card-meta">
+                    <div class="plan-card-meta-item">
+                        <i class="bi bi-hash"></i>
+                        <span>{{ plan.plan_number }}</span>
+                    </div>
+                    <div class="plan-card-meta-item">
+                        <i class="bi bi-person"></i>
+                        <span>{{ plan.project_manager or '-' }}</span>
+                    </div>
+                    <div class="plan-card-meta-item">
+                        <i class="bi bi-calendar"></i>
+                        <span>{{ plan.created_at.strftime('%Y-%m-%d') }}</span>
+                    </div>
+                    <div class="plan-card-meta-item">
+                        <i class="bi bi-user"></i>
+                        <span>{{ plan.creator.username if plan.creator else '-' }}</span>
+                    </div>
+                </div>
+                <div class="plan-card-actions">
+                    <a href="{{ url_for('plan.detail', id=plan.id) }}" class="btn btn-outline-primary btn-sm">
+                        <i class="bi bi-eye"></i> 查看
+                    </a>
+                    {% if plan.status in ['draft', 'rejected'] %}
+                    <a href="{{ url_for('plan.edit', id=plan.id) }}" class="btn btn-outline-secondary btn-sm">
+                        <i class="bi bi-pencil"></i> 编辑
+                    </a>
+                    {% endif %}
+                    <a href="{{ url_for('plan.preview', id=plan.id) }}" class="btn btn-outline-info btn-sm">
+                        <i class="bi bi-file-text"></i> 预览
+                    </a>
+                </div>
+            </div>
+            {% else %}
+            <div class="text-center py-5">
+                <i class="bi bi-inbox" style="font-size: 3rem; color: var(--text-light);"></i>
+                <p class="mt-3 text-muted">暂无采购计划</p>
+                <a href="{{ url_for('plan.create') }}" class="btn btn-primary btn-sm">
+                    <i class="bi bi-plus-lg"></i> 创建第一个采购计划
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
 
     <!-- 分页 -->
     {% if pagination and pagination.pages > 1 %}
-    <div class="card-footer">
+    <div class="card-footer pagination-container">
         <nav>
             <ul class="pagination mb-0 justify-content-center">
                 <li class="page-item {{ 'disabled' if not pagination.has_prev else '' }}">
@@ -138,4 +200,18 @@
     </div>
     {% endif %}
 </div>
+
+<script>
+function toggleFilter() {
+    var card = document.getElementById('filterCard');
+    if (window.innerWidth < 768) {
+        card.classList.toggle('collapsed');
+    }
+}
+document.addEventListener('DOMContentLoaded', function() {
+    if (window.innerWidth < 768) {
+        document.getElementById('filterCard').classList.add('collapsed');
+    }
+});
+</script>
 {% endblock %}
