@@ -6,71 +6,151 @@
 {% block footer %}{% endblock %}
 
 {% block unauthenticated_content %}
-<div class="login-container">
-    <div class="login-card">
-        <div class="card-header">
-            <h4>
-                <i class="bi bi-shield-check"></i> 用户登录
-            </h4>
-        </div>
-        <div class="card-body">
-            <form method="POST" action="{{ url_for('auth.login') }}">
-                {{ form.hidden_tag() }}
+<div class="auth-page">
+    <!-- 背景装饰 -->
+    <div class="auth-bg">
+        <div class="bg-circle bg-circle-1"></div>
+        <div class="bg-circle bg-circle-2"></div>
+        <div class="bg-circle bg-circle-3"></div>
+        <div class="bg-circle bg-circle-4"></div>
+    </div>
 
-                <div class="mb-4">
-                    <label for="username" class="form-label">用户名</label>
-                    {{ form.username(class="form-control", id="username", placeholder="请输入用户名", autocomplete="username", required=True) }}
-                    {% for error in form.username.errors %}
-                        <div class="invalid-feedback d-block">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="mb-4">
-                    <label for="password" class="form-label">密码</label>
-                    {{ form.password(class="form-control", id="password", type="password", placeholder="请输入密码", autocomplete="current-password", required=True) }}
-                    {% for error in form.password.errors %}
-                        <div class="invalid-feedback d-block">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="mb-4 d-flex justify-content-between align-items-center">
-                    <div class="form-check">
-                        {{ form.remember_me(class="form-check-input", id="remember") }}
-                        <label class="form-check-label" for="remember">记住我</label>
+    <div class="auth-container">
+        <!-- 左侧品牌区域 -->
+        <div class="auth-brand-section">
+            <div class="brand-content">
+                <div class="brand-logo">
+                    <div class="logo-icon">
+                        <i class="bi bi-briefcase"></i>
                     </div>
-                    <button type="button" class="btn btn-link text-sm text-primary p-0" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
-                        忘记密码？
-                    </button>
+                    <h1 class="brand-title">KWD Procurement</h1>
+                    <p class="brand-subtitle">企业级采购管理平台</p>
+                </div>
+                
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <i class="bi bi-shield-check"></i>
+                        <span>安全可靠</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-zap"></i>
+                        <span>高效便捷</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-lock"></i>
+                        <span>数据加密</span>
+                    </div>
                 </div>
 
-                <div class="d-grid gap-2">
-                    {{ form.submit(class="btn btn-primary btn-lg") }}
+                <div class="brand-illustration">
+                    <div class="illustration-icon">
+                        <i class="bi bi-building"></i>
+                    </div>
                 </div>
-            </form>
-
-            <hr class="my-4">
+            </div>
         </div>
-        <div class="card-footer">
-            <small class="text-muted">
-                还没有账号？<a href="{{ url_for('auth.register') }}" class="register-link">立即注册</a>
-            </small>
+
+        <!-- 右侧登录表单 -->
+        <div class="auth-form-section">
+            <div class="auth-card">
+                <div class="auth-card-header">
+                    <div class="auth-tabs">
+                        <button class="tab-btn active" data-tab="login">登录</button>
+                        <button class="tab-btn" data-tab="register">注册</button>
+                    </div>
+                </div>
+
+                <div class="auth-card-body">
+                    <!-- 登录表单 -->
+                    <form id="loginForm" method="POST" action="{{ url_for('auth.login') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-user"></i>
+                                <span>用户名</span>
+                            </label>
+                            <input 
+                                type="text" 
+                                class="form-control" 
+                                name="username" 
+                                placeholder="请输入用户名" 
+                                autocomplete="username"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">
+                                <i class="bi bi-lock"></i>
+                                <span>密码</span>
+                            </label>
+                            <input 
+                                type="password" 
+                                class="form-control" 
+                                name="password" 
+                                placeholder="请输入密码" 
+                                autocomplete="current-password"
+                                required
+                            >
+                        </div>
+
+                        <div class="form-options">
+                            <label class="form-check">
+                                <input type="checkbox" name="remember_me">
+                                <span>记住我</span>
+                            </label>
+                            <a href="#" class="forgot-link" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">忘记密码？</a>
+                        </div>
+
+                        <button type="submit" class="auth-btn">
+                            <span>登录系统</span>
+                            <i class="bi bi-arrow-right"></i>
+                        </button>
+                    </form>
+
+                    <!-- 分隔线 -->
+                    <div class="divider">
+                        <span>或</span>
+                    </div>
+
+                    <!-- 快速链接 -->
+                    <div class="quick-links">
+                        <a href="{{ url_for('auth.register') }}" class="link-btn">
+                            <i class="bi bi-user-plus"></i>
+                            <span>立即注册</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="auth-card-footer">
+                    <p>&copy; 2026 KWD Procurement. All rights reserved.</p>
+                </div>
+            </div>
         </div>
     </div>
 
     <!-- 忘记密码弹窗 -->
     <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
-        <div class="modal-dialog">
+        <div class="modal-dialog modal-sm">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"><i class="bi bi-key"></i> 忘记密码</h5>
+                    <h5 class="modal-title">
+                        <i class="bi bi-key"></i> 找回密码
+                    </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <p>如果您忘记了密码，请联系系统管理员重置您的密码。</p>
-                    <p class="text-muted small">联系邮箱：admin@example.com</p>
+                    <p>请联系系统管理员重置您的密码。</p>
+                    <div class="contact-info">
+                        <i class="bi bi-envelope"></i>
+                        <span>admin@kwd-procurement.com</span>
+                    </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                    <button type="button" class="btn btn-primary" data-bs-dismiss="modal">
+                        我知道了
+                    </button>
                 </div>
             </div>
         </div>

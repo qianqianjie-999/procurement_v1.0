@@ -6,84 +6,155 @@
 {% block footer %}{% endblock %}
 
 {% block unauthenticated_content %}
-<div class="register-container">
-    <div class="login-card">
-        <div class="card-header">
-            <h4>
-                <i class="bi bi-user-plus"></i> 用户注册
-            </h4>
-        </div>
-        <div class="card-body">
-            <form method="POST" action="{{ url_for('auth.register') }}">
-                {{ form.hidden_tag() }}
+<div class="auth-page">
+    <!-- 背景装饰 -->
+    <div class="auth-bg">
+        <div class="bg-circle bg-circle-1"></div>
+        <div class="bg-circle bg-circle-2"></div>
+        <div class="bg-circle bg-circle-3"></div>
+        <div class="bg-circle bg-circle-4"></div>
+    </div>
 
-                <div class="mb-4">
-                    <label for="username" class="form-label">用户名</label>
-                    {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), id="username", placeholder="请输入用户名（3-20 个字符）", autocomplete="username", required=True) }}
-                    {% for error in form.username.errors %}
-                        <div class="invalid-feedback d-block">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="mb-4">
-                    <label for="email" class="form-label">邮箱地址</label>
-                    {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), id="email", type="email", placeholder="请输入邮箱地址", autocomplete="email", required=True) }}
-                    {% for error in form.email.errors %}
-                        <div class="invalid-feedback d-block">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="mb-4">
-                    <label for="password" class="form-label">密码</label>
-                    {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), id="password", type="password", placeholder="请输入密码（至少 6 位）", autocomplete="new-password", required=True) }}
-                    {% for error in form.password.errors %}
-                        <div class="invalid-feedback d-block">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="mb-4">
-                    <label for="password2" class="form-label">确认密码</label>
-                    {{ form.password2(class="form-control" + (" is-invalid" if form.password2.errors else ""), id="password2", type="password", placeholder="请再次输入密码", autocomplete="new-password", required=True) }}
-                    {% for error in form.password2.errors %}
-                        <div class="invalid-feedback d-block">{{ error }}</div>
-                    {% endfor %}
-                </div>
-
-                <div class="row">
-                    <div class="col-md-6 mb-4">
-                        <label for="full_name" class="form-label">姓名</label>
-                        {{ form.full_name(class="form-control" + (" is-invalid" if form.full_name.errors else ""), id="full_name", placeholder="请输入姓名") }}
-                        {% for error in form.full_name.errors %}
-                            <div class="invalid-feedback d-block">{{ error }}</div>
-                        {% endfor %}
+    <div class="auth-container">
+        <!-- 左侧品牌区域 -->
+        <div class="auth-brand-section">
+            <div class="brand-content">
+                <div class="brand-logo">
+                    <div class="logo-icon">
+                        <i class="bi bi-briefcase"></i>
                     </div>
-                    <div class="col-md-6 mb-4">
-                        <label for="department" class="form-label">部门</label>
-                        {{ form.department(class="form-control" + (" is-invalid" if form.department.errors else ""), id="department", placeholder="请输入部门") }}
-                        {% for error in form.department.errors %}
-                            <div class="invalid-feedback d-block">{{ error }}</div>
-                        {% endfor %}
+                    <h1 class="brand-title">KWD Procurement</h1>
+                    <p class="brand-subtitle">企业级采购管理平台</p>
+                </div>
+                
+                <div class="brand-features">
+                    <div class="feature-item">
+                        <i class="bi bi-shield-check"></i>
+                        <span>安全可靠</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-zap"></i>
+                        <span>高效便捷</span>
+                    </div>
+                    <div class="feature-item">
+                        <i class="bi bi-lock"></i>
+                        <span>数据加密</span>
                     </div>
                 </div>
 
-                <div class="d-grid gap-2">
-                    {{ form.submit(class="btn btn-success btn-lg") }}
+                <div class="brand-illustration">
+                    <div class="illustration-icon">
+                        <i class="bi bi-users"></i>
+                    </div>
                 </div>
-            </form>
-
-            <hr class="my-4">
-
-            <div class="text-center">
-                <small class="text-muted">已有账号？</small>
-                <a href="{{ url_for('auth.login') }}" class="register-link">
-                    <i class="bi bi-box-arrow-in-right"></i> 立即登录
-                </a>
             </div>
         </div>
-        <div class="card-footer">
-            <small class="text-muted">
-                &copy; 2026 采购管理系统 | 企业级采购管理平台
-            </small>
+
+        <!-- 右侧注册表单 -->
+        <div class="auth-form-section">
+            <div class="auth-card">
+                <div class="auth-card-header">
+                    <div class="auth-tabs">
+                        <button class="tab-btn" data-tab="login">登录</button>
+                        <button class="tab-btn active" data-tab="register">注册</button>
+                    </div>
+                </div>
+
+                <div class="auth-card-body">
+                    <!-- 注册表单 -->
+                    <form id="registerForm" method="POST" action="{{ url_for('auth.register') }}">
+                        {{ form.hidden_tag() }}
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-user"></i>
+                                    <span>用户名</span>
+                                </label>
+                                {{ form.username(class="form-control" + (" is-invalid" if form.username.errors else ""), placeholder="3-20 个字符", autocomplete="username", required=True) }}
+                                {% for error in form.username.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-envelope"></i>
+                                    <span>邮箱</span>
+                                </label>
+                                {{ form.email(class="form-control" + (" is-invalid" if form.email.errors else ""), type="email", placeholder="your@email.com", autocomplete="email", required=True) }}
+                                {% for error in form.email.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-lock"></i>
+                                    <span>密码</span>
+                                </label>
+                                {{ form.password(class="form-control" + (" is-invalid" if form.password.errors else ""), type="password", placeholder="至少 6 位", autocomplete="new-password", required=True) }}
+                                {% for error in form.password.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-lock"></i>
+                                    <span>确认密码</span>
+                                </label>
+                                {{ form.password2(class="form-control" + (" is-invalid" if form.password2.errors else ""), type="password", placeholder="再次输入", autocomplete="new-password", required=True) }}
+                                {% for error in form.password2.errors %}
+                                    <div class="invalid-feedback">{{ error }}</div>
+                                {% endfor %}
+                            </div>
+                        </div>
+
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-person"></i>
+                                    <span>姓名</span>
+                                </label>
+                                {{ form.full_name(class="form-control", placeholder="真实姓名") }}
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">
+                                    <i class="bi bi-building"></i>
+                                    <span>部门</span>
+                                </label>
+                                {{ form.department(class="form-control", placeholder="所属部门") }}
+                            </div>
+                        </div>
+
+                        <button type="submit" class="auth-btn register-btn">
+                            <span>创建账户</span>
+                            <i class="bi bi-user-plus"></i>
+                        </button>
+                    </form>
+
+                    <!-- 分隔线 -->
+                    <div class="divider">
+                        <span>或</span>
+                    </div>
+
+                    <!-- 快速链接 -->
+                    <div class="quick-links">
+                        <a href="{{ url_for('auth.login') }}" class="link-btn">
+                            <i class="bi bi-box-arrow-in-right"></i>
+                            <span>已有账号</span>
+                        </a>
+                    </div>
+                </div>
+
+                <div class="auth-card-footer">
+                    <p>&copy; 2026 KWD Procurement. All rights reserved.</p>
+                </div>
+            </div>
         </div>
     </div>
 </div>
