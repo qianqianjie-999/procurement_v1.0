@@ -10,14 +10,14 @@
     <div class="login-card">
         <div class="card-header">
             <h4>
-                <i class="bi bi-person"></i> 用户登录
+                <i class="bi bi-shield-check"></i> 用户登录
             </h4>
         </div>
         <div class="card-body">
             <form method="POST" action="{{ url_for('auth.login') }}">
                 {{ form.hidden_tag() }}
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="username" class="form-label">用户名</label>
                     {{ form.username(class="form-control", id="username", placeholder="请输入用户名", autocomplete="username", required=True) }}
                     {% for error in form.username.errors %}
@@ -25,7 +25,7 @@
                     {% endfor %}
                 </div>
 
-                <div class="mb-3">
+                <div class="mb-4">
                     <label for="password" class="form-label">密码</label>
                     {{ form.password(class="form-control", id="password", type="password", placeholder="请输入密码", autocomplete="current-password", required=True) }}
                     {% for error in form.password.errors %}
@@ -33,9 +33,14 @@
                     {% endfor %}
                 </div>
 
-                <div class="mb-3 form-check">
-                    {{ form.remember_me(class="form-check-input", id="remember") }}
-                    <label class="form-check-label" for="remember">记住我</label>
+                <div class="mb-4 d-flex justify-content-between align-items-center">
+                    <div class="form-check">
+                        {{ form.remember_me(class="form-check-input", id="remember") }}
+                        <label class="form-check-label" for="remember">记住我</label>
+                    </div>
+                    <button type="button" class="btn btn-link text-sm text-primary p-0" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">
+                        忘记密码？
+                    </button>
                 </div>
 
                 <div class="d-grid gap-2">
@@ -49,6 +54,25 @@
             <small class="text-muted">
                 还没有账号？<a href="{{ url_for('auth.register') }}" class="register-link">立即注册</a>
             </small>
+        </div>
+    </div>
+
+    <!-- 忘记密码弹窗 -->
+    <div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-key"></i> 忘记密码</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <p>如果您忘记了密码，请联系系统管理员重置您的密码。</p>
+                    <p class="text-muted small">联系邮箱：admin@example.com</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">关闭</button>
+                </div>
+            </div>
         </div>
     </div>
 </div>
