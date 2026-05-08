@@ -66,6 +66,30 @@
                     </div>
                 </div>
 
+                <div class="mb-3">
+                    <label for="captcha" class="form-label">验证码</label>
+                    <div class="input-group">
+                        {{ form.captcha(class="form-control" + (" is-invalid" if form.captcha.errors else ""), id="captcha", placeholder="请输入验证码", autocomplete="off", maxlength="4", required=True) }}
+                        <img id="captcha-img" src="{{ captcha_img }}" alt="验证码" class="captcha-img" onclick="refreshCaptcha()" style="cursor: pointer;">
+                        <button type="button" class="btn btn-outline-secondary" onclick="refreshCaptcha()">
+                            <i class="bi bi-arrow-clockwise"></i>
+                        </button>
+                        {% for error in form.captcha.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                </div>
+
+                <script>
+                function refreshCaptcha() {
+                    fetch('{{ url_for("auth.captcha") }}')
+                        .then(response => response.text())
+                        .then(data => {
+                            document.getElementById('captcha-img').src = data;
+                        });
+                }
+                </script>
+
                 <div class="d-grid gap-2">
                     {{ form.submit(class="btn btn-success btn-lg") }}
                 </div>

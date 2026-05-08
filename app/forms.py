@@ -16,6 +16,7 @@ class RegistrationForm(FlaskForm):
     department = StringField('部门', validators=[Optional(), Length(0, 100)])
     password = PasswordField('密码', validators=[DataRequired()])
     password2 = PasswordField('确认密码', validators=[DataRequired(), EqualTo('password')])
+    captcha = StringField('验证码', validators=[DataRequired(), Length(4, 4)])
     submit = SubmitField('注册')
 
     def validate_username(self, username):

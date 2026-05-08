@@ -8,6 +8,8 @@ from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.models import User
 from app.forms import LoginForm, RegistrationForm
+from app.utils.captcha import generate_captcha, validate_captcha
+from app.utils.rate_limit import check_rate_limit
 
 auth_bp = Blueprint('auth', __name__, url_prefix='/auth')
 
@@ -80,27 +82,40 @@ def register():
     GET: 显示注册表单
     POST: 创建新用户并自动登录
     """
-    # 如果已登录，重定向到首页
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
+    allowed, remaining_time = check_rate_limit()
+    if not allowed:
+        flash(f'注册过于频繁，请 {remaining_time} 秒后再试。', 'danger')
+        captcha_img = generate_captcha()
+        return render_template('auth/register.html', form=RegistrationForm(), captcha_img=captcha_img)
+
     form = RegistrationForm()
+
+    if request.method == 'GET':
+        captcha_img = generate_captcha()
+        return render_template('auth/register.html', form=form, captcha_img=captcha_img)
 
     if request.method == 'POST':
         if form.validate():
-            # 检查用户名是否已存在
+            if not validate_captcha(form.captcha.data):
+                flash('验证码错误，请重新输入。', 'danger')
+                captcha_img = generate_captcha()
+                return render_template('auth/register.html', form=form, captcha_img=captcha_img)
+
             user = User.query.filter_by(username=form.username.data).first()
             if user is not None:
                 flash('用户名已存在，请选择其他用户名。', 'warning')
-                return render_template('auth/register.html', form=form)
+                captcha_img = generate_captcha()
+                return render_template('auth/register.html', form=form, captcha_img=captcha_img)
 
-            # 检查邮箱是否已存在
             user = User.query.filter_by(email=form.email.data).first()
             if user is not None:
                 flash('邮箱已被注册，请更换其他邮箱。', 'warning')
-                return render_template('auth/register.html', form=form)
+                captcha_img = generate_captcha()
+                return render_template('auth/register.html', form=form, captcha_img=captcha_img)
 
-            # 创建新用户
             user = User(
                 username=form.username.data,
                 email=form.email.data,
@@ -117,4 +132,11 @@ def register():
         else:
             flash('表单验证失败，请检查输入。', 'danger')
 
-    return render_template('auth/register.html', form=form)
+    captcha_img = generate_captcha()
+    return render_template('auth/register.html', form=form, captcha_img=captcha_img)
+
+
+@auth_bp.route('/captcha')
+def captcha():
+    captcha_img, code = generate_captcha()
+    return captcha_img
