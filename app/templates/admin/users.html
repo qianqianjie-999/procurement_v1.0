@@ -44,7 +44,7 @@
                             <span class="badge bg-secondary">普通用户</span>
                             {% endif %}
                         </td>
-                        <td>
+                        <td id="user-status-{{ user.id }}">
                             {% if user.is_active %}
                             <span class="status-badge status-approved">已激活</span>
                             {% else %}
@@ -176,9 +176,11 @@ document.addEventListener('DOMContentLoaded', function() {
                     if (isActive) {
                         this.innerHTML = '<i class="bi bi-toggle-off"></i> 激活';
                         this.dataset.active = 'false';
+                        document.getElementById('user-status-' + userId).innerHTML = '<span class="status-badge status-rejected">已禁用</span>';
                     } else {
                         this.innerHTML = '<i class="bi bi-toggle-on"></i> 禁用';
                         this.dataset.active = 'true';
+                        document.getElementById('user-status-' + userId).innerHTML = '<span class="status-badge status-approved">已激活</span>';
                     }
                     alert(result.message);
                 } else {
