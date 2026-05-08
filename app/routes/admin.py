@@ -8,6 +8,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models import User, PurchasePlan
 from app.forms import UserForm
+from app import csrf
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -30,6 +31,7 @@ def users():
     return render_template('admin/users.html', users=users)
 
 @admin_bp.route('/users/<int:user_id>/toggle-active', methods=['POST'])
+@csrf.exempt
 def toggle_user_active(user_id):
     """切换用户激活状态"""
     user = User.query.get_or_404(user_id)
@@ -43,6 +45,7 @@ def toggle_user_active(user_id):
     return jsonify({'success': True, 'message': f'用户 {user.username} {status}', 'active': user.is_active_field})
 
 @admin_bp.route('/users/<int:user_id>/set-role', methods=['POST'])
+@csrf.exempt
 def set_user_role(user_id):
     """设置用户角色"""
     user = User.query.get_or_404(user_id)
