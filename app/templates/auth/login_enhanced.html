@@ -51,7 +51,7 @@
                             {{ form.remember_me(class="form-check-input") }}
                             <label class="form-check-label" for="remember_me">记住我</label>
                         </div>
-                        <a href="#" class="text-decoration-none">忘记密码？</a>
+                        <a href="#" class="text-decoration-none" data-bs-toggle="modal" data-bs-target="#forgotPasswordModal">忘记密码？</a>
                     </div>
                     
                     {{ form.submit(class="btn btn-primary btn-lg w-100 py-3 fw-bold") }}
@@ -64,6 +64,28 @@
                 <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary">
                     <i class="bi bi-person-plus"></i> 立即注册
                 </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- 忘记密码提示模态框 -->
+<div class="modal fade" id="forgotPasswordModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header border-0">
+                <h5 class="modal-title"><i class="bi bi-key text-primary me-2"></i>忘记密码</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-center py-4">
+                <div class="mb-4">
+                    <i class="bi bi-envelope-exclamation" style="font-size: 4rem; color: var(--primary-blue);"></i>
+                </div>
+                <h6 class="mb-3">请联系系统管理员重置密码</h6>
+                <p class="text-muted mb-0">如有需要，请联系管理员协助您重置账户密码。</p>
+            </div>
+            <div class="modal-footer border-0 justify-content-center">
+                <button type="button" class="btn btn-primary" data-bs-dismiss="modal">我知道了</button>
             </div>
         </div>
     </div>
