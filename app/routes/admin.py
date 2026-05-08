@@ -25,10 +25,55 @@ def users():
     """用户管理页面"""
     page = request.args.get('page', 1, type=int)
     per_page = 20
-    
+
     users = User.query.paginate(page=page, per_page=per_page, error_out=False)
-    
+
     return render_template('admin/users.html', users=users)
+
+@admin_bp.route('/users/create', methods=['POST'])
+@csrf.exempt
+def create_user():
+    """管理员创建用户"""
+    data = request.json
+
+    username = data.get('username', '').strip()
+    email = data.get('email', '').strip()
+    password = data.get('password', '')
+    full_name = data.get('full_name', '').strip()
+    department = data.get('department', '').strip()
+    role = data.get('role', 'user')
+
+    if not username or not email or not password:
+        return jsonify({'success': False, 'message': '用户名、邮箱和密码不能为空'})
+
+    if len(username) < 3 or len(username) > 20:
+        return jsonify({'success': False, 'message': '用户名长度应为 3-20 个字符'})
+
+    if len(password) < 6:
+        return jsonify({'success': False, 'message': '密码长度至少 6 位'})
+
+    if role not in ['user', 'admin']:
+        return jsonify({'success': False, 'message': '无效的角色'})
+
+    if User.query.filter_by(username=username).first():
+        return jsonify({'success': False, 'message': '用户名已存在'})
+
+    if User.query.filter_by(email=email).first():
+        return jsonify({'success': False, 'message': '邮箱已被注册'})
+
+    user = User(
+        username=username,
+        email=email,
+        full_name=full_name if full_name else None,
+        department=department if department else None,
+        role=role
+    )
+    user.set_password(password)
+
+    db.session.add(user)
+    db.session.commit()
+
+    return jsonify({'success': True, 'message': f'用户 {username} 创建成功'})
 
 @admin_bp.route('/users/<int:user_id>/toggle-active', methods=['POST'])
 @csrf.exempt
