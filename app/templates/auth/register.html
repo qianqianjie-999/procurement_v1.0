@@ -14,16 +14,6 @@
             </h4>
         </div>
         <div class="card-body">
-            <!-- 注册权益 -->
-            <div class="test-account-info">
-                <h5><i class="bi bi-gift"></i> 注册即可享受：</h5>
-                <ul class="mb-0">
-                    <li>创建和管理采购计划</li>
-                    <li>PDF 导出与文档打印</li>
-                    <li>完整的审批流程管理</li>
-                </ul>
-            </div>
-
             <form method="POST" action="{{ url_for('auth.register') }}">
                 {{ form.hidden_tag() }}
 
@@ -57,6 +47,23 @@
                     {% for error in form.password2.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label for="full_name" class="form-label">姓名</label>
+                        {{ form.full_name(class="form-control" + (" is-invalid" if form.full_name.errors else ""), id="full_name", placeholder="请输入姓名") }}
+                        {% for error in form.full_name.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label for="department" class="form-label">部门</label>
+                        {{ form.department(class="form-control" + (" is-invalid" if form.department.errors else ""), id="department", placeholder="请输入部门") }}
+                        {% for error in form.department.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
+                    </div>
                 </div>
 
                 <div class="d-grid gap-2">
