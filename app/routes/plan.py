@@ -141,7 +141,7 @@ def save_items(plan, items_data):
 def index():
     """采购计划列表页"""
     page = request.args.get('page', 1, type=int)
-    per_page = current_app.config.get('POSTS_PER_PAGE', 20)
+    per_page = current_app.config.get('POSTS_PER_PAGE', 15)
 
     # 获取筛选参数
     status_filter = request.args.get('status', '', type=str)
