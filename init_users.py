@@ -19,6 +19,9 @@ def create_user(username, email, password, role='user', full_name=None, departme
     app = create_app()
 
     with app.app_context():
+        # 创建所有数据库表（如果不存在）
+        db.create_all()
+        
         # 检查用户是否已存在
         existing_user = User.query.filter_by(username=username).first()
         if existing_user:
