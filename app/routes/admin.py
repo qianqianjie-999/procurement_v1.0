@@ -8,7 +8,7 @@ from flask_login import login_required, current_user
 from app import db
 from app.models import User, PurchasePlan
 from app.forms import UserForm
-from app import csrf
+from wtforms import ValidationError
 
 admin_bp = Blueprint('admin', __name__, url_prefix='/admin')
 
@@ -19,6 +19,18 @@ def require_admin():
     if not current_user.is_administrator():
         flash('您没有权限访问此页面。', 'danger')
         return redirect(url_for('main.index'))
+
+def validate_ajax_csrf():
+    """验证AJAX请求的CSRF token"""
+    csrf_token = request.headers.get('X-CSRF-Token') or request.json.get('csrf_token') if request.is_json else None
+    if not csrf_token:
+        return False
+    from flask_wtf.csrf import validate_csrf
+    try:
+        validate_csrf(csrf_token)
+        return True
+    except ValidationError:
+        return False
 
 @admin_bp.route('/users')
 def users():
@@ -31,9 +43,11 @@ def users():
     return render_template('admin/users.html', users=users)
 
 @admin_bp.route('/users/create', methods=['POST'])
-@csrf.exempt
 def create_user():
     """管理员创建用户"""
+    if not validate_ajax_csrf():
+        return jsonify({'success': False, 'message': 'CSRF验证失败'}), 403
+
     data = request.json
 
     username = data.get('username', '').strip()
@@ -76,9 +90,11 @@ def create_user():
     return jsonify({'success': True, 'message': f'用户 {username} 创建成功'})
 
 @admin_bp.route('/users/<int:user_id>/toggle-active', methods=['POST'])
-@csrf.exempt
 def toggle_user_active(user_id):
     """切换用户激活状态"""
+    if not validate_ajax_csrf():
+        return jsonify({'success': False, 'message': 'CSRF验证失败'}), 403
+
     user = User.query.get_or_404(user_id)
     if user.id == current_user.id:
         return jsonify({'success': False, 'message': '不能禁用自己的账户'})
@@ -90,9 +106,11 @@ def toggle_user_active(user_id):
     return jsonify({'success': True, 'message': f'用户 {user.username} {status}', 'active': user.is_active_field})
 
 @admin_bp.route('/users/<int:user_id>/set-role', methods=['POST'])
-@csrf.exempt
 def set_user_role(user_id):
     """设置用户角色"""
+    if not validate_ajax_csrf():
+        return jsonify({'success': False, 'message': 'CSRF验证失败'}), 403
+
     user = User.query.get_or_404(user_id)
     if user.id == current_user.id:
         return jsonify({'success': False, 'message': '不能修改自己的角色'})
