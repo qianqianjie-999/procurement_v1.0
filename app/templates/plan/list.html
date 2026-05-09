@@ -115,9 +115,12 @@
     <div class="pagination-container">
         <nav>
             <ul class="pagination">
+                {% set other_args = request.args.to_dict() %}
+                {% if 'page' in other_args %}{% set _ = other_args.pop('page') %}{% endif %}
+                
                 {% if pagination.has_prev %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('plan.index', page=pagination.prev_num, **request.args) }}">«</a>
+                    <a class="page-link" href="{{ url_for('plan.index', page=pagination.prev_num, **other_args) }}">«</a>
                 </li>
                 {% endif %}
                 
@@ -125,7 +128,7 @@
                     {% if page_num %}
                         {% if page_num != pagination.page %}
                         <li class="page-item">
-                            <a class="page-link" href="{{ url_for('plan.index', page=page_num, **request.args) }}">{{ page_num }}</a>
+                            <a class="page-link" href="{{ url_for('plan.index', page=page_num, **other_args) }}">{{ page_num }}</a>
                         </li>
                         {% else %}
                         <li class="page-item active">
@@ -141,7 +144,7 @@
                 
                 {% if pagination.has_next %}
                 <li class="page-item">
-                    <a class="page-link" href="{{ url_for('plan.index', page=pagination.next_num, **request.args) }}">»</a>
+                    <a class="page-link" href="{{ url_for('plan.index', page=pagination.next_num, **other_args) }}">»</a>
                 </li>
                 {% endif %}
             </ul>

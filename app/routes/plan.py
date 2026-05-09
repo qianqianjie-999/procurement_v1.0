@@ -14,7 +14,7 @@ from app.forms import PurchasePlanForm, PurchaseItemForm
 from app.utils.helpers import generate_plan_number, now
 
 
-plan_bp = Blueprint('plan', __name__, url_prefix='/plans')
+plan_bp = Blueprint('plan', __name__, url_prefix='/plan')
 
 
 def parse_items_from_form():
