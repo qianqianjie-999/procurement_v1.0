@@ -298,7 +298,7 @@ def edit(id):
 
             if not items_data:
                 flash('请至少添加一项物资明细。', 'warning')
-                return render_template('plan/plan_form.html', form=form, items=list(plan.items), edit_mode=True, plan=plan)
+                return render_template('plan/plan_form.html', form=form, items=list(plan.items.all()), edit_mode=True, plan=plan)
 
             # 更新采购计划
             plan.plan_name = form.plan_name.data
