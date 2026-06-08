@@ -1024,6 +1024,43 @@ body {
     .table tbody tr:hover {
         background: rgba(59, 130, 246, 0.1);
     }
+    
+    /* 表单控件暗黑模式修复 */
+    .form-control,
+    .form-select,
+    input[type="text"],
+    input[type="number"],
+    input[type="date"],
+    input[type="time"],
+    input[type="email"],
+    input[type="password"],
+    textarea {
+        background-color: var(--bg-gray-100) !important;
+        color: var(--text-primary) !important;
+        border-color: var(--border-color) !important;
+    }
+    
+    .form-control::placeholder,
+    textarea::placeholder,
+    input::placeholder {
+        color: var(--text-muted) !important;
+        opacity: 0.8;
+    }
+    
+    .form-control:focus,
+    .form-select:focus,
+    input:focus,
+    textarea:focus {
+        background-color: var(--bg-gray-100) !important;
+        color: var(--text-primary) !important;
+        border-color: var(--primary-blue) !important;
+        box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.2) !important;
+    }
+    
+    /* 修复下拉选择框 */
+    .form-select {
+        background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M2 5l6 6 6-6'/%3e%3c/svg%3e") !important;
+    }
 }
 
 /* ============================================
