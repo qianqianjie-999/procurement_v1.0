@@ -1515,4 +1515,51 @@ code {
     .form-label {
         color: var(--text-primary) !important;
     }
+    
+    /* 下拉菜单 */
+    .dropdown-menu {
+        background: var(--bg-white) !important;
+        border-color: var(--border-color) !important;
+    }
+    
+    .dropdown-item {
+        color: var(--text-primary) !important;
+    }
+    
+    .dropdown-item:hover {
+        background-color: rgba(59, 130, 246, 0.1) !important;
+        color: var(--primary-blue) !important;
+    }
+    
+    .dropdown-header {
+        color: var(--text-muted) !important;
+    }
+    
+    .dropdown-divider {
+        border-color: var(--border-color) !important;
+    }
+    
+    /* 分页 */
+    .pagination .page-link {
+        background: var(--bg-white);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
+    
+    .pagination .page-link:hover {
+        background: rgba(59, 130, 246, 0.1);
+        color: var(--primary-blue);
+    }
+    
+    /* 徽章 */
+    .badge {
+        border-color: transparent;
+    }
+    
+    /* 警告框 */
+    .alert {
+        background: var(--bg-white);
+        color: var(--text-primary);
+        border-color: var(--border-color);
+    }
 }
