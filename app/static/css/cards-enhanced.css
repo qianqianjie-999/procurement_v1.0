@@ -114,21 +114,3 @@
     transform: translateY(-6px);
     box-shadow: var(--shadow-xl);
 }
-
-/* 暗黑模式支持 */
-@media (prefers-color-scheme: dark) {
-    .card-enhanced,
-    .stat-card-enhanced,
-    .module-card-enhanced,
-    .form-section-enhanced,
-    .data-table-enhanced,
-    .empty-state-enhanced,
-    .quick-action-card-enhanced {
-        background: linear-gradient(145deg, #111827 0%, #1f2937 100%) !important;
-        border-color: #374151 !important;
-    }
-    
-    .welcome-banner-enhanced {
-        border-color: #374151 !important;
-    }
-}
