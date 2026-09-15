@@ -152,7 +152,7 @@ def edit(id):
         else:
             flash('表单验证失败，请检查输入。', 'danger')
 
-    return render_template('approval_request/form.html', form=form, request=approval_request)
+    return render_template('approval_request/form.html', form=form, approval_request=approval_request)
 
 
 @approval_request_bp.route('/<int:id>/delete', methods=['POST'])
