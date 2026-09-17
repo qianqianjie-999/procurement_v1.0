@@ -11,6 +11,8 @@ class Config:
     SECRET_KEY = os.environ.get('SECRET_KEY') or 'procurement-secret-key-2026'
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(hours=2)
+    # CSRF token 跟随 session 生命周期，避免新建页面停留超过 1 小时后提交报 CSRF 过期错误
+    WTF_CSRF_TIME_LIMIT = None
     
     # 关键：添加这个缺失的 init_app 方法（空实现即可）
     @staticmethod
