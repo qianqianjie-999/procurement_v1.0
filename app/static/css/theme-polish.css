@@ -1,0 +1,343 @@
+/* ============================================================
+   采购管理系统 - 全站美化主题层（Police Blue 警蓝主题）
+   说明：本文件为纯视觉覆盖层，最后加载，不改动任何功能与结构
+   ============================================================ */
+
+:root {
+    /* 警蓝主题色 */
+    --police: #1e4e79;
+    --police-dark: #163d60;
+    --police-darker: #0f2c4a;
+    --police-light: #3a6ea5;
+    --police-lighter: #d8e5f2;
+    --police-grad: linear-gradient(135deg, #1e4e79 0%, #163d60 100%);
+
+    /* 覆盖全局主色变量 */
+    --primary-blue: #1e4e79;
+    --primary-blue-dark: #163d60;
+    --primary-blue-darker: #0f2c4a;
+    --primary-blue-light: #7fa8cc;
+    --bg-light: #f4f7fb;
+}
+
+body {
+    background-color: var(--bg-light);
+    color: var(--text-primary);
+}
+
+/* ---------------- 侧边栏：深警蓝渐变 ---------------- */
+.sidebar {
+    background: linear-gradient(180deg, var(--police-darker) 0%, var(--police-dark) 55%, #12395c 100%) !important;
+    box-shadow: 4px 0 24px rgba(15, 44, 74, 0.25);
+}
+
+.sidebar .nav-link,
+.sidebar a {
+    color: rgba(255, 255, 255, 0.82);
+    border-radius: 8px;
+    margin: 2px 10px;
+    transition: all var(--transition-fast) var(--ease-in-out);
+}
+
+.sidebar .nav-link:hover,
+.sidebar a:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #ffffff;
+    transform: translateX(3px);
+}
+
+.sidebar .nav-link.active,
+.sidebar a.active {
+    background: rgba(255, 255, 255, 0.18);
+    color: #ffffff;
+    font-weight: 600;
+    border-left: 3px solid #6ea8dc;
+}
+
+/* ---------------- 顶栏 ---------------- */
+.topbar {
+    background: rgba(255, 255, 255, 0.92);
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid var(--border-color);
+    box-shadow: 0 2px 12px rgba(15, 44, 74, 0.08);
+}
+
+.topbar-title {
+    font-weight: 700;
+    color: var(--police-dark);
+}
+
+.user-avatar {
+    background: var(--police-grad) !important;
+    color: #fff !important;
+    box-shadow: 0 2px 8px rgba(30, 78, 121, 0.4);
+}
+
+/* ---------------- 页面标题区 ---------------- */
+.page-header {
+    padding-bottom: 14px;
+    margin-bottom: 24px;
+    position: relative;
+}
+
+.page-header::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 72px;
+    height: 3px;
+    border-radius: 3px;
+    background: var(--police-grad);
+}
+
+.page-header h1 {
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: var(--police-dark);
+}
+
+.page-header h1 i {
+    color: var(--police);
+}
+
+/* ---------------- 卡片 ---------------- */
+.card {
+    border: none;
+    border-radius: var(--radius-md);
+    box-shadow: 0 2px 10px rgba(15, 44, 74, 0.07);
+    transition: box-shadow var(--transition-normal) var(--ease-in-out),
+                transform var(--transition-normal) var(--ease-in-out);
+}
+
+.card:hover {
+    box-shadow: 0 8px 24px rgba(15, 44, 74, 0.13);
+}
+
+.card-header {
+    background: linear-gradient(180deg, #ffffff 0%, #f6f9fd 100%);
+    border-bottom: 1px solid var(--border-color);
+    border-radius: var(--radius-md) var(--radius-md) 0 0 !important;
+    font-weight: 600;
+    color: var(--police-dark);
+}
+
+.card-header h5,
+.card-header h6 {
+    font-weight: 700;
+}
+
+.card-header h5 i,
+.card-header h6 i {
+    color: var(--police);
+}
+
+/* ---------------- 表格 ---------------- */
+.table {
+    margin-bottom: 0;
+}
+
+.table thead th {
+    background: var(--police) !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    border: none !important;
+    white-space: nowrap;
+    padding: 12px 14px;
+}
+
+.table thead th:first-child {
+    border-top-left-radius: 8px;
+}
+
+.table thead th:last-child {
+    border-top-right-radius: 8px;
+}
+
+.table tbody td {
+    padding: 11px 14px;
+    vertical-align: middle;
+    border-color: #eef2f7;
+}
+
+.table tbody tr {
+    transition: background var(--transition-fast);
+}
+
+.table tbody tr:hover {
+    background: #eef4fb;
+}
+
+.table-striped tbody tr:nth-of-type(odd) {
+    background-color: #fafcfe;
+}
+
+/* ---------------- 按钮 ---------------- */
+.btn {
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all var(--transition-fast) var(--ease-in-out);
+}
+
+.btn-primary {
+    background: var(--police-grad) !important;
+    border: none !important;
+    box-shadow: 0 2px 8px rgba(30, 78, 121, 0.35);
+}
+
+.btn-primary:hover,
+.btn-primary:focus {
+    background: linear-gradient(135deg, #255e91 0%, #1b4a73 100%) !important;
+    transform: translateY(-1px);
+    box-shadow: 0 5px 14px rgba(30, 78, 121, 0.45);
+}
+
+.btn-success {
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.btn-success:hover {
+    transform: translateY(-1px);
+}
+
+.btn-outline-primary {
+    color: var(--police);
+    border-color: var(--police);
+}
+
+.btn-outline-primary:hover {
+    background: var(--police);
+    border-color: var(--police);
+}
+
+.btn-action {
+    border-radius: 6px;
+}
+
+/* ---------------- 状态徽章 ---------------- */
+.badge {
+    border-radius: var(--radius-full);
+    padding: 0.45em 0.9em;
+    font-weight: 600;
+    letter-spacing: 0.3px;
+}
+
+.badge.bg-secondary,
+.badge-secondary {
+    background: #64748b !important;
+}
+
+.badge.bg-warning,
+.badge-warning {
+    color: #7c4a03 !important;
+}
+
+/* ---------------- 表单控件 ---------------- */
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border-color: #d7e0ea;
+    transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: var(--police-light);
+    box-shadow: 0 0 0 0.2rem rgba(30, 78, 121, 0.15);
+}
+
+.form-label {
+    font-weight: 500;
+    color: var(--text-secondary);
+}
+
+/* ---------------- 提示条 ---------------- */
+.alert {
+    border: none;
+    border-radius: 10px;
+    box-shadow: var(--shadow-sm);
+}
+
+.alert-success { background: #e7f7f0; color: #0b6e4f; }
+.alert-danger  { background: #fdecec; color: #b02a2a; }
+.alert-warning { background: #fef6e7; color: #9a6200; }
+.alert-info    { background: #e8f4fb; color: #1a5d8a; }
+
+/* ---------------- 登录页 ---------------- */
+.login-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(160deg, var(--police-darker) 0%, var(--police) 55%, var(--police-light) 100%);
+}
+
+.login-card {
+    border: none;
+    border-radius: 16px !important;
+    box-shadow: 0 24px 60px rgba(6, 24, 44, 0.45) !important;
+    overflow: hidden;
+}
+
+.login-card .card-header {
+    background: var(--police-grad) !important;
+    color: #ffffff;
+    text-align: center;
+    padding: 22px 16px;
+    border-radius: 0 !important;
+}
+
+/* ---------------- 分页 ---------------- */
+.pagination .page-link {
+    border-radius: 8px;
+    margin: 0 3px;
+    border: none;
+    color: var(--police);
+    font-weight: 500;
+}
+
+.pagination .page-item.active .page-link {
+    background: var(--police-grad);
+    color: #ffffff;
+    box-shadow: 0 2px 8px rgba(30, 78, 121, 0.35);
+}
+
+/* ---------------- 滚动条 ---------------- */
+::-webkit-scrollbar {
+    width: 8px;
+    height: 8px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+    background: #c3d0de;
+    border-radius: 8px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--police-light);
+}
+
+/* ---------------- 页脚 ---------------- */
+.footer {
+    color: var(--text-muted);
+    font-size: 0.85rem;
+}
+
+/* ---------------- 详情键值对 ---------------- */
+.detail-label,
+dt {
+    color: var(--text-secondary);
+    font-weight: 600;
+}
+
+/* ---------------- PWA 安装条跟随主题 ---------------- */
+#pwa-install-banner {
+    background: linear-gradient(135deg, var(--police) 0%, var(--police-darker) 100%) !important;
+}
+
+/* ---------------- 主题色元信息 ---------------- */
+meta[name="theme-color"] { }
