@@ -441,13 +441,17 @@ def preview(id):
 import unicodedata as _unicodedata
 
 _ITEM_COL_MINP = [5, 12, 10, 6, 5, 4, 6, 7, 8, 6]
-_ITEM_COL_MAXP = [7, 22, 18, 38, 7, 6, 9, 10, 11, 16]
+_ITEM_COL_MAXP = [7, 22, 18, 38, 7, 6, 9, 10, 13, 16]
 # 每列内容测量的"显示单位"上限（CJK=2、半角=1），防止单条超长文本绑架整列
 _ITEM_COL_CAPD = [8, 24, 28, 60, 8, 6, 10, 10, 12, 32]
-# 表头自身的显示单位（列宽不小于表头宽）
-_ITEM_COL_HDRD = [4, 8, 8, 8, 4, 4, 8, 10, 12, 4]
-_UNIT_PT = 5.3   # 半角显示单位在 14px 宋体下的近似宽度（pt）
-_PAD_PT = 9.0    # 每列 cell 的 padding + 边框近似宽度（pt）
+# 表头自身的显示单位（列宽不小于表头最宽行；长表头已用 <br> 控制断行点）
+_ITEM_COL_HDRD = [4, 8, 8, 8, 4, 4, 4, 4, 8, 4]
+# nowrap 列（序号/数量/单位/批次/合同外/到货）：内容不可折行，列宽必须≥内容宽，
+# 否则 fixed 布局下会溢出压到相邻列（"列重合"的根源）
+_ITEM_NOWRAP_COLS = {0, 4, 5, 6, 7, 8}
+_UNIT_PT = 5.3        # 半角显示单位在 14px 宋体下的近似宽度（pt）
+_PAD_PT = 9.0         # 每列 cell 的 padding + 边框近似宽度（pt）
+_CONTENT_PT = 510.0   # A4 内容区宽度（210mm - 2×15mm 页边距）
 
 
 def _disp_len(s):
@@ -457,7 +461,11 @@ def _disp_len(s):
 
 
 def _calc_item_col_widths(items):
-    """按明细内容计算 10 列的宽度百分比，逐列限制在 [min, max] 区间内。"""
+    """按明细内容计算 10 列宽度百分比。
+
+    约束优先级：硬下限（表头放得下 + nowrap 列内容放得下）>
+    [min, max] 审美区间 > 按需求比例分配余量。
+    """
     fmt = lambda v, f='%.1f': (f % v) if v is not None else ''
     cells = []
     for it in items:
@@ -474,7 +482,6 @@ def _calc_item_col_widths(items):
             it.remarks or '',
         ])
     n_items = max(len(items), 1)
-    # 序号列需求 = 最大位数的显示宽
     seq_demand = _disp_len(str(n_items)) + 1
 
     demands = [seq_demand] + [
@@ -485,23 +492,40 @@ def _calc_item_col_widths(items):
         for i in range(1, 10)
     ]
 
-    # 显示单位 → 宽度 pt → 百分比
     raw_pt = [d * _UNIT_PT + _PAD_PT for d in demands]
-    total = sum(raw_pt)
-    pct = [p / total * 100 for p in raw_pt]
 
-    # 逐列 clamp 到 [min, max]，剩余量按未封顶列的需求比例回摊
-    for _ in range(3):
-        over = sum(max(0, p - mx) for p, mx in zip(pct, _ITEM_COL_MAXP))
-        under = sum(max(0, mn - p) for p, mn in zip(pct, _ITEM_COL_MINP))
-        pct = [min(mx, max(mn, p)) for p, mn, mx in zip(pct, _ITEM_COL_MINP, _ITEM_COL_MAXP)]
-        free_idx = [i for i in range(10) if _ITEM_COL_MINP[i] < pct[i] < _ITEM_COL_MAXP[i]]
-        if not free_idx or (over <= 0.01 and under <= 0.01):
+    # 硬下限：所有列表头必须放得下；nowrap 列内容还必须放得下（防溢出重叠）
+    floor = []
+    for i in range(10):
+        f = max(_ITEM_COL_MINP[i],
+                (_ITEM_COL_HDRD[i] * _UNIT_PT + _PAD_PT) / _CONTENT_PT * 100)
+        if i in _ITEM_NOWRAP_COLS:
+            f = max(f, raw_pt[i] / _CONTENT_PT * 100)
+        floor.append(f)
+    upper = [max(_ITEM_COL_MAXP[i], floor[i]) for i in range(10)]
+
+    total = sum(raw_pt)
+    pct = [min(upper[i], max(floor[i], raw_pt[i] / total * 100)) for i in range(10)]
+
+    # 余量分配：多退（从高于 floor 的列按可缩量回收）少补（按需求比例发放）
+    for _ in range(4):
+        delta = 100.0 - sum(pct)
+        if abs(delta) < 0.01:
             break
-        delta = 100 - sum(pct)
-        free_demand = sum(demands[i] for i in free_idx) or 1
-        for i in free_idx:
-            pct[i] += delta * demands[i] / free_demand
+        if delta > 0:
+            idx = [i for i in range(10) if pct[i] < upper[i] - 0.01]
+            if not idx:
+                break
+            wsum = sum(demands[i] for i in idx) or 1
+            for i in idx:
+                pct[i] = min(upper[i], pct[i] + delta * demands[i] / wsum)
+        else:
+            idx = [i for i in range(10) if pct[i] > floor[i] + 0.01]
+            if not idx:
+                break
+            slack = sum(pct[i] - floor[i] for i in idx) or 1
+            for i in idx:
+                pct[i] = max(floor[i], pct[i] - (-delta) * (pct[i] - floor[i]) / slack)
     # 兜底：浮点误差全部塞给规格列（弹性最大）
     pct[3] += 100 - sum(pct)
     return [round(p, 2) for p in pct]
