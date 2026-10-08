@@ -63,10 +63,12 @@
             background-color: #f5f5f5;
         }
 
-        /* 物资明细表格：列宽由后端按内容计算注入 <colgroup>，
-           此处百分比仅为 col_widths 未传入时的兜底 */
+        /* 物资明细表格：列宽由后端按内容计算注入 <colgroup>。
+           fixed 布局让计算百分比精确生效（auto 布局会被 WeasyPrint
+           按 min-content 再次微调，导致空列过窄/密集列被压） */
         .items-table {
             width: 100%;
+            table-layout: fixed;
             border-collapse: collapse;
             margin-bottom: 15px;
             font-size: 14px;

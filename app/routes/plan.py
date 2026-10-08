@@ -440,10 +440,10 @@ def preview(id):
 # min/max-width 支持不完整，故在 Python 侧量内容算宽度，注入 <colgroup>）。
 import unicodedata as _unicodedata
 
-_ITEM_COL_MINP = [3, 11, 10, 6, 5, 4, 6, 7, 8, 6]
-_ITEM_COL_MAXP = [5, 20, 18, 38, 7, 6, 9, 10, 11, 18]
+_ITEM_COL_MINP = [3, 12, 10, 6, 5, 4, 6, 7, 8, 6]
+_ITEM_COL_MAXP = [5, 22, 18, 38, 7, 6, 9, 10, 11, 16]
 # 每列内容测量的"显示单位"上限（CJK=2、半角=1），防止单条超长文本绑架整列
-_ITEM_COL_CAPD = [6, 24, 28, 60, 8, 6, 10, 10, 12, 44]
+_ITEM_COL_CAPD = [6, 24, 28, 60, 8, 6, 10, 10, 12, 32]
 # 表头自身的显示单位（列宽不小于表头宽）
 _ITEM_COL_HDRD = [4, 8, 8, 8, 4, 4, 8, 10, 12, 4]
 _UNIT_PT = 5.3   # 半角显示单位在 14px 宋体下的近似宽度（pt）
