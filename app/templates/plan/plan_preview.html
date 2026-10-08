@@ -435,8 +435,15 @@
         </table>
 
         <!-- 物资明细表格 -->
-        <table class="items-table">
-            <thead>
+    <table class="items-table">
+        <colgroup>
+            {% for w in col_widths if col_widths is defined and col_widths %}
+            <col style="width: {{ w }}%;">
+            {% else %}
+            <col style="width: 4%;"><col style="width: 15%;"><col style="width: 14%;"><col style="width: 22%;"><col style="width: 6%;"><col style="width: 5%;"><col style="width: 7%;"><col style="width: 8%;"><col style="width: 9%;"><col style="width: 10%;">
+            {% endfor %}
+        </colgroup>
+        <thead>
                 <tr>
                     <th class="col-name">序号</th>
                     <th class="col-name">物资名称</th>

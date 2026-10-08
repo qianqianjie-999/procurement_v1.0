@@ -430,7 +430,81 @@ def preview(id):
     plan = PurchasePlan.query.get_or_404(id)
     items = plan.items.order_by(PurchaseItem.id).all()
 
-    return render_template('plan/plan_preview.html', plan=plan, items=items)
+    return render_template('plan/plan_preview.html', plan=plan, items=items,
+                           col_widths=_calc_item_col_widths(items))
+
+
+# ---------------- 明细表列宽：按内容自适应（含最小/最大约束） ----------------
+# 总宽固定为 A4 内容区，每列预设 [min, max] 百分比区间，
+# 实际宽度由本单明细的真实内容在区间内自动分配（WeasyPrint 对单元格
+# min/max-width 支持不完整，故在 Python 侧量内容算宽度，注入 <colgroup>）。
+import unicodedata as _unicodedata
+
+_ITEM_COL_MINP = [3, 11, 10, 6, 5, 4, 6, 7, 8, 6]
+_ITEM_COL_MAXP = [5, 20, 18, 38, 7, 6, 9, 10, 11, 18]
+# 每列内容测量的"显示单位"上限（CJK=2、半角=1），防止单条超长文本绑架整列
+_ITEM_COL_CAPD = [6, 24, 28, 60, 8, 6, 10, 10, 12, 44]
+# 表头自身的显示单位（列宽不小于表头宽）
+_ITEM_COL_HDRD = [4, 8, 8, 8, 4, 4, 8, 10, 12, 4]
+_UNIT_PT = 5.3   # 半角显示单位在 14px 宋体下的近似宽度（pt）
+_PAD_PT = 9.0    # 每列 cell 的 padding + 边框近似宽度（pt）
+
+
+def _disp_len(s):
+    """字符串显示宽度：全角/CJK 记 2，其余记 1。"""
+    s = '' if s is None else str(s)
+    return sum(2 if _unicodedata.east_asian_width(c) in ('F', 'W') else 1 for c in s)
+
+
+def _calc_item_col_widths(items):
+    """按明细内容计算 10 列的宽度百分比，逐列限制在 [min, max] 区间内。"""
+    fmt = lambda v, f='%.1f': (f % v) if v is not None else ''
+    cells = []
+    for it in items:
+        cells.append([
+            '',  # 序号列宽由位数决定，单独处理
+            it.item_name or '',
+            it.brand_model or '',
+            it.specification or '',
+            fmt(it.quantity),
+            it.unit or '',
+            fmt(it.batch_quantity),
+            fmt(it.extra_contract_quantity),
+            it.required_date.strftime('%Y-%m-%d') if it.required_date else '',
+            it.remarks or '',
+        ])
+    n_items = max(len(items), 1)
+    # 序号列需求 = 最大位数的显示宽
+    seq_demand = _disp_len(str(n_items)) + 1
+
+    demands = [seq_demand] + [
+        max(
+            _ITEM_COL_HDRD[i],
+            max((min(_disp_len(row[i]), _ITEM_COL_CAPD[i]) for row in cells), default=0),
+        )
+        for i in range(1, 10)
+    ]
+
+    # 显示单位 → 宽度 pt → 百分比
+    raw_pt = [d * _UNIT_PT + _PAD_PT for d in demands]
+    total = sum(raw_pt)
+    pct = [p / total * 100 for p in raw_pt]
+
+    # 逐列 clamp 到 [min, max]，剩余量按未封顶列的需求比例回摊
+    for _ in range(3):
+        over = sum(max(0, p - mx) for p, mx in zip(pct, _ITEM_COL_MAXP))
+        under = sum(max(0, mn - p) for p, mn in zip(pct, _ITEM_COL_MINP))
+        pct = [min(mx, max(mn, p)) for p, mn, mx in zip(pct, _ITEM_COL_MINP, _ITEM_COL_MAXP)]
+        free_idx = [i for i in range(10) if _ITEM_COL_MINP[i] < pct[i] < _ITEM_COL_MAXP[i]]
+        if not free_idx or (over <= 0.01 and under <= 0.01):
+            break
+        delta = 100 - sum(pct)
+        free_demand = sum(demands[i] for i in free_idx) or 1
+        for i in free_idx:
+            pct[i] += delta * demands[i] / free_demand
+    # 兜底：浮点误差全部塞给规格列（弹性最大）
+    pct[3] += 100 - sum(pct)
+    return [round(p, 2) for p in pct]
 
 
 @plan_bp.route('/<int:id>/export-pdf', methods=['GET'])
@@ -453,7 +527,8 @@ def export_pdf(id):
     chinese_font_path = current_app.config.get('CHINESE_FONT_PATH')
 
     # 渲染简化的 HTML 模板（专为 PDF 优化）
-    html_content = render_template('plan/plan_pdf.html', plan=plan, items=items)
+    html_content = render_template('plan/plan_pdf.html', plan=plan, items=items,
+                                   col_widths=_calc_item_col_widths(items))
 
     # 生成 PDF - 优化性能
     try:
