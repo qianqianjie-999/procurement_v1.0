@@ -125,6 +125,12 @@
             word-break: keep-all;
         }
 
+        /* 序号列永不折行：防止 "12" 被断成 "1"/"2" 两行 */
+        .items-table th:first-child,
+        .items-table td:first-child {
+            white-space: nowrap;
+        }
+
         .items-table td.left-align {
             text-align: left;
             word-break: break-word;

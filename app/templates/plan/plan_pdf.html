@@ -100,6 +100,12 @@
             text-align: center;
         }
 
+        /* 序号列永不折行：防止 "12" 被断成 "1"/"2" 两行 */
+        .items-table th:first-child,
+        .items-table td:first-child {
+            white-space: nowrap;
+        }
+
         .items-table td {
             text-align: left;
         }
