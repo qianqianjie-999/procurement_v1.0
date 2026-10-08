@@ -8,9 +8,9 @@ CREATE DATABASE IF NOT EXISTS procurement_system
     CHARACTER SET utf8mb4
     COLLATE utf8mb4_unicode_ci;
 
--- 创建用户并授权 (请修改密码)
+-- 创建用户并授权 (密码必须替换，不得提交真实密码)
 CREATE USER IF NOT EXISTS 'procurement'@'localhost'
-    IDENTIFIED BY 'YourSecurePassword123!';
+    IDENTIFIED BY '<REPLACE_WITH_STRONG_PASSWORD>';
 
 GRANT ALL PRIVILEGES ON procurement_system.* TO 'procurement'@'localhost';
 FLUSH PRIVILEGES;

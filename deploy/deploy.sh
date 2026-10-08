@@ -37,7 +37,7 @@ APP_USER="apache"
 APP_DIR="/var/www/html/procurement"
 DB_NAME="procurement_system"
 DB_USER="procurement"
-DB_PASS="YourSecurePassword123!"
+DB_PASS="${DB_PASS:?未设置 DB_PASS 环境变量，拒绝使用默认密码（fail-closed）}"
 ADMIN_PASS="admin123"
 PYTHON_VERSION="python3.9"
 
