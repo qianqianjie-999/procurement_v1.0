@@ -125,9 +125,13 @@
             word-break: keep-all;
         }
 
-        /* 序号列永不折行：防止 "12" 被断成 "1"/"2" 两行 */
-        .items-table th:first-child,
-        .items-table td:first-child {
+        /* 数值/日期/单位列永不折行：序号(1)、数量(5)、单位(6)、批次(7)、合同外(8)、到货(9) */
+        .items-table th:nth-of-type(1), .items-table td:nth-of-type(1),
+        .items-table th:nth-of-type(5), .items-table td:nth-of-type(5),
+        .items-table th:nth-of-type(6), .items-table td:nth-of-type(6),
+        .items-table th:nth-of-type(7), .items-table td:nth-of-type(7),
+        .items-table th:nth-of-type(8), .items-table td:nth-of-type(8),
+        .items-table th:nth-of-type(9), .items-table td:nth-of-type(9) {
             white-space: nowrap;
         }
 
