@@ -79,8 +79,10 @@
         .items-table td {
             border: 1px solid #000;
             padding: 6px 4px;
+            /* 换行策略：中文按字断行（默认行为），英文/型号优先在 - / 空格处断，
+               超长无分隔 token 才启用 overflow-wrap 强制折断 */
             word-wrap: break-word;
-            word-break: break-all;
+            overflow-wrap: break-word;
             white-space: normal;
             vertical-align: top;
         }
@@ -95,17 +97,14 @@
             text-align: left;
         }
 
-        /* 列宽 - 使用固定宽度 */
-        .items-table .col-num { width: 45px; }
-        .items-table .col-name { width: 12%; }
-        .items-table .col-brand { width: 11%; }
-        .items-table .col-spec { width: 25%; }
-        .items-table .col-qty { width: 55px; white-space: nowrap; }
-        .items-table .col-unit { width: 55px; white-space: nowrap; }
-        .items-table .col-batch { width: 80px; white-space: nowrap; }
-        .items-table .col-extra { width: 80px; white-space: nowrap; }
-        .items-table .col-date { width: 80px; white-space: nowrap; }
-        .items-table .col-remark { width: 8%; }
+        /* 列宽：内容自适应——只给文字密集列设百分比建议，
+           数值/日期列不设宽度，由 WeasyPrint 按内容自动分配，
+           空列自动收窄，密集列自动加宽 */
+        .items-table .col-num { width: 4%; }
+        .items-table .col-name { width: 15%; }
+        .items-table .col-brand { width: 14%; }
+        .items-table .col-spec { width: 22%; }
+        .items-table .col-remark { width: 10%; }
 
         /* 签字栏 */
         .signature-section {

@@ -113,7 +113,9 @@
             border: 1px solid #000;
             padding: 8px 5px;
             text-align: center;
-            word-break: break-word;
+            /* 中文按字断行，英文/型号优先在 - / 处断（与 PDF 导出版一致） */
+            word-wrap: break-word;
+            overflow-wrap: break-word;
             white-space: normal;
         }
 
