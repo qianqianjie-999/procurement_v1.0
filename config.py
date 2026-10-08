@@ -5,10 +5,33 @@ import os
 from datetime import timedelta
 
 # ====================== 核心修复：给 Config 基类添加 init_app 方法 ======================
+def _require_secret_key():
+    """SECRET_KEY 必须由部署注入；缺失或仍是占位常量时拒绝启动。"""
+    _bad = {
+        'procurement-secret-key-2026', 'your-production-secret-key-change-this',
+        'dev-secret-key-change-in-production', 'your-secret-key-here',
+    }
+    _v = (os.environ.get('SECRET_KEY') or '').strip()
+    if not _v or _v in _bad:
+        raise RuntimeError('SECRET_KEY 未配置或仍为占位常量，拒绝启动（procurement）')
+    return _v
+
+
+
+def _require_env(name):
+    """必需环境变量；缺失即拒绝启动（fail-closed），绝不用硬编码口令兜底。"""
+    _v = (os.environ.get(name) or '').strip()
+    if not _v:
+        raise RuntimeError('环境变量 %s 未配置，拒绝启动（procurement）' % name)
+    return _v
+
+
 class Config:
     """基础配置类 - 所有环境的通用配置"""
     # 通用配置项（根据你的实际情况调整）
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'procurement-secret-key-2026'
+    # 2026-10-07 修复：原为 `or 'procurement-secret-key-2026'`（公开常量），
+    # 环境变量一旦缺失就静默退化成可被伪造的密钥 ⇒ 改 fail-closed。
+    SECRET_KEY = _require_secret_key()
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     PERMANENT_SESSION_LIFETIME = timedelta(hours=2)
     # CSRF token 跟随 session 生命周期，避免新建页面停留超过 1 小时后提交报 CSRF 过期错误
@@ -57,8 +80,7 @@ class DevelopmentConfig(Config):
 # 测试环境配置（如果有）
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
-        'mysql+pymysql://root:你的密码@localhost/procurement_test'
+    SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or 'sqlite:///:memory:'
     
     @classmethod
     def init_app(cls, app):
@@ -70,8 +92,7 @@ class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_ECHO = False
     # 生产环境数据库地址（根据你的实际配置修改）
-    SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL') or \
-        'mysql+pymysql://procurement:YourSecurePassword123!@127.0.0.1/procurement_system'
+    SQLALCHEMY_DATABASE_URI = _require_env('DATABASE_URL')
 
     # 数据库连接池配置 - 防止 "MySQL server has gone away" 错误
     SQLALCHEMY_ENGINE_OPTIONS = {

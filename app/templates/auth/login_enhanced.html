@@ -60,10 +60,8 @@
             
             <!-- 卡片底部 -->
             <div class="card-footer text-center py-4 bg-light">
-                <p class="mb-2">还没有账户？</p>
-                <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary">
-                    <i class="bi bi-person-plus"></i> 立即注册
-                </a>
+                {# 公开注册已关闭（2026-10-07）：账号由管理员创建 #}
+                <p class="mb-0 text-muted"><i class="bi bi-lock me-1"></i>账号由管理员统一开通，如需账号请联系管理员。</p>
             </div>
         </div>
     </div>

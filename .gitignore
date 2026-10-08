@@ -50,3 +50,7 @@ deploy/*.pid
 *.pem
 *.key
 secrets/
+
+# Local backup files (avoid committing .bak-* scratch files)
+*.bak-*
+.env.bak-*

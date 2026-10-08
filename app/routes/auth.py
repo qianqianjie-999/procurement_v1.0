@@ -3,7 +3,7 @@
 
 包含登录、登出、注册等功能
 """
-from flask import Blueprint, render_template, redirect, url_for, flash, request
+from flask import Blueprint, render_template, redirect, url_for, flash, request, abort
 from flask_login import login_user, logout_user, login_required, current_user
 from app import db
 from app.models import User
@@ -26,10 +26,10 @@ def login():
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
-    locked_out, remaining_time = login_rate_limiter.is_locked_out()
+    locked_out, remaining_time = login_rate_limiter.is_locked_out(request.form.get('username', ''))
     if locked_out:
         flash(f'登录失败次数过多，请 {remaining_time} 秒后再试。', 'danger')
-        return render_template('auth/login_enhanced.html', form=LoginForm())
+        return render_template('auth/login_enhanced.html', form=LoginForm()), 429
 
     form = LoginForm()
 
@@ -38,14 +38,14 @@ def login():
             user = User.query.filter_by(username=form.username.data).first()
 
             if user is None:
-                login_rate_limiter.record_failed_login()
-                remaining = login_rate_limiter.get_remaining_attempts()
+                login_rate_limiter.record_failed_login(form.username.data)
+                remaining = login_rate_limiter.get_remaining_attempts(form.username.data)
                 flash(f'用户名或密码错误。剩余尝试次数: {remaining}', 'danger')
                 return render_template('auth/login_enhanced.html', form=form)
 
             if not user.check_password(form.password.data):
-                login_rate_limiter.record_failed_login()
-                remaining = login_rate_limiter.get_remaining_attempts()
+                login_rate_limiter.record_failed_login(form.username.data)
+                remaining = login_rate_limiter.get_remaining_attempts(form.username.data)
                 flash(f'用户名或密码错误。剩余尝试次数: {remaining}', 'danger')
                 return render_template('auth/login_enhanced.html', form=form)
 
@@ -53,7 +53,7 @@ def login():
                 flash('您的账户已被禁用，请联系管理员。', 'danger')
                 return render_template('auth/login_enhanced.html', form=form)
 
-            login_rate_limiter.reset_attempts()
+            login_rate_limiter.reset_attempts(form.username.data)
             login_user(user, remember=form.remember_me.data)
 
             next_page = request.args.get('next')
@@ -86,14 +86,17 @@ def logout():
     return redirect(url_for('main.index'))
 
 
+# 公开注册开关（2026-10-07 关闭）：内部系统账号一律由管理员创建。
+# 如需临时恢复自助注册，将 False 改为 True 并 reload/restart httpd。
+ENABLE_PUBLIC_REGISTRATION = False
+
+
 @auth_bp.route('/register', methods=['GET', 'POST'])
 def register():
-    """
-    用户注册
+    """用户注册（公开注册已于 2026-10-07 关闭）"""
+    if not ENABLE_PUBLIC_REGISTRATION:
+        abort(403)
 
-    GET: 显示注册表单
-    POST: 创建新用户并自动登录
-    """
     if current_user.is_authenticated:
         return redirect(url_for('main.index'))
 
