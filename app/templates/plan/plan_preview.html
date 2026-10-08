@@ -4,527 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>采购计划预览 - {{ plan.plan_name }}</title>
-
-    <!-- Bootstrap Icons -->
     <link href="{{ url_for('static', filename='vendor/bootstrap-icons.css') }}" rel="stylesheet">
-
     <style>
-        /* ============================================
-           字体配置 - 使用项目内字体文件
-           ============================================ */
-        @font-face {
-            font-family: 'SimSun';
-            src: url('/static/fonts/SimSun.ttf') format('truetype');
+        body { margin: 0; padding: 0; background: #f0f2f5; font-family: "SimSun", "Songti SC", sans-serif; }
+        /* 操作按钮栏（不打印） */
+        .action-bar {
+            position: sticky; top: 0; z-index: 100;
+            background: #fff; border-bottom: 1px solid #e0e0e0;
+            padding: 12px 20px; text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,.06);
         }
-
-        /* ============================================
-           基础样式 - 精确还原 Excel 模板
-           ============================================ */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        .action-bar .btn {
+            display: inline-block; padding: 8px 20px; margin: 0 6px;
+            font-size: 14px; text-decoration: none; border-radius: 6px;
+            cursor: pointer; font-weight: 500; transition: all .2s;
         }
-
-        body {
-            /* 中文字体配置：优先使用宋体，确保 PDF 导出时中文正常显示 */
-            font-family: "SimSun", "Songti SC", "STSong", "SimHei", "Heiti SC", sans-serif;
-            font-size: 15px;
-            line-height: 1.6;
-            color: #000;
-            background-color: #f8fafc;
-            padding: 20px;
+        .btn-pdf { background: #1e4e79; color: #fff; border: none; }
+        .btn-pdf:hover { background: #163a5e; transform: translateY(-1px); }
+        .btn-print { background: #6c757d; color: #fff; border: none; }
+        .btn-print:hover { background: #5a6268; }
+        .btn-back { background: #fff; color: #1e4e79; border: 1px solid #1e4e79; }
+        .btn-back:hover { background: #1e4e79; color: #fff; }
+        /* 预览容器：A4 白纸效果 */
+        .preview-wrapper {
+            max-width: 210mm; margin: 20px auto; background: #fff;
+            box-shadow: 0 4px 12px rgba(0,0,0,.1); padding: 15mm;
         }
-
-        /* ============================================
-           预览容器 - A4 纸张效果
-           ============================================ */
-        .preview-container {
-            max-width: 210mm;
-            margin: 0 auto;
-            background: #fff;
-            padding: 15mm;
-            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        /* ============================================
-           标题样式
-           ============================================ */
-        .header {
-            text-align: center;
-            margin-bottom: 20px;
-            border-bottom: 2px solid #000;
-            padding-bottom: 10px;
-        }
-
-        .header h1 {
-            font-size: 22px;
-            font-weight: bold;
-            letter-spacing: 2px;
-            margin-bottom: 5px;
-        }
-
-        .header .company-name {
-            font-size: 16px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        /* ============================================
-           基本信息表格
-           ============================================ */
-        .info-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 15px;
-        }
-
-        .info-table td {
-            border: 1px solid #000;
-            padding: 6px 10px;
-            word-break: break-word;
-            white-space: normal;
-        }
-
-        .info-table .label {
-            font-weight: bold;
-            width: 100px;
-            background-color: #f9f9f9;
-            word-break: keep-all;
-        }
-
-        .info-table .value {
-            flex: 1;
-        }
-
-        /* ============================================
-           物资明细表格 - 核心样式
-           ============================================ */
-        .items-table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-bottom: 20px;
-            font-size: 14px;
-        }
-
-        .items-table th,
-        .items-table td {
-            border: 1px solid #000;
-            padding: 8px 5px;
-            text-align: center;
-            /* 中文按字断行，英文/型号优先在 - / 处断（与 PDF 导出版一致） */
-            word-wrap: break-word;
-            overflow-wrap: break-word;
-            white-space: normal;
-        }
-
-        .items-table th {
-            background-color: #e8e8e8;
-            font-weight: bold;
-            word-break: keep-all;
-        }
-
-        /* 数值/日期/单位列永不折行：序号(1)、数量(5)、单位(6)、批次(7)、合同外(8)、到货(9) */
-        .items-table th:nth-of-type(1), .items-table td:nth-of-type(1),
-        .items-table th:nth-of-type(5), .items-table td:nth-of-type(5),
-        .items-table th:nth-of-type(6), .items-table td:nth-of-type(6),
-        .items-table th:nth-of-type(7), .items-table td:nth-of-type(7),
-        .items-table th:nth-of-type(8), .items-table td:nth-of-type(8),
-        .items-table th:nth-of-type(9), .items-table td:nth-of-type(9) {
-            white-space: nowrap;
-        }
-
-        .items-table td.left-align {
-            text-align: left;
-            word-break: break-word;
-            white-space: normal;
-        }
-
-        .items-table td.right-align {
-            text-align: right;
-        }
-
-        /* 列宽设置 */
-        .items-table .col-name { width: 5%; }
-        .items-table .col-brand { width: 15%; }
-        .items-table .col-spec { width: 15%; }
-        .items-table .col-quantity { width: 8%; }
-        .items-table .col-unit { width: 5%; }
-        .items-table .col-batch { width: 7%; }
-        .items-table .col-extra { width: 8%; }
-        .items-table .col-date { width: 8%; }
-        .items-table .col-remark { width: 14%; }
-
-        /* ============================================
-           签字栏样式
-           ============================================ */
-        .signature-section {
-            margin-top: 30px;
-            margin-bottom: 20px;
-        }
-
-        .signature-title {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #000;
-            padding-bottom: 5px;
-        }
-
-        .signature-grid {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .signature-grid td {
-            border: 1px solid #000;
-            padding: 12px 8px;
-            height: 45px;
-        }
-
-        .signature-grid .sig-label {
-            font-weight: bold;
-            width: 18%;
-            text-align: center;
-            background-color: #f5f5f5;
-        }
-
-        .signature-grid .sig-space {
-            width: 15%;
-        }
-
-        /* 总经理/董事长特殊样式 */
-        .signature-grid .sig-gm {
-            width: 25%;
-        }
-
-        .gm-approval-note {
-            margin-top: 15px;
-            padding: 10px;
-            border: 1px solid #000;
-            background-color: #fafafa;
-            font-size: 13px;
-        }
-
-        .gm-approval-note p {
-            margin: 5px 0;
-        }
-
-        .gm-approval-note strong {
-            font-weight: bold;
-        }
-
-        .gm-approval-note p {
-            word-break: break-word;
-            white-space: normal;
-        }
-
-        /* ============================================
-           备注说明
-           ============================================ */
-        .remarks-section {
-            margin-top: 20px;
-            padding: 15px;
-            border: 1px solid #000;
-            background-color: #fafafa;
-            font-size: 13px;
-        }
-
-        .remarks-section h4 {
-            font-size: 14px;
-            font-weight: bold;
-            margin-bottom: 10px;
-        }
-
-        .remarks-section ol {
-            padding-left: 20px;
-        }
-
-        .remarks-section li {
-            margin: 5px 0;
-            color: #333;
-        }
-
-        /* ============================================
-           按钮操作区（非打印）
-           ============================================ */
-        .action-buttons {
-            text-align: center;
-            margin-top: 20px;
-            padding: 15px;
-        }
-
-        .action-buttons .btn {
-            display: inline-block;
-            padding: 10px 25px;
-            margin: 0 10px;
-            font-size: 14px;
-            text-decoration: none;
-            border-radius: 6px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-weight: 500;
-            min-width: 120px;
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #3b82f6 0%, #2563eb 100%);
-            color: #fff;
-            border: none;
-            box-shadow: 0 2px 4px rgba(59, 130, 246, 0.2);
-        }
-
-        .btn-primary:hover {
-            background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3);
-        }
-
-        .btn-secondary {
-            background: linear-gradient(135deg, #64748b 0%, #475569 100%);
-            color: #fff;
-            border: none;
-            box-shadow: 0 2px 4px rgba(100, 116, 139, 0.2);
-        }
-
-        .btn-secondary:hover {
-            background: linear-gradient(135deg, #475569 0%, #334155 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(100, 116, 139, 0.3);
-        }
-
-        .btn-success {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: #fff;
-            border: none;
-            box-shadow: 0 2px 4px rgba(16, 185, 129, 0.2);
-        }
-
-        .btn-success:hover {
-            background: linear-gradient(135deg, #059669 0%, #047857 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
-        }
-
-        .btn-outline-secondary {
-            background: transparent;
-            color: #64748b;
-            border: 2px solid #64748b;
-        }
-
-        .btn-outline-secondary:hover {
-            background: #64748b;
-            color: #fff;
-            transform: translateY(-2px);
-        }
-
-        /* ============================================
-           打印样式
-           ============================================ */
         @media print {
-            body {
-                background: #fff;
-                padding: 0;
-            }
-
-            .preview-container {
-                box-shadow: none;
-                padding: 10mm;
-                max-width: none;
-                border-radius: 0;
-            }
-
-            .action-buttons,
-            .no-print {
-                display: none !important;
-            }
-
-            .items-table th {
-                background-color: #e8e8e8 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            .info-table .label,
-            .signature-grid .sig-label {
-                background-color: #f5f5f5 !important;
-                -webkit-print-color-adjust: exact;
-                print-color-adjust: exact;
-            }
-
-            @page {
-                margin: 15mm;
-                size: A4;
-            }
-        }
-
-        /* ============================================
-           响应式调整
-           ============================================ */
-        @media (max-width: 768px) {
-            .preview-container {
-                padding: 10mm;
-            }
-
-            .header h1 {
-                font-size: 18px;
-            }
-
-            .items-table {
-                font-size: 11px;
-            }
-
-            .items-table th,
-            .items-table td {
-                padding: 5px 3px;
-            }
-
-            .action-buttons .btn {
-                padding: 8px 16px;
-                margin: 0 5px;
-                font-size: 12px;
-                min-width: auto;
-            }
+            body { background: #fff; }
+            .action-bar { display: none !important; }
+            .preview-wrapper { box-shadow: none; margin: 0; padding: 0; max-width: none; }
+            @page { margin: 15mm; size: A4; }
         }
     </style>
 </head>
 <body>
-    <!-- 操作按钮 -->
-    <div class="action-buttons no-print">
-        <a href="{{ url_for('plan.export_pdf', id=plan.id) }}" class="btn btn-success">
+    <div class="action-bar no-print">
+        <a href="{{ url_for('plan.export_pdf', id=plan.id) }}" class="btn btn-pdf">
             <i class="bi bi-file-earmark-pdf"></i> 导出 PDF
         </a>
-        <a href="javascript:window.print()" class="btn btn-secondary">
+        <a href="javascript:window.print()" class="btn btn-print">
             <i class="bi bi-printer"></i> 打印
         </a>
-        <a href="{{ url_for('plan.detail', id=plan.id) }}" class="btn btn-primary">
+        <a href="{{ url_for('plan.detail', id=plan.id) }}" class="btn btn-back">
             <i class="bi bi-arrow-left"></i> 返回详情
         </a>
-        <a href="{{ url_for('plan.index') }}" class="btn btn-outline-secondary">
+        <a href="{{ url_for('plan.index') }}" class="btn btn-back">
             <i class="bi bi-list"></i> 返回列表
         </a>
     </div>
 
-    <!-- 预览容器 -->
-    <div class="preview-container">
-        <!-- 标题头 -->
-        <div class="header">
-            <div class="company-name">科威达科技集团股份有限公司</div>
-            <h1>物资采购计划表</h1>
-        </div>
-
-        <!-- 基本信息 -->
-        <table class="info-table">
-            <tr>
-                <td class="label">采购计划编号</td>
-                <td>{{ plan.plan_number }}</td>
-                <td class="label">制表日期</td>
-                <td>{{ plan.created_at.strftime('%Y年%m月%d日') }}</td>
-            </tr>
-            <tr>
-                <td class="label">项目名称</td>
-                <td colspan="3">{{ plan.plan_name }}</td>
-            </tr>
-            <tr>
-                <td class="label">项目经理</td>
-                <td>{{ plan.project_manager or '-' }}</td>
-                <td class="label">开工日期</td>
-                <td>{{ plan.start_date.strftime('%Y年%m月%d日') if plan.start_date else '-' }}</td>
-            </tr>
-            <tr>
-                <td class="label">预计完工日期</td>
-                <td colspan="3">{{ plan.end_date.strftime('%Y年%m月%d日') if plan.end_date else '-' }}</td>
-            </tr>
-            {% if plan.description %}
-            <tr>
-                <td class="label">采购说明</td>
-                <td colspan="3">{{ plan.description }}</td>
-            </tr>
-            {% endif %}
-        </table>
-
-        <!-- 物资明细表格 -->
-    <table class="items-table">
-        <colgroup>
-            {% for w in col_widths if col_widths is defined and col_widths %}
-            <col style="width: {{ w }}%;">
-            {% else %}
-            <col style="width: 4%;"><col style="width: 15%;"><col style="width: 14%;"><col style="width: 22%;"><col style="width: 6%;"><col style="width: 5%;"><col style="width: 7%;"><col style="width: 8%;"><col style="width: 9%;"><col style="width: 10%;">
-            {% endfor %}
-        </colgroup>
-        <thead>
-                <tr>
-                    <th class="col-name">序号</th>
-                    <th class="col-name">物资名称</th>
-                    <th class="col-brand">品牌型号</th>
-                    <th class="col-spec">主要规格</th>
-                    <th class="col-quantity">数量</th>
-                    <th class="col-unit">单位</th>
-                    <th class="col-batch">批次数量</th>
-                    <th class="col-extra">合同外数量</th>
-                    <th class="col-date">计划到货时间</th>
-                    <th class="col-remark">备注</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for item in items %}
-                <tr>
-                    <td>{{ loop.index }}</td>
-                    <td class="left-align">{{ item.item_name }}</td>
-                    <td class="left-align">{{ item.brand_model or '-' }}</td>
-                    <td class="left-align">{{ item.specification or '-' }}</td>
-                    <td>{{ "%.1f"|format(item.quantity) }}</td>
-                    <td>{{ item.unit or '-' }}</td>
-                    <td>{{ "%.1f"|format(item.batch_quantity) if item.batch_quantity else '-' }}</td>
-                    <td>{{ "%.1f"|format(item.extra_contract_quantity) if item.extra_contract_quantity else '-' }}</td>
-                    <td>{{ item.required_date.strftime('%Y-%m-%d') if item.required_date else '-' }}</td>
-                    <td class="left-align">{{ item.remarks or '-' }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-
-        <!-- 签字栏 -->
-        <div class="signature-section">
-            <div class="signature-title">审批签字栏</div>
-            <table class="signature-grid">
-                <tr>
-                    <td class="sig-label">项目经理：</td>
-                    <td class="sig-space"></td>
-                    <td class="sig-label">设计人员：</td>
-                    <td class="sig-space"></td>
-                    <td class="sig-label">设计部经理：</td>
-                    <td class="sig-space"></td>
-                </tr>
-                <tr>
-                    <td class="sig-label">工程部经理/事业部经理：</td>
-                    <td class="sig-space"></td>
-                    <td class="sig-label">采购部经理：</td>
-                    <td class="sig-space"></td>
-                    <td class="sig-label">合同是否签订：</td>
-                    <td class="sig-space"></td>
-                </tr>
-                <tr>
-                    <td class="sig-label sig-gm" colspan="3">总经理/董事长：</td>
-                    <td class="sig-space" colspan="3"></td>
-                </tr>
-            </table>
-
-            <!-- 备注 -->
-            <div class="gm-approval-note">
-                <p><strong>备注：</strong></p>
-                <p>1. 本表用于所有项目物资采购计划，必按流程签字确认物资采购计划。采购计划项目经理、设计部、采购部都有留存；采购清单由设计部按计划输入 T+，采购部采购；库管凭物资采购单发货。（杆件、地笼附图纸、详细采购设备参数需单独附表）</p>
-                <p>2. 审批流程：项目经理列清单表→设计人员审核签字→设计部经理审核签字→事业部经理审核签字→采购部经理审核签字→总经理/董事长审核签字；</p>
-                <p>3. 涉及到本项目合同内清单采购计划遗漏的、变更补充清单、按实结算的补充清单，需另下采购单，签字流程到采购部经理；合同外且无法收费的，需由总经理/董事长，签署事务审批单，再下采购单！</p>
-            </div>
-        </div>
-
-        <!-- 页脚信息 -->
-        <div style="margin-top: 20px; font-size: 12px; color: #666; text-align: center;">
-            <p>制表人：{{ plan.creator.username if plan.creator else '-' }} &nbsp;&nbsp;&nbsp;
-               打印日期：{{ now().strftime('%Y年%m月%d日 %H:%M') if now() else '-' }}</p>
-        </div>
+    <div class="preview-wrapper">
+        {% include 'plan/plan_pdf.html' %}
     </div>
 </body>
 </html>
