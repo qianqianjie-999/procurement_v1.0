@@ -47,6 +47,20 @@ class User(db.Model, UserMixin):
         """检查是否为管理员"""
         return self.role == 'admin'
 
+    def to_dict(self):
+        """序列化为字典，供 API 返回"""
+        return {
+            'id': self.id,
+            'username': self.username,
+            'full_name': self.full_name,
+            'email': self.email,
+            'department': self.department,
+            'role': self.role,
+            'is_admin': self.is_administrator(),
+            'is_active': self.is_active_field,
+            'created_at': self.created_at.strftime('%Y-%m-%d %H:%M:%S') if self.created_at else None,
+        }
+
     def __repr__(self):
         return f'<User {self.username}>'
 

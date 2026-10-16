@@ -35,11 +35,7 @@ def validate_ajax_csrf():
 @admin_bp.route('/users')
 def users():
     """用户管理页面"""
-    page = request.args.get('page', 1, type=int)
-    per_page = 20
-
-    users = User.query.paginate(page=page, per_page=per_page, error_out=False)
-
+    users = User.query.order_by(User.created_at.desc()).all()
     return render_template('admin/users.html', users=users)
 
 @admin_bp.route('/users/create', methods=['POST'])
@@ -124,6 +120,108 @@ def set_user_role(user_id):
     
     role_name = '管理员' if role == 'admin' else '普通用户'
     return jsonify({'success': True, 'message': f'用户 {user.username} 角色已更新为 {role_name}'})
+
+@admin_bp.route('/users/<int:user_id>', methods=['GET'])
+def get_user(user_id):
+    """获取单个用户详情（供编辑模态框填充）"""
+    if not validate_ajax_csrf():
+        return jsonify({'success': False, 'message': 'CSRF验证失败'}), 403
+
+    user = User.query.get_or_404(user_id)
+    return jsonify({'success': True, 'user': user.to_dict()})
+
+@admin_bp.route('/users/<int:user_id>', methods=['PUT'])
+def update_user(user_id):
+    """更新用户信息（姓名、邮箱、部门、角色、状态、可选新密码）"""
+    if not validate_ajax_csrf():
+        return jsonify({'success': False, 'message': 'CSRF验证失败'}), 403
+
+    user = User.query.get_or_404(user_id)
+    data = request.json or {}
+
+    # 姓名
+    if 'full_name' in data:
+        user.full_name = data['full_name'].strip() or None
+
+    # 邮箱（需保持唯一，排除自身）
+    if 'email' in data:
+        new_email = data['email'].strip()
+        if not new_email:
+            return jsonify({'success': False, 'message': '邮箱不能为空'}), 400
+        existing = User.query.filter_by(email=new_email).first()
+        if existing and existing.id != user.id:
+            return jsonify({'success': False, 'message': '邮箱已被注册'}), 400
+        user.email = new_email
+
+    # 部门
+    if 'department' in data:
+        user.department = data['department'].strip() or None
+
+    # 角色
+    if 'role' in data:
+        new_role = data['role']
+        if new_role not in ['user', 'admin']:
+            return jsonify({'success': False, 'message': '无效的角色'}), 400
+        if user.id == current_user.id and new_role != 'admin':
+            return jsonify({'success': False, 'message': '不能取消自己的管理员角色'}), 400
+        user.role = new_role
+
+    # 启用/禁用状态
+    if 'is_active' in data:
+        if user.id == current_user.id and not data['is_active']:
+            return jsonify({'success': False, 'message': '不能禁用自己的账户'}), 400
+        user.is_active_field = bool(data['is_active'])
+
+    # 可选新密码
+    new_password = data.get('new_password')
+    if new_password:
+        if len(new_password) < 6:
+            return jsonify({'success': False, 'message': '密码长度至少 6 位'}), 400
+        user.set_password(new_password)
+
+    db.session.commit()
+    return jsonify({'success': True, 'message': '用户更新成功', 'user': user.to_dict()})
+
+@admin_bp.route('/users/<int:user_id>', methods=['DELETE'])
+def delete_user(user_id):
+    """删除用户（不能删自己；有关联采购计划时禁止删除）"""
+    if not validate_ajax_csrf():
+        return jsonify({'success': False, 'message': 'CSRF验证失败'}), 403
+
+    if user_id == current_user.id:
+        return jsonify({'success': False, 'message': '不能删除自己的账户'}), 400
+
+    user = User.query.get_or_404(user_id)
+
+    plan_count = PurchasePlan.query.filter_by(created_by=user_id).count()
+    if plan_count > 0:
+        return jsonify({
+            'success': False,
+            'message': f'该用户有 {plan_count} 条采购计划记录，无法删除'
+        }), 400
+
+    db.session.delete(user)
+    db.session.commit()
+    return jsonify({'success': True, 'message': f'用户 {user.username} 已删除'})
+
+@admin_bp.route('/users/<int:user_id>/reset-password', methods=['POST'])
+def reset_user_password(user_id):
+    """管理员重置用户密码"""
+    if not validate_ajax_csrf():
+        return jsonify({'success': False, 'message': 'CSRF验证失败'}), 403
+
+    user = User.query.get_or_404(user_id)
+    data = request.json or {}
+    new_password = data.get('new_password', '')
+
+    if not new_password:
+        return jsonify({'success': False, 'message': '新密码不能为空'}), 400
+    if len(new_password) < 6:
+        return jsonify({'success': False, 'message': '密码长度至少 6 位'}), 400
+
+    user.set_password(new_password)
+    db.session.commit()
+    return jsonify({'success': True, 'message': '密码重置成功'})
 
 @admin_bp.route('/reports')
 def reports():

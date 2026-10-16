@@ -86,6 +86,43 @@ def logout():
     return redirect(url_for('main.index'))
 
 
+@auth_bp.route('/change-password', methods=['GET', 'POST'])
+@login_required
+def change_password():
+    """修改当前登录用户的密码"""
+    if request.method == 'POST':
+        old_password = request.form.get('old_password', '')
+        new_password = request.form.get('new_password', '')
+        confirm_password = request.form.get('confirm_password', '')
+
+        if not all([old_password, new_password, confirm_password]):
+            flash('请填写所有字段', 'danger')
+            return render_template('auth/change_password.html')
+
+        if new_password != confirm_password:
+            flash('新密码两次输入不一致', 'danger')
+            return render_template('auth/change_password.html')
+
+        if len(new_password) < 6:
+            flash('新密码长度至少 6 位', 'danger')
+            return render_template('auth/change_password.html')
+
+        if not current_user.check_password(old_password):
+            flash('原密码错误', 'danger')
+            return render_template('auth/change_password.html')
+
+        try:
+            current_user.set_password(new_password)
+            db.session.commit()
+            flash('密码修改成功！', 'success')
+            return redirect(url_for('main.index'))
+        except Exception as e:
+            db.session.rollback()
+            flash(f'密码修改失败: {str(e)}', 'danger')
+
+    return render_template('auth/change_password.html')
+
+
 # 公开注册开关（2026-10-07 关闭）：内部系统账号一律由管理员创建。
 # 如需临时恢复自助注册，将 False 改为 True 并 reload/restart httpd。
 ENABLE_PUBLIC_REGISTRATION = False
