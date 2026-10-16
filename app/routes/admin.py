@@ -6,7 +6,9 @@
 from flask import Blueprint, render_template, redirect, url_for, flash, request, jsonify
 from flask_login import login_required, current_user
 from app import db
-from app.models import User, PurchasePlan
+from app.models import (
+    User, PurchasePlan, ApprovalLog, ApprovalRequest, ApprovalStep,
+)
 from app.forms import UserForm
 from wtforms import ValidationError
 
@@ -21,8 +23,17 @@ def require_admin():
         return redirect(url_for('main.index'))
 
 def validate_ajax_csrf():
-    """验证AJAX请求的CSRF token"""
-    csrf_token = request.headers.get('X-CSRF-Token') or request.json.get('csrf_token') if request.is_json else None
+    """验证AJAX请求的CSRF token
+
+    优先从请求头取（GET/DELETE 等无 body 请求只能从头取），
+    其次才从 JSON/表单请求体取，不依赖 request.is_json。
+    """
+    csrf_token = request.headers.get('X-CSRF-Token') or request.headers.get('X-CSRFToken')
+    if not csrf_token:
+        if request.is_json:
+            csrf_token = (request.get_json(silent=True) or {}).get('csrf_token')
+        else:
+            csrf_token = request.form.get('csrf_token')
     if not csrf_token:
         return False
     from flask_wtf.csrf import validate_csrf
@@ -184,7 +195,7 @@ def update_user(user_id):
 
 @admin_bp.route('/users/<int:user_id>', methods=['DELETE'])
 def delete_user(user_id):
-    """删除用户（不能删自己；有关联采购计划时禁止删除）"""
+    """删除用户（不能删自己；存在任何业务关联记录时禁止删除）"""
     if not validate_ajax_csrf():
         return jsonify({'success': False, 'message': 'CSRF验证失败'}), 403
 
@@ -193,11 +204,29 @@ def delete_user(user_id):
 
     user = User.query.get_or_404(user_id)
 
-    plan_count = PurchasePlan.query.filter_by(created_by=user_id).count()
-    if plan_count > 0:
+    # users 表被 5 个外键引用（数据库均为 RESTRICT），任一存在记录都不能删，
+    # 否则 commit 时会抛外键约束错误（500）。这里统一前置校验并给出可读提示。
+    refs = []
+    created_plans = PurchasePlan.query.filter_by(created_by=user_id).count()
+    if created_plans:
+        refs.append(f'{created_plans} 条采购计划')
+    approved_plans = PurchasePlan.query.filter_by(approved_by=user_id).count()
+    if approved_plans:
+        refs.append(f'{approved_plans} 条审批记录')
+    logs = ApprovalLog.query.filter_by(operator_id=user_id).count()
+    if logs:
+        refs.append(f'{logs} 条审批日志')
+    approval_requests = ApprovalRequest.query.filter_by(created_by=user_id).count()
+    if approval_requests:
+        refs.append(f'{approval_requests} 条审批申请')
+    steps = ApprovalStep.query.filter_by(approver_id=user_id).count()
+    if steps:
+        refs.append(f'{steps} 个审批节点')
+
+    if refs:
         return jsonify({
             'success': False,
-            'message': f'该用户有 {plan_count} 条采购计划记录，无法删除'
+            'message': f'该用户关联了 {"、".join(refs)}，无法删除。建议改用「禁用」保留历史记录。'
         }), 400
 
     db.session.delete(user)
