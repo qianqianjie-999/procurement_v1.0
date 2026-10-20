@@ -16,24 +16,6 @@
     .file-card {
         padding: 0.75rem !important;
     }
-    /* 文件管理区 PDF/Excel 标签块整体缩小（约为常规一半） */
-    .file-card-mini {
-        padding: 0.3rem 0.45rem !important;
-    }
-    .file-card-mini .file-box-title {
-        font-size: 0.7rem;
-    }
-    .file-card-mini .file-box-desc {
-        font-size: 0.6rem;
-    }
-    .file-card-mini .file-box-icon {
-        font-size: 0.8rem;
-    }
-    .file-card-mini .btn {
-        font-size: 0.7rem;
-        padding: 0.1rem 0.35rem;
-        border-radius: 0.2rem;
-    }
     /* 基本信息卡片 - 紧凑布局 */
     .detail-section {
         margin-bottom: 0.25rem !important;
@@ -165,8 +147,8 @@
     <div class="card-body py-2">
         <div class="row g-2">
             <!-- PDF 导出 -->
-            <div class="col-md-6">
-                <div class="file-card file-card-compact file-card-mini">
+            <div class="col-md-4">
+                <div class="file-card file-card-compact">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
                             <div class="file-box-icon pdf me-2">
@@ -190,8 +172,8 @@
             </div>
 
             <!-- Excel 导出 -->
-            <div class="col-md-6">
-                <div class="file-card file-card-compact file-card-mini">
+            <div class="col-md-4">
+                <div class="file-card file-card-compact">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
                             <div class="file-box-icon pdf me-2" style="color: #1d6f42;">
@@ -212,7 +194,7 @@
             </div>
 
             <!-- 扫描件上传 -->
-            <div class="col-md-6">
+            <div class="col-md-4">
                 <div class="file-card file-card-compact">
                     <div class="d-flex align-items-center justify-content-between">
                         <div class="d-flex align-items-center">
