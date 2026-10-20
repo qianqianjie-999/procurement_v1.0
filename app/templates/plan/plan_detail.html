@@ -84,16 +84,6 @@
         white-space: normal;
         font-size: 0.85rem;
     }
-    /* 导出按钮 - 迷你尺寸（约为常规的一半） */
-    .btn-export-mini {
-        font-size: 0.7rem;
-        padding: 0.1rem 0.35rem;
-        border-radius: 0.2rem;
-        line-height: 1.2;
-    }
-    .btn-export-mini .bi {
-        font-size: 0.75em;
-    }
 </style>
 {% endblock %}
 
@@ -173,7 +163,7 @@
                             {% if plan.pdf_path %}
                             <span class="file-box-status success"><i class="bi bi-check-circle"></i> 已生成</span>
                             {% endif %}
-                            <a href="{{ url_for('plan.export_pdf', id=plan.id) }}" class="btn btn-primary btn-export-mini">
+                            <a href="{{ url_for('plan.export_pdf', id=plan.id) }}" class="btn btn-primary btn-sm">
                                 <i class="bi bi-download"></i> 导出
                             </a>
                         </div>
@@ -195,7 +185,7 @@
                             </div>
                         </div>
                         <div class="file-box-actions">
-                            <a href="{{ url_for('plan.export_excel', id=plan.id) }}" class="btn btn-success btn-export-mini">
+                            <a href="{{ url_for('plan.export_excel', id=plan.id) }}" class="btn btn-success btn-sm">
                                 <i class="bi bi-download"></i> 导出
                             </a>
                         </div>
