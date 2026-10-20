@@ -180,7 +180,9 @@
 #addRowBtn {
     transition: all var(--transition-normal) var(--ease-in-out);
     font-weight: 700;
-    color: #fff;
+    color: var(--primary-blue-dark);
+    background: rgba(255, 255, 255, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.7);
     padding: 0.5rem 1rem;
     border-radius: var(--radius);
     display: inline-flex;
@@ -191,8 +193,8 @@
 #addRowBtn:hover {
     transform: translateY(-2px);
     box-shadow: var(--shadow-sm);
-    background: rgba(255, 255, 255, 0.15);
-    color: #fff;
+    background: #fff;
+    color: var(--primary-blue-dark);
 }
 
 /* 表单底部操作区 */
