@@ -8,6 +8,8 @@
 <style>
     /* 欢迎横幅 */
     .dash-hero {
+        position: relative;
+        overflow: hidden;
         background: linear-gradient(135deg, var(--primary-blue) 0%, var(--primary-blue-dark) 100%);
         border-radius: var(--radius-lg);
         color: #fff;
@@ -18,6 +20,29 @@
         align-items: center;
         flex-wrap: wrap;
         gap: 1rem;
+        box-shadow: var(--shadow-md);
+    }
+    .dash-hero::after {
+        content: '';
+        position: absolute;
+        right: 180px;
+        top: -50px;
+        width: 170px;
+        height: 170px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.10);
+        pointer-events: none;
+    }
+    .dash-hero::before {
+        content: '';
+        position: absolute;
+        right: -40px;
+        bottom: -70px;
+        width: 200px;
+        height: 200px;
+        border-radius: 50%;
+        background: rgba(255,255,255,.08);
+        pointer-events: none;
     }
     .dash-hero h4 { margin: 0; font-weight: 700; }
     .dash-hero .hero-meta { opacity: .85; font-size: .85rem; margin-top: .25rem; }
@@ -62,7 +87,7 @@
         border: 1px solid var(--border-color);
         border-radius: var(--radius-lg);
         background: #fff;
-        height: 100%;
+        box-shadow: var(--shadow-sm);
     }
     .dash-panel .panel-head {
         padding: .8rem 1rem;
@@ -79,7 +104,7 @@
     .dist-row:last-child { margin-bottom: 0; }
     .dist-label { width: 52px; font-size: .78rem; color: #495057; flex-shrink: 0; }
     .dist-track { flex: 1; height: 10px; background: #eef1f5; border-radius: 5px; overflow: hidden; }
-    .dist-bar { height: 100%; border-radius: 5px; min-width: 2px; }
+    .dist-bar { height: 100%; border-radius: 5px; min-width: 2px; transition: width .4s ease; }
     .dist-count { width: 30px; text-align: right; font-size: .78rem; font-weight: 600; color: #212529; }
 
     /* 待办列表 */
@@ -98,7 +123,8 @@
 
     /* 底部摘要条 */
     .dash-summary {
-        border: 1px dashed var(--border-color);
+        background: #f8faff;
+        border: 1px solid #dbe7fb;
         border-radius: var(--radius-lg);
         padding: .7rem 1rem;
         display: flex;
