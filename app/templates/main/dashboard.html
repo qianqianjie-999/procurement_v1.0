@@ -181,7 +181,6 @@
                                 <tr>
                                     <th>编号</th>
                                     <th>计划名称</th>
-                                    <th class="text-end">预算金额</th>
                                     <th>状态</th>
                                     <th>创建时间</th>
                                     <th class="text-end">操作</th>
@@ -196,7 +195,6 @@
                                             {{ plan.plan_name|truncate(16) }}
                                         </a>
                                     </td>
-                                    <td class="text-end">¥{{ '{:,.2f}'.format(plan.budget_amount or 0) }}</td>
                                     <td>
                                         {% if plan.status == 'draft' %}
                                         <span class="status-badge status-draft">草稿</span>
@@ -302,9 +300,6 @@
         <div>
             <i class="bi bi-calendar-plus text-primary"></i> 本月新增
             <strong>{{ month_new }}</strong> 个计划
-            <span class="mx-2 text-muted">|</span>
-            <i class="bi bi-wallet2 text-primary"></i> 计划预算合计
-            <strong>¥{{ '{:,.2f}'.format(budget_sum or 0) }}</strong>
         </div>
         <div class="d-flex gap-2">
             <a href="{{ url_for('plan.create') }}" class="btn btn-sm btn-primary">

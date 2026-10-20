@@ -42,11 +42,8 @@ def index():
         'cancelled': status_counts.get('cancelled', 0),
     }
 
-    # 本月新增与预算汇总
+    # 本月新增
     month_new = base_query.filter(PurchasePlan.created_at >= month_start).count()
-    budget_sum = base_query.with_entities(
-        func.coalesce(func.sum(PurchasePlan.budget_amount), 0)
-    ).scalar()
 
     # 最近采购计划
     recent_plans = base_query.order_by(
@@ -82,7 +79,6 @@ def index():
         'main/dashboard.html',
         plan_stats=plan_stats,
         month_new=month_new,
-        budget_sum=budget_sum,
         recent_plans=recent_plans,
         my_tasks=my_tasks,
         status_dist=status_dist,
