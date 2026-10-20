@@ -132,7 +132,20 @@
 
     <!-- Bootstrap 5 JS -->
     <script src="{{ url_for('static', filename='vendor/bootstrap.bundle.min.js') }}"></script>
-    
+
+    <!-- 成功/信息类闪现提示 3 秒自动关闭 -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            document.querySelectorAll('.alert-dismissible').forEach(function(el) {
+                if (el.classList.contains('alert-success') || el.classList.contains('alert-info')) {
+                    setTimeout(function() {
+                        bootstrap.Alert.getOrCreateInstance(el).close();
+                    }, 3000);
+                }
+            });
+        });
+    </script>
+
     <!-- 自定义JavaScript -->
     <script>
         // 侧边栏切换功能
