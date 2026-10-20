@@ -43,6 +43,9 @@
         <a href="{{ url_for('plan.export_pdf', id=plan.id) }}" class="btn btn-pdf">
             <i class="bi bi-file-earmark-pdf"></i> 导出 PDF
         </a>
+        <a href="{{ url_for('plan.export_excel', id=plan.id) }}" class="btn btn-print" style="background:#1d6f42; color:#fff;">
+            <i class="bi bi-file-earmark-excel"></i> 导出 Excel
+        </a>
         <a href="javascript:window.print()" class="btn btn-print">
             <i class="bi bi-printer"></i> 打印
         </a>

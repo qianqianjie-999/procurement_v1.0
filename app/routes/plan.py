@@ -591,6 +591,161 @@ def export_pdf(id):
         return redirect(url_for('plan.preview', id=id))
 
 
+@plan_bp.route('/<int:id>/export-excel', methods=['GET'])
+@login_required
+def export_excel(id):
+    """
+    导出采购计划为 Excel - 直接下载不保存
+
+    布局仿 PDF 模板：标题、基本信息、物资明细表（10 列）、制表人
+    """
+    try:
+        import io
+        from openpyxl import Workbook
+        from openpyxl.styles import Font, Alignment, Border, Side, PatternFill
+    except ImportError:
+        flash('未安装 openpyxl，请先运行：pip install openpyxl', 'warning')
+        return redirect(url_for('plan.detail', id=id))
+
+    plan = PurchasePlan.query.get_or_404(id)
+    items = plan.items.order_by(PurchaseItem.id).all()
+
+    # ---------- 样式 ----------
+    thin = Side(style='thin', color='000000')
+    border = Border(left=thin, right=thin, top=thin, bottom=thin)
+    company_font = Font(name='宋体', size=14, bold=True)
+    title_font = Font(name='宋体', size=16, bold=True)
+    label_font = Font(name='宋体', size=11, bold=True)
+    body_font = Font(name='宋体', size=11)
+    header_fill = PatternFill('solid', fgColor='E8E8E8')
+    label_fill = PatternFill('solid', fgColor='F5F5F5')
+    center = Alignment(horizontal='center', vertical='center', wrap_text=True)
+    left = Alignment(horizontal='left', vertical='center', wrap_text=True)
+
+    N_COLS = 10  # 明细表列数
+
+    wb = Workbook()
+    ws = wb.active
+    ws.title = '采购计划表'
+
+    # ---------- 标题区 ----------
+    ws.merge_cells(start_row=1, start_column=1, end_row=1, end_column=N_COLS)
+    c = ws.cell(row=1, column=1, value='科威达科技集团股份有限公司')
+    c.font = company_font
+    c.alignment = center
+
+    ws.merge_cells(start_row=2, start_column=1, end_row=2, end_column=N_COLS)
+    c = ws.cell(row=2, column=1, value='物资采购计划表')
+    c.font = title_font
+    c.alignment = center
+
+    # ---------- 基本信息区（A=标签, B:D=值；两栏行用 C=标签, D:J=值） ----------
+    def info_cell(row, col, value, is_label=False):
+        c = ws.cell(row=row, column=col, value=value)
+        c.font = label_font if is_label else body_font
+        c.border = border
+        c.alignment = center if is_label else left
+        if is_label:
+            c.fill = label_fill
+        return c
+
+    def info_row(row, label, value, merge_to=4):
+        """单值行：A 标签，B 到 merge_to 列合并为值"""
+        info_cell(row, 1, label, is_label=True)
+        ws.merge_cells(start_row=row, start_column=2, end_row=row, end_column=merge_to)
+        info_cell(row, 2, value)
+        for col in range(3, merge_to + 1):
+            ws.cell(row=row, column=col).border = border
+
+    def info_pair_row(row, label1, value1, label2, value2):
+        """两栏行：A 标签，B:D 值，E 标签，F:J 值"""
+        info_cell(row, 1, label1, is_label=True)
+        ws.merge_cells(start_row=row, start_column=2, end_row=row, end_column=4)
+        info_cell(row, 2, value1)
+        for col in range(3, 5):
+            ws.cell(row=row, column=col).border = border
+        info_cell(row, 5, label2, is_label=True)
+        ws.merge_cells(start_row=row, start_column=6, end_row=row, end_column=10)
+        info_cell(row, 6, value2)
+        for col in range(7, 11):
+            ws.cell(row=row, column=col).border = border
+
+    fmt_cn_date = lambda d: d.strftime('%Y年%m月%d日') if d else '-'
+
+    row = 4
+    info_pair_row(row, '采购计划编号', plan.plan_number, '制表日期',
+                  plan.created_at.strftime('%Y年%m月%d日') if plan.created_at else '-')
+    row += 1
+    info_row(row, '项目名称', plan.plan_name)
+    row += 1
+    info_pair_row(row, '项目经理', plan.project_manager or '-', '开工日期', fmt_cn_date(plan.start_date))
+    row += 1
+    info_row(row, '预计完工日期', fmt_cn_date(plan.end_date))
+    row += 1
+    if plan.description:
+        info_row(row, '采购说明', plan.description)
+        row += 1
+
+    # ---------- 物资明细表 ----------
+    row += 1  # 空一行
+    headers = ['序号', '物资名称', '品牌型号', '主要规格', '数量', '单位',
+               '批次数量', '合同外数量', '计划到货时间', '备注']
+    for col, h in enumerate(headers, 1):
+        c = ws.cell(row=row, column=col, value=h)
+        c.font = label_font
+        c.fill = header_fill
+        c.alignment = center
+        c.border = border
+
+    fmt_num = lambda v: float(v) if v is not None else None
+    for i, it in enumerate(items, 1):
+        r = row + i
+        values = [
+            i,
+            it.item_name or '',
+            it.brand_model or '',
+            it.specification or '',
+            fmt_num(it.quantity),
+            it.unit or '',
+            fmt_num(it.batch_quantity),
+            fmt_num(it.extra_contract_quantity),
+            it.required_date.strftime('%Y-%m-%d') if it.required_date else '',
+            it.remarks or '',
+        ]
+        for col, v in enumerate(values, 1):
+            c = ws.cell(row=r, column=col, value=v)
+            c.font = body_font
+            c.border = border
+            c.alignment = center if col in (1, 5, 6, 7, 8, 9) else left
+        # 数量列数字格式
+        for col in (5, 7, 8):
+            ws.cell(row=r, column=col).number_format = '0.0'
+
+    # ---------- 制表人 ----------
+    row = row + len(items) + 2
+    c = ws.cell(row=row, column=1, value=f"制表人：{plan.creator.username if plan.creator else '-'}")
+    c.font = body_font
+    c.alignment = left
+
+    # ---------- 列宽 ----------
+    from openpyxl.utils import get_column_letter
+    col_widths = [6, 18, 16, 32, 8, 6, 10, 11, 13, 20]
+    for col, w in enumerate(col_widths, 1):
+        ws.column_dimensions[get_column_letter(col)].width = w
+
+    # ---------- 输出 ----------
+    output = io.BytesIO()
+    wb.save(output)
+    output.seek(0)
+
+    response = make_response(output.getvalue())
+    response.headers['Content-Type'] = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    response.headers['Content-Disposition'] = f'attachment; filename={plan.plan_number}_purchase_plan.xlsx'
+    response.headers['Content-Length'] = str(output.getbuffer().nbytes)
+
+    return response
+
+
 @plan_bp.route('/<int:id>/upload', methods=['POST'])
 @login_required
 def upload_scanned(id):
